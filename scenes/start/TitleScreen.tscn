@@ -1,0 +1,108 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/title_screen.gd" id="1_5s83y"]
+[ext_resource type="Texture2D" path="res://art/back1.png" id="2_7q4i0"]
+[ext_resource type="Texture2D" path="res://art/stamp.png" id="3_66tcb"]
+
+[node name="TitleScreen" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_5s83y")
+
+[node name="Backdrop" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_7q4i0")
+expand_mode = 1
+stretch_mode = 6
+
+[node name="Shade" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.0352941, 0.0392157, 0.0470588, 0.52)
+
+[node name="StampGhost" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 170.0
+offset_top = -290.0
+offset_right = 430.0
+offset_bottom = -30.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("3_66tcb")
+expand_mode = 1
+stretch_mode = 6
+modulate = Color(0.721569, 0.188235, 0.160784, 0.14)
+rotation = -0.08
+
+[node name="Margin" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 72.0
+offset_top = 72.0
+offset_right = -72.0
+offset_bottom = -72.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Column" type="VBoxContainer" parent="Margin"]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="Overline" type="Label" parent="Margin/Column"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.682353, 0.721569, 0.745098, 1)
+theme_override_font_sizes/font_size = 14
+text = "INTERNAL RECORDS // NIGHT ACCESS"
+
+[node name="Title" type="Label" parent="Margin/Column"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.94902, 0.956863, 0.964706, 1)
+theme_override_font_sizes/font_size = 52
+text = "Necessary Evil"
+
+[node name="Summary" type="Label" parent="Margin/Column"]
+custom_minimum_size = Vector2(500, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.831373, 0.854902, 0.866667, 1)
+theme_override_font_sizes/font_size = 18
+text = "Enter the intake desk and open the sealed dossier."
+autowrap_mode = 3
+
+[node name="Spacer" type="Control" parent="Margin/Column"]
+custom_minimum_size = Vector2(0, 8)
+layout_mode = 2
+
+[node name="BeginButton" type="Button" parent="Margin/Column"]
+custom_minimum_size = Vector2(220, 54)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.109804, 0.117647, 0.129412, 1)
+theme_override_font_sizes/font_size = 18
+text = "ENTER INTAKE"
+
+[node name="Note" type="Label" parent="Margin/Column"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.596078, 0.631373, 0.65098, 1)
+theme_override_font_sizes/font_size = 13
+text = "One screen follows. No additional systems are loaded."
+
+[connection signal="pressed" from="Margin/Column/BeginButton" to="." method="_on_begin_button_pressed"]

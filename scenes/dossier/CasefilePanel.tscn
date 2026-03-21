@@ -1,0 +1,150 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="Texture2D" path="res://art/Dossier.png" id="1_u67v0"]
+[ext_resource type="Texture2D" path="res://art/stamp.png" id="2_2k46n"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_0h4gk"]
+bg_color = Color(0, 0, 0, 0)
+
+[node name="CasefilePanel" type="PanelContainer"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -460.0
+offset_top = -300.0
+offset_right = 460.0
+offset_bottom = 300.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_0h4gk")
+visible = false
+
+[node name="DossierArt" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("1_u67v0")
+expand_mode = 1
+stretch_mode = 6
+
+[node name="Shade" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.0588235, 0.0705882, 0.0823529, 0.28)
+
+[node name="Stamp" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 0
+offset_left = 620.0
+offset_top = 318.0
+offset_right = 804.0
+offset_bottom = 502.0
+texture = ExtResource("2_2k46n")
+expand_mode = 1
+stretch_mode = 6
+modulate = Color(0.709804, 0.180392, 0.156863, 0.2)
+rotation = -0.14
+
+[node name="Margin" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 18.0
+offset_top = 22.0
+offset_right = -22.0
+offset_bottom = -22.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Ledger" type="VBoxContainer" parent="Margin"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="HeaderRow" type="HBoxContainer" parent="Margin/Ledger"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="CasefileTitle" type="Label" parent="Margin/Ledger/HeaderRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.121569, 0.137255, 0.14902, 1)
+theme_override_font_sizes/font_size = 28
+text = "DOSSIER // NECESSARY EVIL"
+
+[node name="CasefileDismissButton" type="Button" parent="Margin/Ledger/HeaderRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(84, 40)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.14902, 0.152941, 0.156863, 1)
+theme_override_font_sizes/font_size = 14
+text = "CLOSE"
+
+[node name="CaseRef" type="Label" parent="Margin/Ledger"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.196078, 0.227451, 0.247059, 1)
+theme_override_font_sizes/font_size = 13
+text = "Registry 03-A // Night Intake // Internal"
+
+[node name="Divider" type="HSeparator" parent="Margin/Ledger"]
+layout_mode = 2
+
+[node name="SubjectHeader" type="Label" parent="Margin/Ledger"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.227451, 0.258824, 0.278431, 1)
+theme_override_font_sizes/font_size = 14
+text = "SUBJECT"
+
+[node name="SubjectValue" type="Label" parent="Margin/Ledger"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.0705882, 0.0784314, 0.0901961, 1)
+theme_override_font_sizes/font_size = 24
+text = "UNASSIGNED OPERATIVE // FILE SEALED"
+
+[node name="StatusHeader" type="Label" parent="Margin/Ledger"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.227451, 0.258824, 0.278431, 1)
+theme_override_font_sizes/font_size = 14
+text = "STATUS"
+
+[node name="StatusValue" type="Label" parent="Margin/Ledger"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.145098, 0.231373, 0.176471, 1)
+theme_override_font_sizes/font_size = 20
+text = "DORMANT // AWAITING DIRECTIVE"
+
+[node name="ClearanceHeader" type="Label" parent="Margin/Ledger"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.227451, 0.258824, 0.278431, 1)
+theme_override_font_sizes/font_size = 14
+text = "CLEARANCE"
+
+[node name="ClearanceValue" type="Label" parent="Margin/Ledger"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.223529, 0.117647, 0.109804, 1)
+theme_override_font_sizes/font_size = 20
+text = "PROVISIONAL // REVIEW PENDING"
+
+[node name="NotesHeader" type="Label" parent="Margin/Ledger"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.227451, 0.258824, 0.278431, 1)
+theme_override_font_sizes/font_size = 14
+text = "BRIEF"
+
+[node name="NotesValue" type="RichTextLabel" parent="Margin/Ledger"]
+custom_minimum_size = Vector2(0, 220)
+layout_mode = 2
+bbcode_enabled = true
+scroll_active = false
+theme_override_colors/default_color = Color(0.0862745, 0.0941176, 0.105882, 1)
+theme_override_font_sizes/normal_font_size = 18
+text = "No field report is attached to this record.\n\nThe file remains sealed pending review by internal office staff.\n\nOpen the dossier, read the page, close it, and continue waiting."

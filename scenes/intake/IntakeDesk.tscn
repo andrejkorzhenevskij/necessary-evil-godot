@@ -1,0 +1,107 @@
+[gd_scene load_steps=5 format=3 uid="uid://cn4fgf6f3l6v4"]
+
+[ext_resource type="Script" path="res://scripts/intake_desk.gd" id="1_4p8ec"]
+[ext_resource type="PackedScene" path="res://scenes/dossier/CasefilePanel.tscn" id="2_0l8wl"]
+[ext_resource type="Texture2D" path="res://art/back.png" id="3_3yb3m"]
+[ext_resource type="Texture2D" path="res://art/back1.png" id="4_vx11e"]
+
+[node name="IntakeDesk" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_4p8ec")
+
+[node name="Backdrop" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("3_3yb3m")
+expand_mode = 1
+stretch_mode = 6
+
+[node name="BackdropOverlay" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.0470588, 0.0509804, 0.0627451, 0.42)
+
+[node name="DeskPlate" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 620.0
+offset_top = 120.0
+offset_right = -80.0
+offset_bottom = -120.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("4_vx11e")
+expand_mode = 1
+stretch_mode = 6
+modulate = Color(1, 1, 1, 0.28)
+
+[node name="Margin" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 56.0
+offset_top = 56.0
+offset_right = -56.0
+offset_bottom = -56.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Console" type="VBoxContainer" parent="Margin"]
+layout_mode = 2
+theme_override_constants/separation = 18
+
+[node name="Overline" type="Label" parent="Margin/Console"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.658824, 0.713726, 0.741176, 1)
+theme_override_font_sizes/font_size = 15
+text = "INTAKE DESK // MIDNIGHT SHIFT // INTERNAL USE"
+
+[node name="Title" type="Label" parent="Margin/Console"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.94902, 0.956863, 0.964706, 1)
+theme_override_font_sizes/font_size = 46
+text = "Necessary Evil"
+
+[node name="Summary" type="Label" parent="Margin/Console"]
+custom_minimum_size = Vector2(520, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.819608, 0.847059, 0.862745, 1)
+theme_override_font_sizes/font_size = 18
+text = "A sealed file waits on the desk. Open the dossier to inspect the record, then close it again."
+autowrap_mode = 3
+
+[node name="DossierToggleButton" type="Button" parent="Margin/Console"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(240, 56)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.0980392, 0.105882, 0.117647, 1)
+theme_override_font_sizes/font_size = 18
+text = "OPEN DOSSIER"
+
+[node name="TerminalNote" type="Label" parent="Margin/Console"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.603922, 0.639216, 0.654902, 1)
+theme_override_font_sizes/font_size = 13
+text = "No active field systems loaded. No movement beyond dossier access."
+
+[node name="CasefilePanel" parent="." instance=ExtResource("2_0l8wl")]
+unique_name_in_owner = true
+
+[connection signal="pressed" from="Margin/Console/DossierToggleButton" to="." method="_on_dossier_toggle_button_pressed"]
+[connection signal="pressed" from="CasefilePanel/Margin/Ledger/HeaderRow/CasefileDismissButton" to="." method="_on_casefile_dismiss_button_pressed"]
