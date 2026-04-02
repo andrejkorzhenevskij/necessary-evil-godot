@@ -1,10 +1,85 @@
-[gd_scene load_steps=4 format=3]
+[gd_scene format=3 uid="uid://wreemut4vwhe"]
 
-[ext_resource type="Script" path="res://scripts/title_screen.gd" id="1_5s83y"]
-[ext_resource type="Texture2D" path="res://art/back1.png" id="2_7q4i0"]
-[ext_resource type="Texture2D" path="res://art/stamp.png" id="3_66tcb"]
+[ext_resource type="Script" uid="uid://bsupp35r8wdsk" path="res://scripts/title_screen.gd" id="1_5s83y"]
+[ext_resource type="Texture2D" uid="uid://m0vdiijiqns1" path="res://art/back.png" id="2_4v28x"]
+[ext_resource type="Texture2D" uid="uid://dgm2a2xl61sjh" path="res://art/stamp.png" id="3_66tcb"]
+[ext_resource type="Texture2D" uid="uid://c7qtj2tyc1qcp" path="res://art/ChatGPT Image 13 мар. 2026 г., 01_57_23.png" id="4_fv7ny"]
+[ext_resource type="Texture2D" uid="uid://7s5s4jewcgq5" path="res://art/ChatGPT Image 13 мар. 2026 г., 02_20_06.png" id="5_5d8wq"]
+[ext_resource type="Texture2D" uid="uid://w5067hl8axyi" path="res://art/ChatGPT Image 13 мар. 2026 г., 02_26_30.png" id="6_2u0n6"]
+[ext_resource type="Texture2D" uid="uid://dwklfjyw3jqm3" path="res://art/ChatGPT Image 13 мар. 2026 г., 03_02_40.png" id="7_7kjlx"]
+[ext_resource type="PackedScene" uid="uid://o0ua8el6khqm" path="res://scenes/dossier/CasefilePanel.tscn" id="8_vsh83"]
 
-[node name="TitleScreen" type="Control"]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_board"]
+bg_color = Color(0.0509804, 0.0588235, 0.0705882, 0.76)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.356863, 0.290196, 0.231373, 0.85)
+corner_radius_top_left = 20
+corner_radius_top_right = 20
+corner_radius_bottom_right = 20
+corner_radius_bottom_left = 20
+shadow_color = Color(0, 0, 0, 0.4)
+shadow_size = 14
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_card"]
+bg_color = Color(0.0862745, 0.0705882, 0.0588235, 0.94)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.54902, 0.447059, 0.341176, 0.8)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+shadow_color = Color(0, 0, 0, 0.45)
+shadow_size = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_button_normal"]
+bg_color = Color(0.784314, 0.709804, 0.545098, 0.94)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.270588, 0.223529, 0.180392, 0.95)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+shadow_color = Color(0, 0, 0, 0.3)
+shadow_size = 8
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_button_pressed"]
+bg_color = Color(0.658824, 0.584314, 0.435294, 0.98)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.239216, 0.196078, 0.152941, 1)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+shadow_color = Color(0, 0, 0, 0.2)
+shadow_size = 6
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_button_hover"]
+bg_color = Color(0.870588, 0.792157, 0.607843, 0.98)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.345098, 0.278431, 0.219608, 1)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+shadow_color = Color(0, 0, 0, 0.32)
+shadow_size = 8
+
+[node name="TitleScreen" type="Control" unique_id=1855821990]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -13,96 +88,285 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_5s83y")
 
-[node name="Backdrop" type="TextureRect" parent="."]
+[node name="Backdrop" type="TextureRect" parent="." unique_id=847799746]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-texture = ExtResource("2_7q4i0")
+texture = ExtResource("2_4v28x")
 expand_mode = 1
 stretch_mode = 6
 
-[node name="Shade" type="ColorRect" parent="."]
+[node name="Shade" type="ColorRect" parent="." unique_id=72744122]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0.0352941, 0.0392157, 0.0470588, 0.52)
+color = Color(0.027451, 0.0313726, 0.0392157, 0.72)
 
-[node name="StampGhost" type="TextureRect" parent="."]
+[node name="BoardFrame" type="PanelContainer" parent="." unique_id=241061617]
 layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = 170.0
-offset_top = -290.0
-offset_right = 430.0
-offset_bottom = -30.0
+anchors_preset = -1
+anchor_left = 0.07
+anchor_top = 0.08
+anchor_right = 0.93
+anchor_bottom = 0.92
 grow_horizontal = 2
 grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_board")
+
+[node name="BoardMargin" type="MarginContainer" parent="BoardFrame" unique_id=563636349]
+layout_mode = 2
+theme_override_constants/margin_left = 28
+theme_override_constants/margin_top = 24
+theme_override_constants/margin_right = 28
+theme_override_constants/margin_bottom = 24
+
+[node name="BoardContent" type="VBoxContainer" parent="BoardFrame/BoardMargin" unique_id=1882222117]
+layout_mode = 2
+theme_override_constants/separation = 18
+
+[node name="TopRow" type="HBoxContainer" parent="BoardFrame/BoardMargin/BoardContent" unique_id=1486458771]
+layout_mode = 2
+
+[node name="HeaderBlock" type="VBoxContainer" parent="BoardFrame/BoardMargin/BoardContent/TopRow" unique_id=514103174]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 4
+
+[node name="Title" type="Label" parent="BoardFrame/BoardMargin/BoardContent/TopRow/HeaderBlock" unique_id=869158581]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.92549, 0.937255, 0.94902, 1)
+theme_override_font_sizes/font_size = 40
+text = "Necessary Evil"
+horizontal_alignment = 1
+
+[node name="Status" type="Label" parent="BoardFrame/BoardMargin/BoardContent/TopRow/HeaderBlock" unique_id=1027640145]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.654902, 0.690196, 0.717647, 0.92)
+theme_override_font_sizes/font_size = 15
+text = "Four records remain under seal."
+horizontal_alignment = 1
+
+[node name="CardsArea" type="Control" parent="BoardFrame/BoardMargin/BoardContent" unique_id=1696295593]
+custom_minimum_size = Vector2(0, 470)
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="ConnectorLine" type="ColorRect" parent="BoardFrame/BoardMargin/BoardContent/CardsArea" unique_id=1624622865]
+layout_mode = 0
+offset_left = 302.0
+offset_top = 208.0
+offset_right = 905.0
+offset_bottom = 210.0
+color = Color(0.65098, 0.521569, 0.368627, 0.18)
+
+[node name="OktaviyCard" type="PanelContainer" parent="BoardFrame/BoardMargin/BoardContent/CardsArea" unique_id=1106613632]
+layout_mode = 0
+offset_left = 36.0
+offset_top = 132.0
+offset_right = 360.0
+offset_bottom = 376.0
+rotation = -0.045
+theme_override_styles/panel = SubResource("StyleBoxFlat_card")
+
+[node name="Margin" type="MarginContainer" parent="BoardFrame/BoardMargin/BoardContent/CardsArea/OktaviyCard" unique_id=1833370502]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="Column" type="VBoxContainer" parent="BoardFrame/BoardMargin/BoardContent/CardsArea/OktaviyCard/Margin" unique_id=1805977849]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="Portrait" type="TextureRect" parent="BoardFrame/BoardMargin/BoardContent/CardsArea/OktaviyCard/Margin/Column" unique_id=1910876815]
+custom_minimum_size = Vector2(0, 176)
+layout_mode = 2
+texture = ExtResource("7_7kjlx")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="StampGhost" type="TextureRect" parent="BoardFrame/BoardMargin/BoardContent/CardsArea/OktaviyCard/Margin/Column" unique_id=1837125075]
+modulate = Color(14.59599, 4.1724997, 3.749926, 0.49411765)
+layout_mode = 2
 texture = ExtResource("3_66tcb")
 expand_mode = 1
 stretch_mode = 6
-modulate = Color(0.721569, 0.188235, 0.160784, 0.14)
-rotation = -0.08
 
-[node name="Margin" type="MarginContainer" parent="."]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = 72.0
-offset_top = 72.0
-offset_right = -72.0
-offset_bottom = -72.0
-grow_horizontal = 2
-grow_vertical = 2
-
-[node name="Column" type="VBoxContainer" parent="Margin"]
-layout_mode = 2
-theme_override_constants/separation = 16
-
-[node name="Overline" type="Label" parent="Margin/Column"]
-layout_mode = 2
-theme_override_colors/font_color = Color(0.682353, 0.721569, 0.745098, 1)
-theme_override_font_sizes/font_size = 14
-text = "INTERNAL RECORDS // NIGHT ACCESS"
-
-[node name="Title" type="Label" parent="Margin/Column"]
+[node name="Name" type="Label" parent="BoardFrame/BoardMargin/BoardContent/CardsArea/OktaviyCard/Margin/Column" unique_id=1235722244]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.94902, 0.956863, 0.964706, 1)
-theme_override_font_sizes/font_size = 52
-text = "Necessary Evil"
+theme_override_font_sizes/font_size = 23
+text = "OKTAVIY"
 
-[node name="Summary" type="Label" parent="Margin/Column"]
-custom_minimum_size = Vector2(500, 0)
+[node name="Tag" type="Label" parent="BoardFrame/BoardMargin/BoardContent/CardsArea/OktaviyCard/Margin/Column" unique_id=1928368155]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.831373, 0.854902, 0.866667, 1)
+theme_override_colors/font_color = Color(0.760784, 0.631373, 0.509804, 0.9)
+theme_override_font_sizes/font_size = 12
+text = "Unfiled anomaly"
+
+[node name="CardA" type="PanelContainer" parent="BoardFrame/BoardMargin/BoardContent/CardsArea" unique_id=850078911]
+layout_mode = 0
+offset_left = 442.0
+offset_top = 116.0
+offset_right = 636.0
+offset_bottom = 424.0
+rotation = -0.065
+theme_override_styles/panel = SubResource("StyleBoxFlat_card")
+
+[node name="Margin" type="MarginContainer" parent="BoardFrame/BoardMargin/BoardContent/CardsArea/CardA" unique_id=441133586]
+layout_mode = 2
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 8
+theme_override_constants/margin_bottom = 8
+
+[node name="Column" type="VBoxContainer" parent="BoardFrame/BoardMargin/BoardContent/CardsArea/CardA/Margin" unique_id=1348218538]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Portrait" type="TextureRect" parent="BoardFrame/BoardMargin/BoardContent/CardsArea/CardA/Margin/Column" unique_id=1606296257]
+custom_minimum_size = Vector2(0, 248)
+layout_mode = 2
+texture = ExtResource("4_fv7ny")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="StampGhost2" type="TextureRect" parent="BoardFrame/BoardMargin/BoardContent/CardsArea/CardA/Margin/Column/Portrait" unique_id=1269605777]
+modulate = Color(14.59599, 4.1724997, 3.749926, 0.49411765)
+layout_mode = 0
+offset_left = 95.665535
+offset_top = 142.68585
+offset_right = 205.37976
+offset_bottom = 237.23563
+texture = ExtResource("3_66tcb")
+expand_mode = 1
+stretch_mode = 6
+
+[node name="Name" type="Label" parent="BoardFrame/BoardMargin/BoardContent/CardsArea/CardA/Margin/Column" unique_id=478807806]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.909804, 0.917647, 0.929412, 0.96)
 theme_override_font_sizes/font_size = 18
-text = "Enter the intake desk and open the sealed dossier."
-autowrap_mode = 3
+text = "Leonard"
 
-[node name="Spacer" type="Control" parent="Margin/Column"]
-custom_minimum_size = Vector2(0, 8)
-layout_mode = 2
+[node name="CardB" type="PanelContainer" parent="BoardFrame/BoardMargin/BoardContent/CardsArea" unique_id=1790144623]
+layout_mode = 0
+offset_left = 632.0
+offset_top = 96.0
+offset_right = 844.0
+offset_bottom = 432.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_card")
 
-[node name="BeginButton" type="Button" parent="Margin/Column"]
-custom_minimum_size = Vector2(220, 54)
+[node name="Margin" type="MarginContainer" parent="BoardFrame/BoardMargin/BoardContent/CardsArea/CardB" unique_id=315397484]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.109804, 0.117647, 0.129412, 1)
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 8
+theme_override_constants/margin_bottom = 8
+
+[node name="Column" type="VBoxContainer" parent="BoardFrame/BoardMargin/BoardContent/CardsArea/CardB/Margin" unique_id=2009254598]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Portrait" type="TextureRect" parent="BoardFrame/BoardMargin/BoardContent/CardsArea/CardB/Margin/Column" unique_id=455353716]
+custom_minimum_size = Vector2(0, 274)
+layout_mode = 2
+texture = ExtResource("5_5d8wq")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="StampGhost3" type="TextureRect" parent="BoardFrame/BoardMargin/BoardContent/CardsArea/CardB/Margin/Column/Portrait" unique_id=1580156771]
+modulate = Color(14.59599, 4.1724997, 3.749926, 0.49411765)
+layout_mode = 0
+offset_left = 102.359985
+offset_top = 147.5
+offset_right = 210.85999
+offset_bottom = 256.0
+texture = ExtResource("3_66tcb")
+expand_mode = 3
+stretch_mode = 6
+
+[node name="Name" type="Label" parent="BoardFrame/BoardMargin/BoardContent/CardsArea/CardB/Margin/Column" unique_id=355413823]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.909804, 0.917647, 0.929412, 0.96)
 theme_override_font_sizes/font_size = 18
-text = "ENTER INTAKE"
+text = "Victoria"
 
-[node name="Note" type="Label" parent="Margin/Column"]
+[node name="CardC" type="PanelContainer" parent="BoardFrame/BoardMargin/BoardContent/CardsArea" unique_id=1665266069]
+layout_mode = 0
+offset_left = 824.0
+offset_top = 122.0
+offset_right = 1020.0
+offset_bottom = 430.0
+rotation = 0.055
+theme_override_styles/panel = SubResource("StyleBoxFlat_card")
+
+[node name="Margin" type="MarginContainer" parent="BoardFrame/BoardMargin/BoardContent/CardsArea/CardC" unique_id=1005229791]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.596078, 0.631373, 0.65098, 1)
-theme_override_font_sizes/font_size = 13
-text = "One screen follows. No additional systems are loaded."
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 8
+theme_override_constants/margin_bottom = 8
 
-[connection signal="pressed" from="Margin/Column/BeginButton" to="." method="_on_begin_button_pressed"]
+[node name="Column" type="VBoxContainer" parent="BoardFrame/BoardMargin/BoardContent/CardsArea/CardC/Margin" unique_id=1869395659]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Portrait" type="TextureRect" parent="BoardFrame/BoardMargin/BoardContent/CardsArea/CardC/Margin/Column" unique_id=513230729]
+custom_minimum_size = Vector2(0, 248)
+layout_mode = 2
+texture = ExtResource("6_2u0n6")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="StampGhost4" type="TextureRect" parent="BoardFrame/BoardMargin/BoardContent/CardsArea/CardC/Margin/Column/Portrait" unique_id=563584575]
+modulate = Color(14.59599, 4.1724997, 3.749926, 0.49411765)
+layout_mode = 0
+offset_left = 93.31522
+offset_top = 150.06255
+offset_right = 177.22366
+offset_bottom = 261.1974
+texture = ExtResource("3_66tcb")
+expand_mode = 1
+stretch_mode = 6
+
+[node name="Name" type="Label" parent="BoardFrame/BoardMargin/BoardContent/CardsArea/CardC/Margin/Column" unique_id=737855926]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.909804, 0.917647, 0.929412, 0.96)
+theme_override_font_sizes/font_size = 18
+text = "Desmond"
+
+[node name="FooterRow" type="HBoxContainer" parent="BoardFrame/BoardMargin/BoardContent" unique_id=1379631928]
+layout_mode = 2
+alignment = 1
+
+[node name="BeginButton" type="Button" parent="BoardFrame/BoardMargin/BoardContent/FooterRow" unique_id=971488187]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(248, 58)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.0980392, 0.105882, 0.117647, 1)
+theme_override_colors/font_pressed_color = Color(0.0980392, 0.105882, 0.117647, 1)
+theme_override_colors/font_hover_color = Color(0.0980392, 0.105882, 0.117647, 1)
+theme_override_font_sizes/font_size = 20
+theme_override_styles/normal = SubResource("StyleBoxFlat_button_normal")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_button_pressed")
+theme_override_styles/hover = SubResource("StyleBoxFlat_button_hover")
+text = "START PLAY"
+
+[node name="CasefilePanel" parent="." unique_id=1465156981 instance=ExtResource("8_vsh83")]
+z_index = 10
+layout_mode = 0
+offset_left = 366.0
+offset_top = 16.0
+offset_right = 806.0
+offset_bottom = 623.0
+grow_horizontal = 1
+grow_vertical = 1
+
+[connection signal="pressed" from="BoardFrame/BoardMargin/BoardContent/FooterRow/BeginButton" to="." method="_on_begin_button_pressed"]
