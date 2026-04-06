@@ -1,0 +1,457 @@
+[gd_scene format=3 uid="uid://dcu3ie4rv8f8u"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_frame"]
+bg_color = Color(0.0627451, 0.0588235, 0.054902, 0.96)
+border_width_left = 6
+border_width_top = 10
+border_width_right = 8
+border_width_bottom = 14
+border_color = Color(0.298039, 0.247059, 0.196078, 1)
+corner_radius_top_left = 18
+corner_radius_top_right = 10
+corner_radius_bottom_right = 22
+corner_radius_bottom_left = 12
+shadow_color = Color(0, 0, 0, 0.4)
+shadow_size = 18
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_scene_area"]
+bg_color = Color(0.137255, 0.145098, 0.156863, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.356863, 0.380392, 0.407843, 0.5)
+corner_radius_top_left = 10
+corner_radius_top_right = 6
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 8
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_strip"]
+bg_color = Color(0.0823529, 0.0745098, 0.0666667, 0.94)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.392157, 0.321569, 0.247059, 0.85)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_portrait"]
+bg_color = Color(0.180392, 0.176471, 0.160784, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.505882, 0.45098, 0.352941, 0.8)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_headshot"]
+bg_color = Color(0.101961, 0.0941176, 0.0862745, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.458824, 0.396078, 0.309804, 0.8)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_script_column"]
+bg_color = Color(0.933333, 0.878431, 0.74902, 0.96)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.45098, 0.364706, 0.262745, 0.7)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 16
+corner_radius_bottom_left = 16
+shadow_color = Color(0, 0, 0, 0.16)
+shadow_size = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_script_note"]
+bg_color = Color(0.901961, 0.835294, 0.701961, 0.92)
+border_width_bottom = 1
+border_color = Color(0.556863, 0.45098, 0.333333, 0.55)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_overlay"]
+bg_color = Color(0.121569, 0.027451, 0.027451, 0.82)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.745098, 0.207843, 0.184314, 0.5)
+
+[node name="MainGameplayInterface" type="Control" unique_id=471346909]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Backdrop" type="ColorRect" parent="." unique_id=701140056]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.0392157, 0.0470588, 0.0588235, 1)
+
+[node name="Vignette" type="ColorRect" parent="." unique_id=1199427947]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.0156863, 0.0196078, 0.0235294, 0.28)
+
+[node name="Margin" type="MarginContainer" parent="." unique_id=627369549]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 42.0
+offset_top = 38.0
+offset_right = -42.0
+offset_bottom = -38.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 0
+theme_override_constants/margin_top = 0
+theme_override_constants/margin_right = 0
+theme_override_constants/margin_bottom = 0
+
+[node name="MainRow" type="HBoxContainer" parent="Margin" unique_id=1137351107]
+layout_mode = 2
+theme_override_constants/separation = 28
+
+[node name="SceneFrame" type="PanelContainer" parent="Margin/MainRow" unique_id=1174765118]
+custom_minimum_size = Vector2(860, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 2.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_frame")
+
+[node name="FrameMargin" type="MarginContainer" parent="Margin/MainRow/SceneFrame" unique_id=469611440]
+layout_mode = 2
+theme_override_constants/margin_left = 22
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 22
+
+[node name="FrameCanvas" type="Control" parent="Margin/MainRow/SceneFrame/FrameMargin" unique_id=1937541986]
+custom_minimum_size = Vector2(0, 620)
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="SceneImageArea" type="PanelContainer" parent="Margin/MainRow/SceneFrame/FrameMargin/FrameCanvas" unique_id=110915531]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_bottom = -122.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_scene_area")
+
+[node name="SceneImageLabel" type="Label" parent="Margin/MainRow/SceneFrame/FrameMargin/FrameCanvas/SceneImageArea" unique_id=2120139570]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.803922, 0.839216, 0.87451, 0.85)
+theme_override_font_sizes/font_size = 26
+text = "SCENE IMAGE PLACEHOLDER"
+
+[node name="SceneImageNote" type="Label" parent="Margin/MainRow/SceneFrame/FrameMargin/FrameCanvas/SceneImageArea" unique_id=1535885862]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.666667, 0.705882, 0.745098, 0.78)
+theme_override_font_sizes/font_size = 15
+text = "Large left-side viewport for story art, transitions, and interactive overlays."
+autowrap_mode = 3
+
+[node name="OctaviusInnerVoiceLayer" type="Control" parent="Margin/MainRow/SceneFrame/FrameMargin/FrameCanvas/SceneImageArea" unique_id=1554054469]
+layout_mode = 2
+mouse_filter = 2
+
+[node name="OctaviusInnerVoiceLabel" type="Label" parent="Margin/MainRow/SceneFrame/FrameMargin/FrameCanvas/SceneImageArea/OctaviusInnerVoiceLayer" unique_id=274734928]
+layout_mode = 0
+theme_override_colors/font_color = Color(0.886275, 0.929412, 0.968627, 0.72)
+theme_override_font_sizes/font_size = 13
+text = "OCTAVIUS INNER VOICE"
+
+[node name="PortraitStrip" type="PanelContainer" parent="Margin/MainRow/SceneFrame/FrameMargin/FrameCanvas" unique_id=538008994]
+layout_mode = 0
+offset_left = 18.0
+offset_top = 498.0
+offset_right = 812.0
+offset_bottom = 620.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_strip")
+
+[node name="PortraitMargin" type="MarginContainer" parent="Margin/MainRow/SceneFrame/FrameMargin/FrameCanvas/PortraitStrip" unique_id=1125523708]
+layout_mode = 2
+theme_override_constants/margin_left = 12
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 12
+theme_override_constants/margin_bottom = 10
+
+[node name="PortraitRow" type="HBoxContainer" parent="Margin/MainRow/SceneFrame/FrameMargin/FrameCanvas/PortraitStrip/PortraitMargin" unique_id=1772765032]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="DossierSlotA" type="PanelContainer" parent="Margin/MainRow/SceneFrame/FrameMargin/FrameCanvas/PortraitStrip/PortraitMargin/PortraitRow" unique_id=372965555]
+custom_minimum_size = Vector2(0, 88)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_portrait")
+
+[node name="DossierSlotAMargin" type="MarginContainer" parent="Margin/MainRow/SceneFrame/FrameMargin/FrameCanvas/PortraitStrip/PortraitMargin/PortraitRow/DossierSlotA" unique_id=1466685650]
+layout_mode = 2
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_top = 7
+theme_override_constants/margin_right = 8
+theme_override_constants/margin_bottom = 7
+
+[node name="DossierSlotAStack" type="VBoxContainer" parent="Margin/MainRow/SceneFrame/FrameMargin/FrameCanvas/PortraitStrip/PortraitMargin/PortraitRow/DossierSlotA/DossierSlotAMargin" unique_id=1466685651]
+layout_mode = 2
+theme_override_constants/separation = 5
+
+[node name="DossierSlotAHeadshot" type="PanelContainer" parent="Margin/MainRow/SceneFrame/FrameMargin/FrameCanvas/PortraitStrip/PortraitMargin/PortraitRow/DossierSlotA/DossierSlotAMargin/DossierSlotAStack" unique_id=1466685652]
+custom_minimum_size = Vector2(0, 44)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_headshot")
+
+[node name="DossierSlotAHeadshotLabel" type="Label" parent="Margin/MainRow/SceneFrame/FrameMargin/FrameCanvas/PortraitStrip/PortraitMargin/PortraitRow/DossierSlotA/DossierSlotAMargin/DossierSlotAStack/DossierSlotAHeadshot" unique_id=1466685653]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.854902, 0.827451, 0.776471, 0.92)
+theme_override_font_sizes/font_size = 12
+text = "HEADSHOT"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="DossierSlotATitle" type="Label" parent="Margin/MainRow/SceneFrame/FrameMargin/FrameCanvas/PortraitStrip/PortraitMargin/PortraitRow/DossierSlotA/DossierSlotAMargin/DossierSlotAStack" unique_id=1466685654]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.909804, 0.878431, 0.819608, 0.95)
+theme_override_font_sizes/font_size = 13
+text = "CHANNEL 01"
+horizontal_alignment = 1
+
+[node name="DossierSlotACue" type="Label" parent="Margin/MainRow/SceneFrame/FrameMargin/FrameCanvas/PortraitStrip/PortraitMargin/PortraitRow/DossierSlotA/DossierSlotAMargin/DossierSlotAStack" unique_id=1466685655]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.756863, 0.666667, 0.54902, 0.86)
+theme_override_font_sizes/font_size = 10
+text = "status: destined to be forgotten"
+horizontal_alignment = 1
+
+[node name="DossierSlotB" type="PanelContainer" parent="Margin/MainRow/SceneFrame/FrameMargin/FrameCanvas/PortraitStrip/PortraitMargin/PortraitRow" unique_id=1715347479]
+custom_minimum_size = Vector2(0, 88)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_portrait")
+
+[node name="DossierSlotBMargin" type="MarginContainer" parent="Margin/MainRow/SceneFrame/FrameMargin/FrameCanvas/PortraitStrip/PortraitMargin/PortraitRow/DossierSlotB" unique_id=2117352537]
+layout_mode = 2
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_top = 7
+theme_override_constants/margin_right = 8
+theme_override_constants/margin_bottom = 7
+
+[node name="DossierSlotBStack" type="VBoxContainer" parent="Margin/MainRow/SceneFrame/FrameMargin/FrameCanvas/PortraitStrip/PortraitMargin/PortraitRow/DossierSlotB/DossierSlotBMargin" unique_id=2117352538]
+layout_mode = 2
+theme_override_constants/separation = 5
+
+[node name="DossierSlotBHeadshot" type="PanelContainer" parent="Margin/MainRow/SceneFrame/FrameMargin/FrameCanvas/PortraitStrip/PortraitMargin/PortraitRow/DossierSlotB/DossierSlotBMargin/DossierSlotBStack" unique_id=2117352539]
+custom_minimum_size = Vector2(0, 44)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_headshot")
+
+[node name="DossierSlotBHeadshotLabel" type="Label" parent="Margin/MainRow/SceneFrame/FrameMargin/FrameCanvas/PortraitStrip/PortraitMargin/PortraitRow/DossierSlotB/DossierSlotBMargin/DossierSlotBStack/DossierSlotBHeadshot" unique_id=2117352540]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.854902, 0.827451, 0.776471, 0.92)
+theme_override_font_sizes/font_size = 12
+text = "HEADSHOT"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="DossierSlotBTitle" type="Label" parent="Margin/MainRow/SceneFrame/FrameMargin/FrameCanvas/PortraitStrip/PortraitMargin/PortraitRow/DossierSlotB/DossierSlotBMargin/DossierSlotBStack" unique_id=2117352541]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.909804, 0.878431, 0.819608, 0.95)
+theme_override_font_sizes/font_size = 13
+text = "CHANNEL 02"
+horizontal_alignment = 1
+
+[node name="DossierSlotBCue" type="Label" parent="Margin/MainRow/SceneFrame/FrameMargin/FrameCanvas/PortraitStrip/PortraitMargin/PortraitRow/DossierSlotB/DossierSlotBMargin/DossierSlotBStack" unique_id=2117352542]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.756863, 0.666667, 0.54902, 0.86)
+theme_override_font_sizes/font_size = 10
+text = "status: destined to be forgotten"
+horizontal_alignment = 1
+
+[node name="DossierSlotC" type="PanelContainer" parent="Margin/MainRow/SceneFrame/FrameMargin/FrameCanvas/PortraitStrip/PortraitMargin/PortraitRow" unique_id=1017146386]
+custom_minimum_size = Vector2(0, 88)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_portrait")
+
+[node name="DossierSlotCMargin" type="MarginContainer" parent="Margin/MainRow/SceneFrame/FrameMargin/FrameCanvas/PortraitStrip/PortraitMargin/PortraitRow/DossierSlotC" unique_id=1017146387]
+layout_mode = 2
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_top = 7
+theme_override_constants/margin_right = 8
+theme_override_constants/margin_bottom = 7
+
+[node name="DossierSlotCStack" type="VBoxContainer" parent="Margin/MainRow/SceneFrame/FrameMargin/FrameCanvas/PortraitStrip/PortraitMargin/PortraitRow/DossierSlotC/DossierSlotCMargin" unique_id=1017146388]
+layout_mode = 2
+theme_override_constants/separation = 5
+
+[node name="DossierSlotCHeadshot" type="PanelContainer" parent="Margin/MainRow/SceneFrame/FrameMargin/FrameCanvas/PortraitStrip/PortraitMargin/PortraitRow/DossierSlotC/DossierSlotCMargin/DossierSlotCStack" unique_id=1017146389]
+custom_minimum_size = Vector2(0, 44)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_headshot")
+
+[node name="DossierSlotCHeadshotLabel" type="Label" parent="Margin/MainRow/SceneFrame/FrameMargin/FrameCanvas/PortraitStrip/PortraitMargin/PortraitRow/DossierSlotC/DossierSlotCMargin/DossierSlotCStack/DossierSlotCHeadshot" unique_id=1017146390]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.854902, 0.827451, 0.776471, 0.92)
+theme_override_font_sizes/font_size = 12
+text = "HEADSHOT"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="DossierSlotCTitle" type="Label" parent="Margin/MainRow/SceneFrame/FrameMargin/FrameCanvas/PortraitStrip/PortraitMargin/PortraitRow/DossierSlotC/DossierSlotCMargin/DossierSlotCStack" unique_id=1017146391]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.909804, 0.878431, 0.819608, 0.95)
+theme_override_font_sizes/font_size = 13
+text = "CHANNEL 03"
+horizontal_alignment = 1
+
+[node name="DossierSlotCCue" type="Label" parent="Margin/MainRow/SceneFrame/FrameMargin/FrameCanvas/PortraitStrip/PortraitMargin/PortraitRow/DossierSlotC/DossierSlotCMargin/DossierSlotCStack" unique_id=1017146392]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.756863, 0.666667, 0.54902, 0.86)
+theme_override_font_sizes/font_size = 10
+text = "status: destined to be forgotten"
+horizontal_alignment = 1
+
+[node name="FrameDamageTop" type="ColorRect" parent="Margin/MainRow/SceneFrame/FrameMargin/FrameCanvas" unique_id=130209029]
+layout_mode = 0
+offset_left = 34.0
+offset_right = 744.0
+offset_bottom = 10.0
+color = Color(0.454902, 0.337255, 0.239216, 0.22)
+
+[node name="FrameDamageRight" type="ColorRect" parent="Margin/MainRow/SceneFrame/FrameMargin/FrameCanvas" unique_id=1228557028]
+layout_mode = 0
+offset_left = 798.0
+offset_top = 34.0
+offset_right = 812.0
+offset_bottom = 468.0
+color = Color(0.521569, 0.411765, 0.282353, 0.18)
+
+[node name="ScriptColumn" type="PanelContainer" parent="Margin/MainRow" unique_id=520380722]
+custom_minimum_size = Vector2(400, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_script_column")
+
+[node name="ScriptMargin" type="MarginContainer" parent="Margin/MainRow/ScriptColumn" unique_id=876195368]
+layout_mode = 2
+theme_override_constants/margin_left = 22
+theme_override_constants/margin_top = 24
+theme_override_constants/margin_right = 22
+theme_override_constants/margin_bottom = 24
+
+[node name="ScriptStack" type="VBoxContainer" parent="Margin/MainRow/ScriptColumn/ScriptMargin" unique_id=136112955]
+layout_mode = 2
+theme_override_constants/separation = 14
+
+[node name="Overline" type="Label" parent="Margin/MainRow/ScriptColumn/ScriptMargin/ScriptStack" unique_id=104632916]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.407843, 0.321569, 0.231373, 0.95)
+theme_override_font_sizes/font_size = 14
+text = "SCENE SCRIPT // PLACEHOLDER COPY"
+
+[node name="Title" type="Label" parent="Margin/MainRow/ScriptColumn/ScriptMargin/ScriptStack" unique_id=1517932688]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.172549, 0.129412, 0.0941176, 1)
+theme_override_font_sizes/font_size = 34
+text = "Main Gameplay Interface"
+
+[node name="BeatLine" type="Label" parent="Margin/MainRow/ScriptColumn/ScriptMargin/ScriptStack" unique_id=269700879]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.254902, 0.196078, 0.141176, 0.82)
+theme_override_font_sizes/font_size = 16
+text = "INT. OPERATING THEATER OF THOUGHT - NIGHT"
+
+[node name="BodyCopy" type="RichTextLabel" parent="Margin/MainRow/ScriptColumn/ScriptMargin/ScriptStack" unique_id=379364934]
+custom_minimum_size = Vector2(0, 300)
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_colors/default_color = Color(0.192157, 0.14902, 0.109804, 0.96)
+theme_override_font_sizes/normal_font_size = 18
+bbcode_enabled = true
+text = "[i]Placeholder narration and dialogue live here.[/i]
+
+Use this column for script beats, player-facing prose, and interaction prompts that should sit outside the framed image area."
+scroll_active = false
+
+[node name="CueCard" type="PanelContainer" parent="Margin/MainRow/ScriptColumn/ScriptMargin/ScriptStack" unique_id=340457656]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_script_note")
+
+[node name="CueCardMargin" type="MarginContainer" parent="Margin/MainRow/ScriptColumn/ScriptMargin/ScriptStack/CueCard" unique_id=685850931]
+layout_mode = 2
+theme_override_constants/margin_left = 12
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 12
+theme_override_constants/margin_bottom = 10
+
+[node name="CueCardText" type="Label" parent="Margin/MainRow/ScriptColumn/ScriptMargin/ScriptStack/CueCard/CueCardMargin" unique_id=1330588670]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.356863, 0.278431, 0.196078, 0.9)
+theme_override_font_sizes/font_size = 15
+text = "Reserved for prompts, speaker tags, or branching-choice hints."
+autowrap_mode = 3
+
+[node name="ScratchNotes" type="Label" parent="Margin/MainRow/ScriptColumn/ScriptMargin/ScriptStack" unique_id=25995290]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.45098, 0.352941, 0.254902, 0.76)
+theme_override_font_sizes/font_size = 13
+text = "Right column is intentionally separate from the film frame for clean gameplay text layout."
+autowrap_mode = 3
+
+[node name="SurgeryOverlay" type="Control" parent="." unique_id=271614908]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="OverlayShade" type="PanelContainer" parent="SurgeryOverlay" unique_id=1961921367]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_overlay")
+
+[node name="OverlayLabel" type="Label" parent="SurgeryOverlay/OverlayShade" unique_id=361659845]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.87451, 0.858824, 0.95)
+theme_override_font_sizes/font_size = 28
+text = "SURGERY OVERLAY"
+
+[node name="OverlayNote" type="Label" parent="SurgeryOverlay/OverlayShade" unique_id=653512943]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.831373, 0.811765, 0.82)
+theme_override_font_sizes/font_size = 16
+text = "Hidden by default. Keep surgery-specific controls, effects, and blockers here."
+autowrap_mode = 3
