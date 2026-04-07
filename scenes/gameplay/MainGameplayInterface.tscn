@@ -418,7 +418,34 @@ theme_override_font_sizes/font_size = 15
 text = "Reserved for prompts, speaker tags, or branching-choice hints."
 autowrap_mode = 3
 
+[node name="ActionButtons" type="VBoxContainer" parent="Margin/MainRow/ScriptColumn/ScriptMargin/ScriptStack" unique_id=171115923]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="PrimaryActionButton" type="Button" parent="Margin/MainRow/ScriptColumn/ScriptMargin/ScriptStack/ActionButtons" unique_id=179302492]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 52)
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "PRIMARY ACTION"
+
+[node name="SecondaryActionButton" type="Button" parent="Margin/MainRow/ScriptColumn/ScriptMargin/ScriptStack/ActionButtons" unique_id=1086593328]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 52)
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "SECONDARY ACTION"
+
+[node name="TertiaryActionButton" type="Button" parent="Margin/MainRow/ScriptColumn/ScriptMargin/ScriptStack/ActionButtons" unique_id=688489933]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 52)
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "TERTIARY ACTION"
+
 [node name="ScratchNotes" type="Label" parent="Margin/MainRow/ScriptColumn/ScriptMargin/ScriptStack" unique_id=25995290]
+unique_name_in_owner = true
 layout_mode = 2
 theme_override_colors/font_color = Color(0.45098, 0.352941, 0.254902, 0.76)
 theme_override_font_sizes/font_size = 13

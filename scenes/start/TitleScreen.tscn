@@ -192,9 +192,13 @@ texture = ExtResource("7_7kjlx")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="StampGhost" type="TextureRect" parent="BoardFrame/BoardMargin/BoardContent/CardsArea/OktaviyCard/Margin/Column" unique_id=1837125075]
+[node name="StampGhost" type="TextureRect" parent="BoardFrame/BoardMargin/BoardContent/CardsArea/OktaviyCard/Margin/Column/Portrait" unique_id=1837125075]
 modulate = Color(14.59599, 4.1724997, 3.749926, 0.49411765)
-layout_mode = 2
+layout_mode = 0
+offset_left = 221.1572
+offset_top = 131.13344
+offset_right = 321.9208
+offset_bottom = 232.07623
 texture = ExtResource("3_66tcb")
 expand_mode = 1
 stretch_mode = 6
@@ -359,13 +363,26 @@ theme_override_styles/pressed = SubResource("StyleBoxFlat_button_pressed")
 theme_override_styles/hover = SubResource("StyleBoxFlat_button_hover")
 text = "START PLAY"
 
+[node name="DossierBackdropDim" type="ColorRect" parent="." unique_id=206580094]
+visible = false
+z_index = 9
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0.0156863, 0.0196078, 0.027451, 0.72)
+
 [node name="CasefilePanel" parent="." unique_id=1465156981 instance=ExtResource("8_vsh83")]
+visible = true
 z_index = 10
 layout_mode = 0
-offset_left = 366.0
-offset_top = 16.0
-offset_right = 806.0
-offset_bottom = 623.0
+offset_left = 70.0
+offset_top = 39.0
+offset_right = 827.0
+offset_bottom = 647.0
 grow_horizontal = 1
 grow_vertical = 1
 

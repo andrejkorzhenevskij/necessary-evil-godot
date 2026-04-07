@@ -1,16 +1,18 @@
 extends Control
 
-const NEXT_SCENE_PATH := "res://scenes/intake/IntakeDesk.tscn"
+const NEXT_SCENE_PATH := "res://scenes/gameplay/F1.tscn"
 const FALLBACK_SCENE_PATH := "res://scenes/start/StartPlayTransition.tscn"
 
 @onready var begin_button: Button = %BeginButton
+@onready var dossier_backdrop_dim: ColorRect = $DossierBackdropDim
 @onready var dossier_panel: Control = $CasefilePanel
 @onready var dossier_close_button: Button = $CasefilePanel/Margin/Ledger/HeaderRow/CasefileDismissButton
 @onready var dossier_case_ref: Label = $CasefilePanel/Margin/Ledger/CaseRef
 @onready var dossier_subject_value: Label = $CasefilePanel/Margin/Ledger/SubjectValue
 @onready var dossier_subtitle_value: Label = $CasefilePanel/Margin/Ledger/SubtitleValue
-@onready var dossier_profile_value: RichTextLabel = $CasefilePanel/Margin/Ledger/ProfileValue
-@onready var dossier_observations_value: RichTextLabel = $CasefilePanel/Margin/Ledger/ObservationsValue
+@onready var dossier_known_facts_value: RichTextLabel = $CasefilePanel/Margin/Ledger/KnownFactsValue
+@onready var dossier_interpretation_value: RichTextLabel = $CasefilePanel/Margin/Ledger/InterpretationValue
+@onready var dossier_assessment_stamp: Label = $CasefilePanel/Margin/Ledger/AssessmentStamp
 
 const CARD_NODE_PATHS := {
 	"OktaviyCard": NodePath("BoardFrame/BoardMargin/BoardContent/CardsArea/OktaviyCard"),
@@ -21,32 +23,52 @@ const CARD_NODE_PATHS := {
 
 const DOSSIER_DATA := {
 	"OktaviyCard": {
-		"name": "OKTAVIY",
+		"subject": "OKTAVIY",
 		"subtitle": "Unfiled anomaly",
-		"case_ref": "Registry 01-A // Corridor Sweep // Internal",
-		"profile": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer posuere erat a ante venenatis dapibus posuere velit aliquet.",
-		"observations": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent commodo cursus magna, vel scelerisque nisl consectetur et.\n\nLorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sed odio dui."
+		"registry_line": "Registry 01-A // Corridor Sweep // Internal",
+		"known_facts": [
+			"Observed outside assigned corridor boundaries after curfew.",
+			"Record remains unattached to a stable departmental chain.",
+			"Witness memory of first contact shifts between statements."
+		],
+		"interpretation": "Oktaviy reads as an unresolved anomaly rather than a standard intake error. The file suggests persistence without institutional anchoring.",
+		"assessment": "UNFILED ANOMALY"
 	},
 	"CardA": {
-		"name": "Leonard",
+		"subject": "Leonard",
 		"subtitle": "Archive witness",
-		"case_ref": "Registry 02-C // Annex Review // Internal",
-		"profile": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas faucibus mollis interdum. Curabitur blandit tempus porttitor.",
-		"observations": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed posuere consectetur est at lobortis.\n\nLorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean lacinia bibendum nulla sed consectetur."
+		"registry_line": "Registry 02-C // Annex Review // Internal",
+		"known_facts": [
+			"Present for multiple archive events but absent from official staffing ledgers.",
+			"Cross-references place him near sealed material after lock cycle.",
+			"Independent accounts describe him as calm, attentive, and difficult to place."
+		],
+		"interpretation": "Leonard appears less like an intruder than a tolerated witness whose access is never formally acknowledged.",
+		"assessment": "ARCHIVE WITNESS"
 	},
 	"CardB": {
-		"name": "Victoria",
+		"subject": "Victoria",
 		"subtitle": "Dormant liaison",
-		"case_ref": "Registry 03-B // Desk Intake // Internal",
-		"profile": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras mattis consectetur purus sit amet fermentum. Nullam quis risus eget urna mollis ornare vel eu leo.",
-		"observations": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus sagittis lacus vel augue laoreet rutrum faucibus dolor auctor.\n\nLorem ipsum dolor sit amet, consectetur adipiscing elit. Integer posuere erat a ante venenatis dapibus."
+		"registry_line": "Registry 03-B // Desk Intake // Internal",
+		"known_facts": [
+			"Communications history shows long inactive gaps followed by precise contact windows.",
+			"Desk routing marks her file as informational rather than operational.",
+			"Old liaison credentials remain valid in at least one internal subsystem."
+		],
+		"interpretation": "Victoria presents as a dormant connector: not currently active, but still capable of re-entering the network with minimal friction.",
+		"assessment": "DORMANT LIAISON"
 	},
 	"CardC": {
-		"name": "Desmond",
+		"subject": "Desmond",
 		"subtitle": "Flagged observer",
-		"case_ref": "Registry 04-D // South Wing // Internal",
-		"profile": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam porta sem malesuada magna mollis euismod. Donec ullamcorper nulla non metus auctor fringilla.",
-		"observations": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi leo risus, porta ac consectetur ac, vestibulum at eros.\n\nLorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum id ligula porta felis euismod semper."
+		"registry_line": "Registry 04-D // South Wing // Internal",
+		"known_facts": [
+			"Repeatedly logged near review sites without initiating direct contact.",
+			"Flags were raised by pattern analysis rather than a single incident.",
+			"Behavior indicates deliberate observation with minimal physical trace."
+		],
+		"interpretation": "Desmond is best read as a patient observer whose threat profile comes from repetition and positioning rather than overt action.",
+		"assessment": "FLAGGED OBSERVER"
 	}
 }
 
@@ -54,6 +76,7 @@ var active_dossier_id := ""
 
 func _ready() -> void:
 	begin_button.grab_focus()
+	dossier_backdrop_dim.hide()
 	dossier_panel.hide()
 	dossier_close_button.pressed.connect(_close_dossier)
 
@@ -64,6 +87,7 @@ func _ready() -> void:
 		card.gui_input.connect(_on_card_gui_input.bind(card_name))
 
 func _on_begin_button_pressed() -> void:
+	GameState.reset_run()
 	var target_scene_path := NEXT_SCENE_PATH if ResourceLoader.exists(NEXT_SCENE_PATH) else FALLBACK_SCENE_PATH
 	get_tree().change_scene_to_file(target_scene_path)
 
@@ -74,13 +98,27 @@ func _on_card_gui_input(event: InputEvent, dossier_id: String) -> void:
 func _open_dossier(dossier_id: String) -> void:
 	var dossier: Dictionary = DOSSIER_DATA[dossier_id]
 	active_dossier_id = dossier_id
-	dossier_case_ref.text = dossier["case_ref"]
-	dossier_subject_value.text = dossier["name"]
+	dossier_case_ref.text = dossier["registry_line"]
+	dossier_subject_value.text = dossier["subject"]
 	dossier_subtitle_value.text = dossier["subtitle"]
-	dossier_profile_value.text = dossier["profile"]
-	dossier_observations_value.text = dossier["observations"]
+	dossier_known_facts_value.text = _format_known_facts(dossier["known_facts"])
+	dossier_interpretation_value.text = dossier["interpretation"]
+	dossier_assessment_stamp.text = dossier["assessment"]
+	dossier_backdrop_dim.show()
 	dossier_panel.show()
 
 func _close_dossier() -> void:
 	active_dossier_id = ""
+	dossier_backdrop_dim.hide()
 	dossier_panel.hide()
+
+
+func _format_known_facts(facts: Array) -> String:
+	var entries: PackedStringArray = []
+	for fact_variant in facts:
+		var fact := str(fact_variant).strip_edges()
+		if fact.is_empty():
+			continue
+		entries.append("• %s" % fact)
+
+	return "\n".join(entries)

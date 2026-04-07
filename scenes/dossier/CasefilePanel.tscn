@@ -5,7 +5,11 @@
 [ext_resource type="Texture2D" uid="uid://bjhfbie0chwge" path="res://art/closedossier.png" id="3_lkpst"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_0h4gk"]
-bg_color = Color(0, 0, 0, 0)
+bg_color = Color(0.0156863, 0.0196078, 0.0235294, 0.14)
+corner_radius_top_left = 14
+corner_radius_top_right = 14
+corner_radius_bottom_right = 14
+corner_radius_bottom_left = 14
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_close_normal"]
 bg_color = Color(0.505882, 0.419608, 0.294118, 0.94)
@@ -61,13 +65,14 @@ theme_override_styles/panel = SubResource("StyleBoxFlat_0h4gk")
 
 [node name="DossierArt" type="TextureRect" parent="." unique_id=1112444266]
 layout_mode = 2
+self_modulate = Color(1, 1, 1, 0.82)
 texture = ExtResource("1_u67v0")
 expand_mode = 1
 stretch_mode = 6
 
 [node name="Shade" type="ColorRect" parent="." unique_id=870199942]
 layout_mode = 2
-color = Color(0.0588235, 0.0705882, 0.0823529, 0.28)
+color = Color(0.0352941, 0.0431373, 0.054902, 0.42)
 
 [node name="Stamp" type="TextureRect" parent="." unique_id=1046171876]
 modulate = Color(0.709804, 0.180392, 0.156863, 0.2)
@@ -91,7 +96,7 @@ alignment = 2
 [node name="CasefileTitle" type="Label" parent="Margin/Ledger/HeaderRow" unique_id=2129391667]
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_colors/font_color = Color(0.121569, 0.137255, 0.14902, 1)
+theme_override_colors/font_color = Color(0.968627, 0.941176, 0.87451, 0.98)
 theme_override_font_sizes/font_size = 28
 text = "DOSSIER // NECESSARY EVIL"
 
@@ -114,7 +119,7 @@ tooltip_text = "Close dossier"
 
 [node name="CaseRef" type="Label" parent="Margin/Ledger" unique_id=2127624176]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.196078, 0.227451, 0.247059, 1)
+theme_override_colors/font_color = Color(0.856863, 0.819608, 0.741176, 0.92)
 theme_override_font_sizes/font_size = 13
 text = "Registry 03-A // Night Intake // Internal"
 
@@ -123,58 +128,68 @@ layout_mode = 2
 
 [node name="SubjectHeader" type="Label" parent="Margin/Ledger" unique_id=137223827]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.227451, 0.258824, 0.278431, 1)
+theme_override_colors/font_color = Color(0.815686, 0.764706, 0.666667, 0.94)
 theme_override_font_sizes/font_size = 14
 text = "SUBJECT"
 
 [node name="SubjectValue" type="Label" parent="Margin/Ledger" unique_id=114169615]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.0705882, 0.0784314, 0.0901961, 1)
+theme_override_colors/font_color = Color(0.988235, 0.964706, 0.913725, 1)
 theme_override_font_sizes/font_size = 24
 text = "UNASSIGNED OPERATIVE // FILE SEALED"
 autowrap_mode = 3
 
 [node name="SubtitleHeader" type="Label" parent="Margin/Ledger" unique_id=1895120859]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.227451, 0.258824, 0.278431, 1)
+theme_override_colors/font_color = Color(0.815686, 0.764706, 0.666667, 0.94)
 theme_override_font_sizes/font_size = 14
 text = "SUBTITLE"
 
 [node name="SubtitleValue" type="Label" parent="Margin/Ledger" unique_id=108845443]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.188235, 0.219608, 0.239216, 1)
+theme_override_colors/font_color = Color(0.929412, 0.901961, 0.843137, 0.98)
 theme_override_font_sizes/font_size = 18
 text = "NO SECONDARY SUMMARY RECORDED"
 autowrap_mode = 3
 
-[node name="ProfileHeader" type="Label" parent="Margin/Ledger" unique_id=273165950]
+[node name="KnownFactsHeader" type="Label" parent="Margin/Ledger" unique_id=273165950]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.227451, 0.258824, 0.278431, 1)
+theme_override_colors/font_color = Color(0.815686, 0.764706, 0.666667, 0.94)
 theme_override_font_sizes/font_size = 14
-text = "PROFILE"
+text = "KNOWN FACTS"
 
-[node name="ProfileValue" type="RichTextLabel" parent="Margin/Ledger" unique_id=903301620]
-custom_minimum_size = Vector2(0, 110)
+[node name="KnownFactsValue" type="RichTextLabel" parent="Margin/Ledger" unique_id=903301620]
+custom_minimum_size = Vector2(0, 120)
 layout_mode = 2
-theme_override_colors/default_color = Color(0.0862745, 0.0941176, 0.105882, 1)
+theme_override_colors/default_color = Color(0.94902, 0.929412, 0.878431, 0.98)
 theme_override_font_sizes/normal_font_size = 17
-bbcode_enabled = true
-text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
+text = "• Fact one recorded for intake.\n• Fact two recorded for intake.\n• Fact three recorded for intake."
 scroll_active = false
 
-[node name="ObservationsHeader" type="Label" parent="Margin/Ledger" unique_id=982337723]
+[node name="InterpretationHeader" type="Label" parent="Margin/Ledger" unique_id=982337723]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.227451, 0.258824, 0.278431, 1)
+theme_override_colors/font_color = Color(0.815686, 0.764706, 0.666667, 0.94)
 theme_override_font_sizes/font_size = 14
-text = "OBSERVATIONS"
+text = "INTERPRETATION"
 
-[node name="ObservationsValue" type="RichTextLabel" parent="Margin/Ledger" unique_id=1477942637]
-custom_minimum_size = Vector2(0, 160)
+[node name="InterpretationValue" type="RichTextLabel" parent="Margin/Ledger" unique_id=1477942637]
+custom_minimum_size = Vector2(0, 126)
 layout_mode = 2
-theme_override_colors/default_color = Color(0.0862745, 0.0941176, 0.105882, 1)
+theme_override_colors/default_color = Color(0.94902, 0.929412, 0.878431, 0.98)
 theme_override_font_sizes/normal_font_size = 17
 bbcode_enabled = true
-text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-
-Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur."
+text = "Interpretive summary recorded by the archive desk."
 scroll_active = false
+
+[node name="AssessmentHeader" type="Label" parent="Margin/Ledger" unique_id=174200581]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.815686, 0.764706, 0.666667, 0.94)
+theme_override_font_sizes/font_size = 14
+text = "ASSESSMENT"
+
+[node name="AssessmentStamp" type="Label" parent="Margin/Ledger" unique_id=1398140288]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.988235, 0.901961, 0.811765, 0.98)
+theme_override_font_sizes/font_size = 18
+text = "ASSESSMENT PENDING"
+horizontal_alignment = 1
