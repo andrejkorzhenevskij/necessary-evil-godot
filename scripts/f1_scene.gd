@@ -1,6 +1,6 @@
 extends Control
 
-const NEXT_SCENE_PATH := "res://scenes/gameplay/F2.tscn"
+const NEXT_SCENE_PATH := "res://scenes/gameplay/SurgeryLayer.tscn"
 
 @onready var scene_image_label: Label = $Margin/MainRow/SceneFrame/FrameMargin/FrameCanvas/SceneImageArea/SceneImageLabel
 @onready var scene_image_note: Label = $Margin/MainRow/SceneFrame/FrameMargin/FrameCanvas/SceneImageArea/SceneImageNote
@@ -18,14 +18,14 @@ const NEXT_SCENE_PATH := "res://scenes/gameplay/F2.tscn"
 func _ready() -> void:
 	GameState.reset_run()
 	scene_image_label.text = "F1 // OPERATING FLOOR"
-	scene_image_note.text = "The dossier is sealed. The theater is live. There is only one way forward."
+	scene_image_note.text = "The dossier is sealed. The theater is live. Freeze 1 hands directly into the Surgery Layer."
 	overline.text = "FIELD FLOW // F1"
 	title_label.text = "Field One"
 	beat_line.text = "INT. PREP BAY - CONTINUOUS"
-	body_copy.text = "[i]Octaviy steps through the first threshold.[/i]\n\nThis MVP flow skips Intake Desk entirely. F1 exists only to establish the first gameplay state and hand off to the decision scene."
-	cue_card_text.text = "Continue directly into the concrete outcome selector."
-	scratch_notes.text = "Minimal path: TitleScreen -> F1 -> F2 -> F3."
-	primary_action_button.text = "Continue to F2"
+	body_copy.text = "[i]Octaviy steps through the first threshold.[/i]\n\nThis MVP flow skips Intake Desk entirely. F1 exists only to establish the first gameplay state and hand off to the Surgery Layer allocation scene."
+	cue_card_text.text = "Continue into Freeze 1 pressure routing."
+	scratch_notes.text = "Minimal path: TitleScreen -> F1 -> SurgeryLayer -> FinalScreen."
+	primary_action_button.text = "Continue to Surgery Layer"
 	primary_action_button.pressed.connect(_go_to_f2)
 	secondary_action_button.hide()
 	tertiary_action_button.hide()

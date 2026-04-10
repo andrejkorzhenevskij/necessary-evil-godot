@@ -1,0 +1,255 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/final_screen.gd" id="1_final"]
+
+[node name="FinalScreen" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_final")
+
+[node name="Background" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.027451, 0.031373, 0.0431373, 1)
+
+[node name="Tint" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.129412, 0.0509804, 0.180392, 0.14)
+
+[node name="Margin" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 32
+theme_override_constants/margin_top = 18
+theme_override_constants/margin_right = 32
+theme_override_constants/margin_bottom = 18
+
+[node name="RootColumn" type="VBoxContainer" parent="Margin"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 12
+
+[node name="HeaderBlock" type="VBoxContainer" parent="Margin/RootColumn"]
+layout_mode = 2
+custom_minimum_size = Vector2(680, 0)
+theme_override_constants/separation = 4
+
+[node name="Overline" type="Label" parent="Margin/RootColumn/HeaderBlock" unique_name_in_owner = true]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "WEYR RECORD // FINAL SCREEN"
+
+[node name="Title" type="Label" parent="Margin/RootColumn/HeaderBlock" unique_name_in_owner = true]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "RESULT REVIEW"
+
+[node name="Subtitle" type="Label" parent="Margin/RootColumn/HeaderBlock" unique_name_in_owner = true]
+layout_mode = 2
+size_flags_horizontal = 3
+autowrap_mode = 3
+text = "Outcome summary placeholder."
+
+[node name="ContentRow" type="HBoxContainer" parent="Margin/RootColumn"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 14
+
+[node name="ResultPanel" type="PanelContainer" parent="Margin/RootColumn/ContentRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 1.15
+
+[node name="Margin" type="MarginContainer" parent="Margin/RootColumn/ContentRow/ResultPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 18
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_right = 18
+theme_override_constants/margin_bottom = 18
+
+[node name="Stack" type="VBoxContainer" parent="Margin/RootColumn/ContentRow/ResultPanel/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="EndingLabel" type="Label" parent="Margin/RootColumn/ContentRow/ResultPanel/Margin/Stack" unique_name_in_owner = true]
+layout_mode = 2
+text = "ENDING //"
+
+[node name="EndingSummary" type="RichTextLabel" parent="Margin/RootColumn/ContentRow/ResultPanel/Margin/Stack" unique_name_in_owner = true]
+custom_minimum_size = Vector2(0, 156)
+layout_mode = 2
+size_flags_vertical = 3
+bbcode_enabled = true
+scroll_active = false
+text = "Outcome placeholder."
+
+[node name="RunMeta" type="Label" parent="Margin/RootColumn/ContentRow/ResultPanel/Margin/Stack" unique_name_in_owner = true]
+layout_mode = 2
+autowrap_mode = 3
+text = "Run metadata placeholder."
+
+[node name="DossierPanel" type="PanelContainer" parent="Margin/RootColumn/ContentRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Margin" type="MarginContainer" parent="Margin/RootColumn/ContentRow/DossierPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 18
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_right = 18
+theme_override_constants/margin_bottom = 18
+
+[node name="Stack" type="VBoxContainer" parent="Margin/RootColumn/ContentRow/DossierPanel/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="DossierLabel" type="Label" parent="Margin/RootColumn/ContentRow/DossierPanel/Margin/Stack" unique_name_in_owner = true]
+layout_mode = 2
+text = "DOSSIER FRAGMENT"
+
+[node name="DossierBody" type="Label" parent="Margin/RootColumn/ContentRow/DossierPanel/Margin/Stack" unique_name_in_owner = true]
+custom_minimum_size = Vector2(0, 172)
+layout_mode = 2
+size_flags_vertical = 3
+autowrap_mode = 3
+text = "Dossier placeholder."
+
+[node name="DossierVariantLabel" type="Label" parent="Margin/RootColumn/ContentRow/DossierPanel/Margin/Stack" unique_name_in_owner = true]
+layout_mode = 2
+autowrap_mode = 3
+text = "Variant placeholder."
+
+[node name="BadgesPanel" type="PanelContainer" parent="Margin/RootColumn"]
+layout_mode = 2
+
+[node name="Margin" type="MarginContainer" parent="Margin/RootColumn/BadgesPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 14
+theme_override_constants/margin_top = 12
+theme_override_constants/margin_right = 14
+theme_override_constants/margin_bottom = 12
+
+[node name="Stack" type="VBoxContainer" parent="Margin/RootColumn/BadgesPanel/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="BadgesHeading" type="Label" parent="Margin/RootColumn/BadgesPanel/Margin/Stack" unique_name_in_owner = true]
+layout_mode = 2
+text = "MARKERS RECORDED"
+
+[node name="BadgeRow" type="HBoxContainer" parent="Margin/RootColumn/BadgesPanel/Margin/Stack"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="BadgeSlotA" type="PanelContainer" parent="Margin/RootColumn/BadgesPanel/Margin/Stack/BadgeRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Margin" type="MarginContainer" parent="Margin/RootColumn/BadgesPanel/Margin/Stack/BadgeRow/BadgeSlotA"]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="Stack" type="VBoxContainer" parent="Margin/RootColumn/BadgesPanel/Margin/Stack/BadgeRow/BadgeSlotA/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="BadgeSlotATitle" type="Label" parent="Margin/RootColumn/BadgesPanel/Margin/Stack/BadgeRow/BadgeSlotA/Margin/Stack" unique_name_in_owner = true]
+layout_mode = 2
+text = "BADGE A"
+
+[node name="BadgeSlotABody" type="Label" parent="Margin/RootColumn/BadgesPanel/Margin/Stack/BadgeRow/BadgeSlotA/Margin/Stack" unique_name_in_owner = true]
+layout_mode = 2
+autowrap_mode = 3
+text = "Placeholder"
+
+[node name="BadgeSlotB" type="PanelContainer" parent="Margin/RootColumn/BadgesPanel/Margin/Stack/BadgeRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Margin" type="MarginContainer" parent="Margin/RootColumn/BadgesPanel/Margin/Stack/BadgeRow/BadgeSlotB"]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="Stack" type="VBoxContainer" parent="Margin/RootColumn/BadgesPanel/Margin/Stack/BadgeRow/BadgeSlotB/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="BadgeSlotBTitle" type="Label" parent="Margin/RootColumn/BadgesPanel/Margin/Stack/BadgeRow/BadgeSlotB/Margin/Stack" unique_name_in_owner = true]
+layout_mode = 2
+text = "BADGE B"
+
+[node name="BadgeSlotBBody" type="Label" parent="Margin/RootColumn/BadgesPanel/Margin/Stack/BadgeRow/BadgeSlotB/Margin/Stack" unique_name_in_owner = true]
+layout_mode = 2
+autowrap_mode = 3
+text = "Placeholder"
+
+[node name="BadgeSlotC" type="PanelContainer" parent="Margin/RootColumn/BadgesPanel/Margin/Stack/BadgeRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Margin" type="MarginContainer" parent="Margin/RootColumn/BadgesPanel/Margin/Stack/BadgeRow/BadgeSlotC"]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="Stack" type="VBoxContainer" parent="Margin/RootColumn/BadgesPanel/Margin/Stack/BadgeRow/BadgeSlotC/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="BadgeSlotCTitle" type="Label" parent="Margin/RootColumn/BadgesPanel/Margin/Stack/BadgeRow/BadgeSlotC/Margin/Stack" unique_name_in_owner = true]
+layout_mode = 2
+text = "BADGE C"
+
+[node name="BadgeSlotCBody" type="Label" parent="Margin/RootColumn/BadgesPanel/Margin/Stack/BadgeRow/BadgeSlotC/Margin/Stack" unique_name_in_owner = true]
+layout_mode = 2
+autowrap_mode = 3
+text = "Placeholder"
+
+[node name="FooterBlock" type="VBoxContainer" parent="Margin/RootColumn"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="FooterNote" type="Label" parent="Margin/RootColumn/FooterBlock" unique_name_in_owner = true]
+layout_mode = 2
+autowrap_mode = 3
+text = "Restart returns to the beginning of the MVP run."
+
+[node name="ButtonRow" type="HBoxContainer" parent="Margin/RootColumn/FooterBlock"]
+layout_mode = 2
+alignment = 1
+theme_override_constants/separation = 12
+
+[node name="RestartButton" type="Button" parent="Margin/RootColumn/FooterBlock/ButtonRow" unique_name_in_owner = true]
+custom_minimum_size = Vector2(210, 50)
+layout_mode = 2
+text = "RESTART RUN"
+
+[node name="ReturnButton" type="Button" parent="Margin/RootColumn/FooterBlock/ButtonRow" unique_name_in_owner = true]
+custom_minimum_size = Vector2(210, 50)
+layout_mode = 2
+text = "RETURN TO TITLE"

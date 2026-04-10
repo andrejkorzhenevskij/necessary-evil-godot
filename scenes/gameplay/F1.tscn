@@ -1,7 +1,5 @@
-[gd_scene format=3 uid="uid://dr4ci3wlqyn4a"]
+[gd_scene format=3]
 
-[ext_resource type="PackedScene" uid="uid://dcu3ie4rv8f8u" path="res://scenes/gameplay/MainGameplayInterface.tscn" id="1_ptw8v"]
-[ext_resource type="Script" path="res://scripts/f1_scene.gd" id="2_65j2b"]
+[ext_resource type="PackedScene" path="res://scenes/gameplay/GameplayScreen.tscn" id="1_gameplay"]
 
-[node name="MainGameplayInterface" instance=ExtResource("1_ptw8v")]
-script = ExtResource("2_65j2b")
+[node name="F1" instance=ExtResource("1_gameplay")]

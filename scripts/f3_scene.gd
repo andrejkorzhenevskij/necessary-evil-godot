@@ -17,20 +17,26 @@ const REPLAY_SCENE_PATH := "res://scenes/gameplay/F1.tscn"
 
 
 func _ready() -> void:
-	var achievement_summary := ", ".join(GameState.achievement_ids)
-	if achievement_summary.is_empty():
-		achievement_summary = "none"
+	var badge_summary := ", ".join(GameState.badge_ids)
+	if badge_summary.is_empty():
+		badge_summary = "none"
+	var allocation_summary := "Scene %d / Victoria %d / Desmond %d" % [
+		int(GameState.surgery_allocation.get("scene", 0)),
+		int(GameState.surgery_allocation.get("victoria", 0)),
+		int(GameState.surgery_allocation.get("desmond", 0)),
+	]
 
 	scene_image_label.text = "F3 // FINAL OUTCOME"
 	scene_image_note.text = "The run resolves here using the exact values stored in GameState."
 	overline.text = "FIELD FLOW // F3"
 	title_label.text = "Outcome Report"
 	beat_line.text = "INT. ARCHIVE CHAMBER - POST-OP"
-	body_copy.text = "[i]Run locked.[/i]\n\nDominant zone: %s\nEnding: %s\nLeonard dossier variant: %s\nAchievements: %s" % [
-		_value_or_placeholder(GameState.dominant_zone),
+	body_copy.text = "[i]Run locked.[/i]\n\nAllocation: %s\nResolved outcome: %s\nEnding: %s\nDossier variant: %s\nBadges: %s" % [
+		allocation_summary,
+		_value_or_placeholder(GameState.resolved_outcome),
 		_value_or_placeholder(GameState.ending_id),
-		_value_or_placeholder(GameState.leonard_dossier_variant),
-		achievement_summary,
+		_value_or_placeholder(GameState.dossier_variant),
+		badge_summary,
 	]
 	cue_card_text.text = "This is the concrete end of the MVP path."
 	scratch_notes.text = "Restart returns to TitleScreen. Replay jumps back to F1."

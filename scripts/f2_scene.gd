@@ -1,6 +1,6 @@
 extends Control
 
-const NEXT_SCENE_PATH := "res://scenes/gameplay/F3.tscn"
+const NEXT_SCENE_PATH := "res://scenes/gameplay/FinalScreen.tscn"
 
 @onready var scene_image_label: Label = $Margin/MainRow/SceneFrame/FrameMargin/FrameCanvas/SceneImageArea/SceneImageLabel
 @onready var scene_image_note: Label = $Margin/MainRow/SceneFrame/FrameMargin/FrameCanvas/SceneImageArea/SceneImageNote
@@ -23,7 +23,7 @@ func _ready() -> void:
 	beat_line.text = "INT. SURGERY THEATER - DECISION POINT"
 	body_copy.text = "[i]This scene is intentionally literal.[/i]\n\nChoose one hard-coded branch. Each button writes the corresponding outcome into GameState and advances to the final scene."
 	cue_card_text.text = "No generic branching system here. These three buttons are the flow."
-	scratch_notes.text = "Branches: scene -> ending_12a, victoria -> ending_12b, desmond -> ending_12c."
+	scratch_notes.text = "Branches: scene -> 12A, victoria -> 12B, desmond -> 12C."
 	primary_action_button.text = "Resolve Scene"
 	secondary_action_button.text = "Resolve Victoria"
 	tertiary_action_button.text = "Resolve Desmond"
@@ -34,5 +34,6 @@ func _ready() -> void:
 
 
 func _resolve_and_continue(zone: String) -> void:
-	GameState.resolve_surgery_results(zone)
+	GameState.set_dominant_zone(zone)
+	GameState.resolve_f2_outcome()
 	get_tree().change_scene_to_file(NEXT_SCENE_PATH)

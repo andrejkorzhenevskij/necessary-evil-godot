@@ -1,0 +1,439 @@
+extends Control
+
+const TITLE_SCENE_PATH := "res://scenes/start/TitleScreen.tscn"
+const NEXT_SCENE_PATH := "res://scenes/gameplay/FinalScreen.tscn"
+const TOTAL_CONTROL := 2
+const ZONE_IDS := ["scene", "victoria", "desmond"]
+const ZONE_CONTENT: Dictionary[String, Dictionary] = {
+	"scene": {
+		"title": "SCENE",
+		"subtitle": "Escalate the rupture",
+		"pressure": "Rupture load widening through the theater seam.",
+	},
+	"victoria": {
+		"title": "VICTORIA",
+		"subtitle": "Protect the exit",
+		"pressure": "Exit corridor takes the contamination bleed.",
+	},
+	"desmond": {
+		"title": "DESMOND",
+		"subtitle": "Preserve precision",
+		"pressure": "Precision channel absorbs the fracture cost.",
+	},
+}
+
+const COLOR_PANEL := Color(0.08, 0.09, 0.12, 0.92)
+const COLOR_PANEL_ACTIVE := Color(0.16, 0.09, 0.22, 0.95)
+const COLOR_STEEL := Color(0.34, 0.38, 0.44, 0.6)
+const COLOR_VIOLET := Color(0.69, 0.39, 1.0, 1.0)
+const COLOR_VIOLET_SOFT := Color(0.55, 0.28, 0.85, 0.35)
+const COLOR_VIOLET_HARD := Color(0.88, 0.68, 1.0, 1.0)
+const COLOR_CONTAMINATION := Color(0.75, 0.45, 1.0, 0.18)
+const COLOR_TEXT := Color(0.92, 0.94, 0.98, 1.0)
+const COLOR_TEXT_MUTED := Color(0.66, 0.69, 0.78, 0.92)
+const COLOR_TEXT_DIM := Color(0.48, 0.5, 0.58, 0.86)
+
+@onready var header_block: VBoxContainer = $Margin/RootColumn/HeaderWrap/HeaderBlock
+@onready var overline_label: Label = $Margin/RootColumn/HeaderWrap/HeaderBlock/Overline
+@onready var title_label: Label = $Margin/RootColumn/HeaderWrap/HeaderBlock/Title
+@onready var subtitle_label: Label = $Margin/RootColumn/HeaderWrap/HeaderBlock/Subtitle
+@onready var helper_label: Label = $Margin/RootColumn/HeaderWrap/HeaderBlock/Helper
+
+@onready var route_layer: Control = $Margin/RootColumn/DiagramArea/RouteLayer
+@onready var weyr_core: PanelContainer = $Margin/RootColumn/DiagramArea/WeyrCore
+@onready var weyr_title: Label = $Margin/RootColumn/DiagramArea/WeyrCore/Margin/Column/WeyrTitle
+@onready var weyr_subtitle: Label = $Margin/RootColumn/DiagramArea/WeyrCore/Margin/Column/WeyrSubtitle
+
+@onready var scene_zone: PanelContainer = $Margin/RootColumn/DiagramArea/SceneZone
+@onready var scene_zone_title: Label = $Margin/RootColumn/DiagramArea/SceneZone/Margin/Column/SceneZoneTitle
+@onready var scene_zone_subtitle: Label = $Margin/RootColumn/DiagramArea/SceneZone/Margin/Column/SceneZoneSubtitle
+@onready var scene_zone_points: Label = $Margin/RootColumn/DiagramArea/SceneZone/Margin/Column/SceneZonePoints
+
+@onready var victoria_zone: PanelContainer = $Margin/RootColumn/DiagramArea/VictoriaZone
+@onready var victoria_zone_title: Label = $Margin/RootColumn/DiagramArea/VictoriaZone/Margin/Column/VictoriaZoneTitle
+@onready var victoria_zone_subtitle: Label = $Margin/RootColumn/DiagramArea/VictoriaZone/Margin/Column/VictoriaZoneSubtitle
+@onready var victoria_zone_points: Label = $Margin/RootColumn/DiagramArea/VictoriaZone/Margin/Column/VictoriaZonePoints
+
+@onready var desmond_zone: PanelContainer = $Margin/RootColumn/DiagramArea/DesmondZone
+@onready var desmond_zone_title: Label = $Margin/RootColumn/DiagramArea/DesmondZone/Margin/Column/DesmondZoneTitle
+@onready var desmond_zone_subtitle: Label = $Margin/RootColumn/DiagramArea/DesmondZone/Margin/Column/DesmondZoneSubtitle
+@onready var desmond_zone_points: Label = $Margin/RootColumn/DiagramArea/DesmondZone/Margin/Column/DesmondZonePoints
+
+@onready var remaining_label: Label = $Margin/RootColumn/FooterBlock/RemainingLabel
+@onready var status_label: Label = $Margin/RootColumn/FooterBlock/StatusLabel
+@onready var back_button: Button = $Margin/RootColumn/FooterBlock/ButtonRow/BackButton
+@onready var reset_button: Button = $Margin/RootColumn/FooterBlock/ButtonRow/ResetButton
+@onready var confirm_button: Button = $Margin/RootColumn/FooterBlock/ButtonRow/ConfirmButton
+
+var pulse_time: float = 0.0
+var zone_panels: Dictionary[String, PanelContainer] = {}
+var zone_title_labels: Dictionary[String, Label] = {}
+var zone_subtitle_labels: Dictionary[String, Label] = {}
+var zone_point_labels: Dictionary[String, Label] = {}
+var zone_allocation := {
+	"scene": 0,
+	"victoria": 0,
+	"desmond": 0,
+}
+
+
+func _ready() -> void:
+	_configure_copy()
+	_configure_buttons()
+	_configure_zones()
+	_update_header_width()
+	if route_layer.has_method("setup"):
+		route_layer.setup(self)
+	_refresh_allocation_state()
+	set_process(true)
+	route_layer.queue_redraw()
+
+
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_RESIZED:
+		_update_header_width()
+
+
+func _process(delta: float) -> void:
+	pulse_time += delta
+	route_layer.queue_redraw()
+
+
+func _draw_route_layer(layer: Control) -> void:
+	if not is_instance_valid(weyr_core):
+		return
+
+	var core_center := _to_layer_center(weyr_core, layer)
+	var phase := 0.5 + 0.5 * sin(pulse_time * 1.7)
+	var outer_radius := 96.0 + phase * 9.0
+	var middle_radius := 66.0 + phase * 13.0
+	var inner_radius := 28.0 + phase * 5.0
+
+	for zone_id: String in zone_panels.keys():
+		var zone_center := _to_layer_center(zone_panels[zone_id], layer)
+		var zone_rect := _to_layer_rect(zone_panels[zone_id], layer)
+		var allocation := int(zone_allocation.get(zone_id, 0))
+		var route_strength := float(allocation) / float(TOTAL_CONTROL)
+		var route_direction: Vector2 = (zone_center - core_center).normalized()
+		var route_endpoint: Vector2 = zone_center - route_direction * min(zone_rect.size.x, zone_rect.size.y) * 0.46
+		var baseline_color := Color(0.46, 0.5, 0.6, 0.62)
+		var baseline_glow := Color(COLOR_VIOLET_SOFT.r, COLOR_VIOLET_SOFT.g, COLOR_VIOLET_SOFT.b, 0.22)
+		var route_color := Color(
+			lerp(COLOR_VIOLET_SOFT.r, COLOR_VIOLET_HARD.r, route_strength),
+			lerp(COLOR_VIOLET_SOFT.g, COLOR_VIOLET_HARD.g, route_strength),
+			lerp(COLOR_VIOLET_SOFT.b, COLOR_VIOLET_HARD.b, route_strength),
+			0.26 + route_strength * 0.74
+		)
+
+		layer.draw_line(core_center, route_endpoint, baseline_glow, 11.0, true)
+		layer.draw_line(core_center, route_endpoint, baseline_color, 5.0, true)
+		layer.draw_circle(route_endpoint, 7.0, baseline_color)
+
+		if allocation > 0:
+			var route_width := 8.0 + float(allocation) * 5.0
+			layer.draw_line(core_center, route_endpoint, Color(route_color.r, route_color.g, route_color.b, 0.28 + route_strength * 0.28), route_width + 7.0, true)
+			layer.draw_line(core_center, route_endpoint, route_color, route_width, true)
+			layer.draw_circle(route_endpoint, 9.0 + float(allocation) * 3.0, route_color)
+
+			for seam_index: int in range(allocation):
+				var seam_ratio := 0.34 + float(seam_index) * 0.21 + phase * 0.02
+				var midpoint := core_center.lerp(route_endpoint, seam_ratio)
+				var drift := Vector2(
+					cos(pulse_time * (2.1 + float(seam_index))),
+					sin(pulse_time * (1.7 + float(seam_index)))
+				) * (6.0 + 2.0 * seam_index)
+				layer.draw_circle(midpoint + drift, 7.0 + phase * 3.0 + float(seam_index) * 2.0, Color(route_color.r, route_color.g, route_color.b, 0.45 + 0.16 * seam_index))
+
+			var haze_rect := Rect2(zone_rect.position - Vector2.ONE * 6.0, zone_rect.size + Vector2.ONE * 12.0)
+			layer.draw_rect(haze_rect, Color(COLOR_CONTAMINATION.r, COLOR_CONTAMINATION.g, COLOR_CONTAMINATION.b, 0.08 + route_strength * 0.12), false, 2.0)
+			var seam_color := Color(COLOR_VIOLET_HARD.r, COLOR_VIOLET_HARD.g, COLOR_VIOLET_HARD.b, 0.22 + route_strength * 0.2)
+			var seam_shift := 10.0 + phase * 8.0
+			layer.draw_line(zone_rect.position + Vector2(18.0, 16.0), zone_rect.position + Vector2(zone_rect.size.x - 26.0, zone_rect.size.y * 0.45 + seam_shift * 0.15), seam_color, 2.0, true)
+			layer.draw_line(zone_rect.position + Vector2(zone_rect.size.x * 0.22, zone_rect.size.y - 20.0), zone_rect.position + Vector2(zone_rect.size.x - 22.0, 22.0 + seam_shift * 0.1), seam_color, 1.0 + float(allocation), true)
+
+	layer.draw_circle(core_center, outer_radius, Color(0.17, 0.05, 0.22, 0.42))
+	layer.draw_circle(core_center + Vector2(sin(pulse_time * 1.2), cos(pulse_time * 1.6)) * 10.0, middle_radius, Color(0.45, 0.12, 0.65, 0.3))
+	layer.draw_circle(core_center + Vector2(cos(pulse_time * 2.0), sin(pulse_time * 1.4)) * 7.0, inner_radius * 1.9, Color(0.72, 0.28, 1.0, 0.22))
+	layer.draw_circle(core_center, inner_radius, Color(0.96, 0.83, 1.0, 0.96))
+
+	var wound_points := PackedVector2Array()
+	for index: int in range(12):
+		var angle := (TAU / 12.0) * float(index) + pulse_time * 0.35
+		var radius := 42.0 + sin(pulse_time * 2.4 + float(index) * 1.3) * 10.0
+		wound_points.append(core_center + Vector2.from_angle(angle) * radius)
+	layer.draw_colored_polygon(wound_points, Color(0.39, 0.11, 0.52, 0.22))
+
+
+func _unhandled_input(event: InputEvent) -> void:
+	if event.is_action_pressed("ui_cancel"):
+		_return_to_title()
+
+
+func _configure_copy() -> void:
+	overline_label.text = "WEYR CONTACT // SURGERY LAYER"
+	title_label.text = "ALLOCATE TENSION"
+	subtitle_label.text = "The price cannot be erased. Only redirected."
+	helper_label.text = "Click zones to route exactly 2 control. Split pressure if needed, then confirm the carrying line."
+	weyr_title.text = "WEYR"
+	weyr_subtitle.text = "Hungry pressure\nheld open"
+	remaining_label.text = ""
+	status_label.text = ""
+
+	_style_header_label(overline_label, 14, COLOR_TEXT_MUTED)
+	_style_header_label(title_label, 42, COLOR_TEXT)
+	_style_header_label(subtitle_label, 20, COLOR_VIOLET_HARD)
+	_style_header_label(helper_label, 15, COLOR_TEXT_MUTED)
+	subtitle_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	helper_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	_style_header_label(weyr_title, 24, COLOR_TEXT)
+	_style_header_label(weyr_subtitle, 13, COLOR_TEXT_MUTED)
+	_style_header_label(remaining_label, 16, COLOR_VIOLET_HARD)
+	_style_header_label(status_label, 15, COLOR_TEXT_MUTED)
+
+
+func _update_header_width() -> void:
+	if not is_instance_valid(header_block):
+		return
+
+	var available_width := get_viewport_rect().size.x - 72.0
+	header_block.custom_minimum_size.x = clampf(available_width, 420.0, 680.0)
+
+
+func _configure_buttons() -> void:
+	back_button.text = "RETURN"
+	reset_button.text = "RESET ALLOCATION"
+	confirm_button.text = "CONFIRM ROUTE"
+	back_button.pressed.connect(_return_to_title)
+	reset_button.pressed.connect(_reset_allocation)
+	confirm_button.pressed.connect(_confirm_allocation)
+	confirm_button.disabled = true
+	_apply_button_style(back_button, false)
+	_apply_button_style(reset_button, false)
+	_apply_button_style(confirm_button, true)
+
+
+func _configure_zones() -> void:
+	zone_panels = {
+		"scene": scene_zone,
+		"victoria": victoria_zone,
+		"desmond": desmond_zone,
+	}
+	zone_title_labels = {
+		"scene": scene_zone_title,
+		"victoria": victoria_zone_title,
+		"desmond": desmond_zone_title,
+	}
+	zone_subtitle_labels = {
+		"scene": scene_zone_subtitle,
+		"victoria": victoria_zone_subtitle,
+		"desmond": desmond_zone_subtitle,
+	}
+	zone_point_labels = {
+		"scene": scene_zone_points,
+		"victoria": victoria_zone_points,
+		"desmond": desmond_zone_points,
+	}
+
+	for zone_id: String in zone_panels.keys():
+		var panel := zone_panels[zone_id]
+		var title := zone_title_labels[zone_id]
+		var subtitle := zone_subtitle_labels[zone_id]
+		var points := zone_point_labels[zone_id]
+		var zone_copy: Dictionary = ZONE_CONTENT[zone_id]
+
+		panel.mouse_filter = Control.MOUSE_FILTER_STOP
+		panel.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
+		panel.gui_input.connect(_on_zone_gui_input.bind(zone_id))
+
+		title.text = zone_copy["title"]
+		subtitle.text = zone_copy["subtitle"]
+		points.text = ""
+		_style_header_label(title, 24, COLOR_TEXT)
+		_style_header_label(subtitle, 14, COLOR_TEXT_MUTED)
+		_style_header_label(points, 13, COLOR_VIOLET_HARD)
+		title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		subtitle.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		points.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+
+	weyr_core.add_theme_stylebox_override("panel", _make_core_style())
+
+
+func _on_zone_gui_input(event: InputEvent, zone_id: String) -> void:
+	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
+		if _get_total_allocated() >= TOTAL_CONTROL:
+			return
+
+		zone_allocation[zone_id] = int(zone_allocation.get(zone_id, 0)) + 1
+		_refresh_allocation_state()
+
+
+func _confirm_allocation() -> void:
+	if _get_total_allocated() != TOTAL_CONTROL:
+		return
+
+	if has_node("/root/GameState"):
+		GameState.set_surgery_allocation(zone_allocation.duplicate(true))
+		GameState.resolve_surgery_allocation()
+
+	get_tree().change_scene_to_file(NEXT_SCENE_PATH)
+
+
+func _return_to_title() -> void:
+	get_tree().change_scene_to_file(TITLE_SCENE_PATH)
+
+
+func _reset_allocation() -> void:
+	zone_allocation = {
+		"scene": 0,
+		"victoria": 0,
+		"desmond": 0,
+	}
+	_refresh_allocation_state()
+
+
+func _refresh_allocation_state() -> void:
+	_update_zone_visuals()
+	route_layer.queue_redraw()
+
+
+func _update_zone_visuals() -> void:
+	for zone_id: String in zone_panels.keys():
+		var allocation := int(zone_allocation.get(zone_id, 0))
+		var route_strength := float(allocation) / float(TOTAL_CONTROL)
+		var has_pressure := allocation > 0
+		zone_panels[zone_id].add_theme_stylebox_override("panel", _make_zone_style(allocation))
+		zone_title_labels[zone_id].modulate = Color(0.95, 0.86, 1.0, 1.0) if allocation == TOTAL_CONTROL else (COLOR_VIOLET_HARD if has_pressure else COLOR_TEXT)
+		zone_subtitle_labels[zone_id].modulate = Color(0.82, 0.74, 0.93, 0.96) if has_pressure else COLOR_TEXT_MUTED
+		zone_point_labels[zone_id].text = _format_zone_points(zone_id)
+		zone_point_labels[zone_id].modulate = Color(COLOR_VIOLET_HARD.r, COLOR_VIOLET_HARD.g, COLOR_VIOLET_HARD.b, 0.62 + route_strength * 0.38) if has_pressure else COLOR_TEXT_DIM
+
+	remaining_label.text = "Remaining control: %d / %d" % [_get_remaining_control(), TOTAL_CONTROL]
+	status_label.text = _build_status_line()
+	reset_button.disabled = _get_total_allocated() == 0
+	confirm_button.disabled = _get_total_allocated() != TOTAL_CONTROL
+	_apply_button_style(reset_button, false)
+	_apply_button_style(confirm_button, true)
+
+
+func _get_total_allocated() -> int:
+	return int(zone_allocation.get("scene", 0)) + int(zone_allocation.get("victoria", 0)) + int(zone_allocation.get("desmond", 0))
+
+
+func _get_remaining_control() -> int:
+	return TOTAL_CONTROL - _get_total_allocated()
+
+
+func _format_zone_points(zone_id: String) -> String:
+	var allocation := int(zone_allocation.get(zone_id, 0))
+	var carrier_label := "pressure seam" if allocation == 1 else "pressure seams"
+	return "%d / %d routed  //  %s %s" % [allocation, TOTAL_CONTROL, allocation, carrier_label]
+
+
+func _build_status_line() -> String:
+	var parts := PackedStringArray()
+	for zone_id: String in ZONE_IDS:
+		parts.append("%s %d" % [ZONE_CONTENT[zone_id]["title"], int(zone_allocation.get(zone_id, 0))])
+
+	if _get_total_allocated() < TOTAL_CONTROL:
+		return "Allocation live: %s. Route %d more control to commit the carrying line." % [", ".join(parts), _get_remaining_control()]
+
+	var outcome_id := _resolve_ending_id()
+	return "Allocation locked: %s. Full concentration resolves %s; any split resolves 12D." % [", ".join(parts), outcome_id]
+
+
+func _resolve_ending_id() -> String:
+	if int(zone_allocation.get("scene", 0)) == TOTAL_CONTROL:
+		return "12A"
+	if int(zone_allocation.get("victoria", 0)) == TOTAL_CONTROL:
+		return "12B"
+	if int(zone_allocation.get("desmond", 0)) == TOTAL_CONTROL:
+		return "12C"
+	return "12D"
+
+
+func _to_layer_center(control: Control, layer: Control) -> Vector2:
+	return control.get_global_rect().get_center() - layer.global_position
+
+
+func _to_layer_rect(control: Control, layer: Control) -> Rect2:
+	var global_rect := control.get_global_rect()
+	return Rect2(global_rect.position - layer.global_position, global_rect.size)
+
+
+func _style_header_label(label: Label, font_size: int, color: Color) -> void:
+	label.add_theme_font_size_override("font_size", font_size)
+	label.add_theme_color_override("font_color", color)
+	label.add_theme_color_override("font_outline_color", Color(0.01, 0.01, 0.02, 0.9))
+	label.add_theme_constant_override("outline_size", 1)
+
+
+func _apply_button_style(button: Button, is_confirm: bool) -> void:
+	var enabled := not button.disabled
+	var font_color := COLOR_TEXT if enabled or not is_confirm else COLOR_TEXT_DIM
+	var normal := StyleBoxFlat.new()
+	normal.bg_color = Color(0.11, 0.12, 0.15, 0.94) if not is_confirm else (Color(0.19, 0.11, 0.26, 0.98) if enabled else Color(0.08, 0.085, 0.11, 0.92))
+	normal.border_width_left = 2
+	normal.border_width_top = 2
+	normal.border_width_right = 2
+	normal.border_width_bottom = 2
+	normal.border_color = COLOR_STEEL if not is_confirm else (COLOR_VIOLET_HARD if enabled else COLOR_TEXT_DIM)
+	normal.corner_radius_top_left = 12
+	normal.corner_radius_top_right = 12
+	normal.corner_radius_bottom_right = 12
+	normal.corner_radius_bottom_left = 12
+	normal.shadow_color = Color(0, 0, 0, 0.4)
+	normal.shadow_size = 10
+
+	var hover := normal.duplicate() as StyleBoxFlat
+	hover.bg_color = normal.bg_color.lightened(0.08)
+
+	var pressed := normal.duplicate() as StyleBoxFlat
+	pressed.bg_color = normal.bg_color.darkened(0.08)
+
+	button.add_theme_stylebox_override("normal", normal)
+	button.add_theme_stylebox_override("hover", hover)
+	button.add_theme_stylebox_override("pressed", pressed)
+	button.add_theme_font_size_override("font_size", 18)
+	button.add_theme_color_override("font_color", font_color)
+	button.add_theme_color_override("font_hover_color", font_color)
+	button.add_theme_color_override("font_pressed_color", font_color)
+	button.add_theme_color_override("font_disabled_color", COLOR_TEXT_DIM)
+
+
+func _make_zone_style(allocation: int) -> StyleBoxFlat:
+	var route_strength := float(allocation) / float(TOTAL_CONTROL)
+	var style := StyleBoxFlat.new()
+	style.bg_color = COLOR_PANEL.lerp(COLOR_PANEL_ACTIVE, 0.18 + route_strength * 0.72) if allocation > 0 else COLOR_PANEL
+	style.border_width_left = 2
+	style.border_width_top = 2
+	style.border_width_right = 2
+	style.border_width_bottom = 2
+	style.border_color = COLOR_STEEL.lerp(COLOR_VIOLET_HARD, route_strength)
+	style.corner_radius_top_left = 20
+	style.corner_radius_top_right = 20
+	style.corner_radius_bottom_right = 20
+	style.corner_radius_bottom_left = 20
+	style.shadow_color = Color(COLOR_VIOLET.r, COLOR_VIOLET.g, COLOR_VIOLET.b, 0.12 + route_strength * 0.2)
+	style.shadow_size = 10 + allocation * 5
+	style.expand_margin_left = 2.0
+	style.expand_margin_top = 2.0
+	style.expand_margin_right = 2.0
+	style.expand_margin_bottom = 2.0
+	return style
+
+
+func _make_core_style() -> StyleBoxFlat:
+	var style := StyleBoxFlat.new()
+	style.bg_color = Color(0.07, 0.035, 0.1, 0.88)
+	style.border_width_left = 2
+	style.border_width_top = 2
+	style.border_width_right = 2
+	style.border_width_bottom = 2
+	style.border_color = Color(0.71, 0.45, 1.0, 0.92)
+	style.corner_radius_top_left = 90
+	style.corner_radius_top_right = 90
+	style.corner_radius_bottom_right = 90
+	style.corner_radius_bottom_left = 90
+	style.shadow_color = Color(0.35, 0.08, 0.5, 0.45)
+	style.shadow_size = 28
+	return style

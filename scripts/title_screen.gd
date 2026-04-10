@@ -1,9 +1,11 @@
 extends Control
 
-const NEXT_SCENE_PATH := "res://scenes/gameplay/F1.tscn"
+const NEXT_SCENE_PATH := "res://scenes/gameplay/GameplayScreen.tscn"
 const FALLBACK_SCENE_PATH := "res://scenes/start/StartPlayTransition.tscn"
+const SURGERY_TEST_SCENE_PATH := "res://scenes/gameplay/SurgeryLayer.tscn"
 
 @onready var begin_button: Button = %BeginButton
+@onready var surgery_test_button: Button = %SurgeryTestButton
 @onready var dossier_backdrop_dim: ColorRect = $DossierBackdropDim
 @onready var dossier_panel: Control = $CasefilePanel
 @onready var dossier_close_button: Button = $CasefilePanel/Margin/Ledger/HeaderRow/CasefileDismissButton
@@ -76,6 +78,8 @@ var active_dossier_id := ""
 
 func _ready() -> void:
 	begin_button.grab_focus()
+	surgery_test_button.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
+	_configure_dossier_overlay()
 	dossier_backdrop_dim.hide()
 	dossier_panel.hide()
 	dossier_close_button.pressed.connect(_close_dossier)
@@ -91,11 +95,22 @@ func _on_begin_button_pressed() -> void:
 	var target_scene_path := NEXT_SCENE_PATH if ResourceLoader.exists(NEXT_SCENE_PATH) else FALLBACK_SCENE_PATH
 	get_tree().change_scene_to_file(target_scene_path)
 
+
+func _on_surgery_test_button_pressed() -> void:
+	GameState.reset_run()
+	get_tree().change_scene_to_file(SURGERY_TEST_SCENE_PATH)
+
 func _on_card_gui_input(event: InputEvent, dossier_id: String) -> void:
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
 		_open_dossier(dossier_id)
 
 func _open_dossier(dossier_id: String) -> void:
+	if not DOSSIER_DATA.has(dossier_id):
+		return
+
+	if dossier_panel.visible and active_dossier_id == dossier_id:
+		return
+
 	var dossier: Dictionary = DOSSIER_DATA[dossier_id]
 	active_dossier_id = dossier_id
 	dossier_case_ref.text = dossier["registry_line"]
@@ -104,8 +119,11 @@ func _open_dossier(dossier_id: String) -> void:
 	dossier_known_facts_value.text = _format_known_facts(dossier["known_facts"])
 	dossier_interpretation_value.text = dossier["interpretation"]
 	dossier_assessment_stamp.text = dossier["assessment"]
-	dossier_backdrop_dim.show()
-	dossier_panel.show()
+
+	if not dossier_backdrop_dim.visible:
+		dossier_backdrop_dim.show()
+	if not dossier_panel.visible:
+		dossier_panel.show()
 
 func _close_dossier() -> void:
 	active_dossier_id = ""
@@ -122,3 +140,16 @@ func _format_known_facts(facts: Array) -> String:
 		entries.append("• %s" % fact)
 
 	return "\n".join(entries)
+
+
+func _configure_dossier_overlay() -> void:
+	dossier_backdrop_dim.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_set_overlay_pass_through(dossier_panel)
+	dossier_close_button.mouse_filter = Control.MOUSE_FILTER_STOP
+
+
+func _set_overlay_pass_through(control: Control) -> void:
+	control.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	for child in control.get_children():
+		if child is Control:
+			_set_overlay_pass_through(child as Control)

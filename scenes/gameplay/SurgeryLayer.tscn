@@ -1,0 +1,280 @@
+[gd_scene format=3 uid="uid://hv7181yqh6r6"]
+
+[ext_resource type="Script" uid="uid://b606ciwwd4ojg" path="res://scripts/surgery_layer.gd" id="1_surgery"]
+[ext_resource type="Script" uid="uid://ddwkit8qgkxth" path="res://scripts/surgery_route_layer.gd" id="2_route_layer"]
+
+[node name="SurgeryLayer" type="Control" unique_id=636355741]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_surgery")
+
+[node name="Background" type="ColorRect" parent="." unique_id=38329828]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.03, 0.035, 0.05, 1)
+
+[node name="Tint" type="ColorRect" parent="." unique_id=1227198402]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.13, 0.05, 0.18, 0.16)
+
+[node name="Margin" type="MarginContainer" parent="." unique_id=1978931097]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 36
+theme_override_constants/margin_top = 22
+theme_override_constants/margin_right = 36
+theme_override_constants/margin_bottom = 22
+
+[node name="RootColumn" type="VBoxContainer" parent="Margin" unique_id=1957127808]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 10
+
+[node name="HeaderWrap" type="HBoxContainer" parent="Margin/RootColumn" unique_id=16520021]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="HeaderBlock" type="VBoxContainer" parent="Margin/RootColumn/HeaderWrap" unique_id=16520022]
+layout_mode = 2
+size_flags_horizontal = 0
+theme_override_constants/separation = 4
+
+[node name="Overline" type="Label" parent="Margin/RootColumn/HeaderWrap/HeaderBlock" unique_id=1759060815]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "WEYR CONTACT // SURGERY LAYER"
+
+[node name="Title" type="Label" parent="Margin/RootColumn/HeaderWrap/HeaderBlock" unique_id=1598117947]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "ALLOCATE TENSION"
+
+[node name="Subtitle" type="Label" parent="Margin/RootColumn/HeaderWrap/HeaderBlock" unique_id=1772049395]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "The price cannot be erased. Only redirected."
+autowrap_mode = 3
+
+[node name="Helper" type="Label" parent="Margin/RootColumn/HeaderWrap/HeaderBlock" unique_id=1421334424]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Select a pressure sink."
+autowrap_mode = 3
+
+[node name="DiagramArea" type="Control" parent="Margin/RootColumn" unique_id=2037261346]
+custom_minimum_size = Vector2(0, 340)
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="RouteLayer" type="Control" parent="Margin/RootColumn/DiagramArea" unique_id=926423109]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+scale = Vector2(1, 0.9943586)
+mouse_filter = 2
+script = ExtResource("2_route_layer")
+
+[node name="WeyrCore" type="PanelContainer" parent="Margin/RootColumn/DiagramArea" unique_id=423873281]
+custom_minimum_size = Vector2(220, 220)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -110.0
+offset_top = -98.0
+offset_right = 110.0
+offset_bottom = 122.0
+
+[node name="Margin" type="MarginContainer" parent="Margin/RootColumn/DiagramArea/WeyrCore" unique_id=628540839]
+custom_minimum_size = Vector2(0, 0.065)
+layout_mode = 2
+theme_override_constants/margin_left = 22
+theme_override_constants/margin_top = 22
+theme_override_constants/margin_right = 22
+theme_override_constants/margin_bottom = 22
+
+[node name="Column" type="VBoxContainer" parent="Margin/RootColumn/DiagramArea/WeyrCore/Margin" unique_id=1884465081]
+layout_mode = 2
+theme_override_constants/separation = 6
+alignment = 1
+
+[node name="WeyrTitle" type="Label" parent="Margin/RootColumn/DiagramArea/WeyrCore/Margin/Column" unique_id=399074102]
+layout_mode = 2
+text = "WEYR"
+horizontal_alignment = 1
+
+[node name="WeyrSubtitle" type="Label" parent="Margin/RootColumn/DiagramArea/WeyrCore/Margin/Column" unique_id=1636209318]
+layout_mode = 2
+text = "Hungry pressure"
+horizontal_alignment = 1
+
+[node name="SceneZone" type="PanelContainer" parent="Margin/RootColumn/DiagramArea" unique_id=1639725157]
+custom_minimum_size = Vector2(240, 126)
+layout_mode = 0
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -120.0
+offset_top = -46.0
+offset_right = 120.0
+offset_bottom = 80.0
+
+[node name="Margin" type="MarginContainer" parent="Margin/RootColumn/DiagramArea/SceneZone" unique_id=972998132]
+layout_mode = 2
+theme_override_constants/margin_left = 18
+theme_override_constants/margin_top = 18
+theme_override_constants/margin_right = 18
+theme_override_constants/margin_bottom = 18
+
+[node name="Column" type="VBoxContainer" parent="Margin/RootColumn/DiagramArea/SceneZone/Margin" unique_id=534012487]
+layout_mode = 2
+theme_override_constants/separation = 8
+alignment = 1
+
+[node name="SceneZoneTitle" type="Label" parent="Margin/RootColumn/DiagramArea/SceneZone/Margin/Column" unique_id=689525929]
+layout_mode = 2
+text = "SCENE"
+horizontal_alignment = 1
+
+[node name="SceneZoneSubtitle" type="Label" parent="Margin/RootColumn/DiagramArea/SceneZone/Margin/Column" unique_id=482942927]
+layout_mode = 2
+text = "Escalate the rupture"
+horizontal_alignment = 1
+
+[node name="SceneZonePoints" type="Label" parent="Margin/RootColumn/DiagramArea/SceneZone/Margin/Column" unique_id=788987089]
+layout_mode = 2
+text = "0 / 2 routed"
+horizontal_alignment = 1
+
+[node name="VictoriaZone" type="PanelContainer" parent="Margin/RootColumn/DiagramArea" unique_id=1378849473]
+custom_minimum_size = Vector2(250, 126)
+layout_mode = 0
+anchor_left = 0.18
+anchor_top = 1.0
+anchor_right = 0.18
+anchor_bottom = 1.0
+offset_left = -125.0
+offset_top = -176.0
+offset_right = 125.0
+offset_bottom = -50.0
+
+[node name="Margin" type="MarginContainer" parent="Margin/RootColumn/DiagramArea/VictoriaZone" unique_id=380090045]
+layout_mode = 2
+theme_override_constants/margin_left = 18
+theme_override_constants/margin_top = 18
+theme_override_constants/margin_right = 18
+theme_override_constants/margin_bottom = 18
+
+[node name="Column" type="VBoxContainer" parent="Margin/RootColumn/DiagramArea/VictoriaZone/Margin" unique_id=957907627]
+layout_mode = 2
+theme_override_constants/separation = 8
+alignment = 1
+
+[node name="VictoriaZoneTitle" type="Label" parent="Margin/RootColumn/DiagramArea/VictoriaZone/Margin/Column" unique_id=1473648980]
+layout_mode = 2
+text = "VICTORIA"
+horizontal_alignment = 1
+
+[node name="VictoriaZoneSubtitle" type="Label" parent="Margin/RootColumn/DiagramArea/VictoriaZone/Margin/Column" unique_id=1962603496]
+layout_mode = 2
+text = "Protect the exit"
+horizontal_alignment = 1
+
+[node name="VictoriaZonePoints" type="Label" parent="Margin/RootColumn/DiagramArea/VictoriaZone/Margin/Column" unique_id=41988944]
+layout_mode = 2
+text = "0 / 2 routed"
+horizontal_alignment = 1
+
+[node name="DesmondZone" type="PanelContainer" parent="Margin/RootColumn/DiagramArea" unique_id=1865583602]
+custom_minimum_size = Vector2(250, 126)
+layout_mode = 0
+anchor_left = 0.82
+anchor_top = 1.0
+anchor_right = 0.82
+anchor_bottom = 1.0
+offset_left = -125.0
+offset_top = -176.0
+offset_right = 125.0
+offset_bottom = -50.0
+
+[node name="Margin" type="MarginContainer" parent="Margin/RootColumn/DiagramArea/DesmondZone" unique_id=779081975]
+layout_mode = 2
+theme_override_constants/margin_left = 18
+theme_override_constants/margin_top = 18
+theme_override_constants/margin_right = 18
+theme_override_constants/margin_bottom = 18
+
+[node name="Column" type="VBoxContainer" parent="Margin/RootColumn/DiagramArea/DesmondZone/Margin" unique_id=29760846]
+layout_mode = 2
+theme_override_constants/separation = 8
+alignment = 1
+
+[node name="DesmondZoneTitle" type="Label" parent="Margin/RootColumn/DiagramArea/DesmondZone/Margin/Column" unique_id=28118928]
+layout_mode = 2
+text = "DESMOND"
+horizontal_alignment = 1
+
+[node name="DesmondZoneSubtitle" type="Label" parent="Margin/RootColumn/DiagramArea/DesmondZone/Margin/Column" unique_id=549440430]
+layout_mode = 2
+text = "Preserve precision"
+horizontal_alignment = 1
+
+[node name="DesmondZonePoints" type="Label" parent="Margin/RootColumn/DiagramArea/DesmondZone/Margin/Column" unique_id=5611913]
+layout_mode = 2
+text = "0 / 2 routed"
+horizontal_alignment = 1
+
+[node name="FooterBlock" type="VBoxContainer" parent="Margin/RootColumn" unique_id=292504724]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="RemainingLabel" type="Label" parent="Margin/RootColumn/FooterBlock" unique_id=2068921366]
+layout_mode = 2
+text = "Remaining control: 2 / 2"
+
+[node name="StatusLabel" type="Label" parent="Margin/RootColumn/FooterBlock" unique_id=1186312977]
+layout_mode = 2
+text = "Allocation live."
+autowrap_mode = 3
+
+[node name="ButtonRow" type="HBoxContainer" parent="Margin/RootColumn/FooterBlock" unique_id=1847297912]
+layout_mode = 2
+theme_override_constants/separation = 12
+alignment = 1
+
+[node name="BackButton" type="Button" parent="Margin/RootColumn/FooterBlock/ButtonRow" unique_id=611030571]
+custom_minimum_size = Vector2(180, 54)
+layout_mode = 2
+text = "RETURN"
+
+[node name="ResetButton" type="Button" parent="Margin/RootColumn/FooterBlock/ButtonRow" unique_id=360360495]
+custom_minimum_size = Vector2(220, 54)
+layout_mode = 2
+text = "RESET ALLOCATION"
+
+[node name="ConfirmButton" type="Button" parent="Margin/RootColumn/FooterBlock/ButtonRow" unique_id=1098919973]
+custom_minimum_size = Vector2(220, 54)
+layout_mode = 2
+disabled = true
+text = "CONFIRM ROUTE"
