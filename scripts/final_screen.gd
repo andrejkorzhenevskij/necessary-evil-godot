@@ -73,7 +73,7 @@ func _ready() -> void:
 	_apply_screen_styles()
 	_bind_game_state()
 	restart_button.pressed.connect(_restart_run)
-	return_button.pressed.connect(_return_to_title)
+	return_button.pressed.connect(_back_to_menu)
 	restart_button.grab_focus()
 
 
@@ -84,17 +84,22 @@ func _bind_game_state() -> void:
 	var badges := _read_badges()
 	var ending_copy: Dictionary = ENDING_SUMMARIES.get(ending, {})
 	var allocation_summary := _build_allocation_summary()
+	var completed_summary := _build_completed_summary()
+	var resolution_label := _read_string("resolution_label")
+	var resolution_summary := _read_string("resolution_summary")
 
 	overline.text = "WEYR RECORD // FINAL SCREEN"
 	title_label.text = ending_copy.get("title", "OUTCOME UNRESOLVED")
-	subtitle_label.text = "Recorded consequence. Readout stays stable even if the run state is incomplete."
+	subtitle_label.text = "Recorded consequence: %s" % _value_or_placeholder(resolution_label)
 
 	ending_label.text = "ENDING SUMMARY"
-	ending_summary.text = "[i]%s[/i]\n\n%s" % [
+	ending_summary.text = "[i]%s[/i]\n\n%s\n\nResolver: %s" % [
 		ending if not ending.is_empty() else "ENDING ID UNSET",
-		ending_copy.get("summary", "No resolved ending is available yet. Launch the scene directly for layout checks, or enter it through the MVP flow to read the recorded result.")
+		ending_copy.get("summary", "No resolved ending is available yet. Launch the scene directly for layout checks, or enter it through the MVP flow to read the recorded result."),
+		resolution_summary if not resolution_summary.is_empty() else "Outcome resolver did not record a visible summary.",
 	]
-	run_meta.text = "Dominant zone: %s\nAllocation: %s" % [
+	run_meta.text = "Completed freezes: %s\nDominant zone: %s\nAllocation: %s" % [
+		completed_summary,
 		_value_or_placeholder(dominant_zone).to_upper(),
 		allocation_summary,
 	]
@@ -109,7 +114,7 @@ func _bind_game_state() -> void:
 	badges_heading.text = "MARKERS RECORDED"
 	_bind_badge_slots(badges)
 
-	footer_note.text = "Restart resets the current run state and returns to F1. Return to Title also clears the run state."
+	footer_note.text = "Restart Run starts a new pass from F1. Back to Menu returns to the title screen. Both clear the current run state."
 
 
 func _bind_badge_slots(badges: Array[String]) -> void:
@@ -133,15 +138,25 @@ func _resolve_dominant_zone() -> String:
 		return dominant_zone
 
 	var allocation: Dictionary = _read_allocation()
-	if int(allocation.get("scene", 0)) >= 2:
-		return "scene"
-	if int(allocation.get("victoria", 0)) >= 2:
-		return "victoria"
-	if int(allocation.get("desmond", 0)) >= 2:
-		return "desmond"
-	if int(allocation.get("scene", 0)) + int(allocation.get("victoria", 0)) + int(allocation.get("desmond", 0)) > 0:
+	var scene_points := int(allocation.get("scene", 0))
+	var victoria_points := int(allocation.get("victoria", 0))
+	var desmond_points := int(allocation.get("desmond", 0))
+	var highest_points := maxi(scene_points, maxi(victoria_points, desmond_points))
+	var highest_count := 0
+
+	for points: int in [scene_points, victoria_points, desmond_points]:
+		if points == highest_points:
+			highest_count += 1
+
+	if highest_points == 0:
+		return ""
+	if highest_count > 1:
 		return "mixed"
-	return ""
+	if scene_points == highest_points:
+		return "scene"
+	if victoria_points == highest_points:
+		return "victoria"
+	return "desmond"
 
 
 func _build_allocation_summary() -> String:
@@ -165,6 +180,12 @@ func _read_badges() -> Array[String]:
 	return []
 
 
+func _build_completed_summary() -> String:
+	if has_node("/root/GameState") and not GameState.completed_phases.is_empty():
+		return ", ".join(GameState.completed_phases)
+	return "none"
+
+
 func _read_string(field_name: String) -> String:
 	if not has_node("/root/GameState"):
 		return ""
@@ -181,7 +202,7 @@ func _restart_run() -> void:
 	get_tree().change_scene_to_file(RESTART_SCENE_PATH)
 
 
-func _return_to_title() -> void:
+func _back_to_menu() -> void:
 	if has_node("/root/GameState"):
 		GameState.reset_run()
 	get_tree().change_scene_to_file(TITLE_SCENE_PATH)

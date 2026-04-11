@@ -2,10 +2,8 @@ extends Control
 
 const NEXT_SCENE_PATH := "res://scenes/gameplay/GameplayScreen.tscn"
 const FALLBACK_SCENE_PATH := "res://scenes/start/StartPlayTransition.tscn"
-const SURGERY_TEST_SCENE_PATH := "res://scenes/gameplay/SurgeryLayer.tscn"
 
 @onready var begin_button: Button = %BeginButton
-@onready var surgery_test_button: Button = %SurgeryTestButton
 @onready var dossier_backdrop_dim: ColorRect = $DossierBackdropDim
 @onready var dossier_panel: Control = $CasefilePanel
 @onready var dossier_close_button: Button = $CasefilePanel/Margin/Ledger/HeaderRow/CasefileDismissButton
@@ -78,7 +76,6 @@ var active_dossier_id := ""
 
 func _ready() -> void:
 	begin_button.grab_focus()
-	surgery_test_button.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
 	_configure_dossier_overlay()
 	dossier_backdrop_dim.hide()
 	dossier_panel.hide()
@@ -94,11 +91,6 @@ func _on_begin_button_pressed() -> void:
 	GameState.reset_run()
 	var target_scene_path := NEXT_SCENE_PATH if ResourceLoader.exists(NEXT_SCENE_PATH) else FALLBACK_SCENE_PATH
 	get_tree().change_scene_to_file(target_scene_path)
-
-
-func _on_surgery_test_button_pressed() -> void:
-	GameState.reset_run()
-	get_tree().change_scene_to_file(SURGERY_TEST_SCENE_PATH)
 
 func _on_card_gui_input(event: InputEvent, dossier_id: String) -> void:
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:

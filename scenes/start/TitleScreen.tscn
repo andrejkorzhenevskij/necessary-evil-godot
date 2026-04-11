@@ -364,16 +364,6 @@ theme_override_styles/pressed = SubResource("StyleBoxFlat_button_pressed")
 theme_override_styles/hover = SubResource("StyleBoxFlat_button_hover")
 text = "START PLAY"
 
-[node name="SurgeryTestButton" type="Button" parent="BoardFrame/BoardMargin/BoardContent/FooterRow" unique_id=1038187912]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(248, 58)
-layout_mode = 2
-theme_override_colors/font_color = Color(0.894118, 0.901961, 0.952941, 1)
-theme_override_colors/font_pressed_color = Color(0.894118, 0.901961, 0.952941, 1)
-theme_override_colors/font_hover_color = Color(0.972549, 0.952941, 1, 1)
-theme_override_font_sizes/font_size = 18
-text = "SURGERY TEST"
-
 [node name="DossierBackdropDim" type="ColorRect" parent="." unique_id=206580094]
 visible = false
 z_index = 9
@@ -397,4 +387,3 @@ grow_horizontal = 1
 grow_vertical = 1
 
 [connection signal="pressed" from="BoardFrame/BoardMargin/BoardContent/FooterRow/BeginButton" to="." method="_on_begin_button_pressed"]
-[connection signal="pressed" from="BoardFrame/BoardMargin/BoardContent/FooterRow/SurgeryTestButton" to="." method="_on_surgery_test_button_pressed"]

@@ -1,10 +1,30 @@
 extends Control
 
-const TITLE_SCENE_PATH := "res://scenes/start/TitleScreen.tscn"
-const NEXT_SCENE_PATH := "res://scenes/gameplay/FinalScreen.tscn"
+const GAMEPLAY_SCENE_PATH := "res://scenes/gameplay/GameplayScreen.tscn"
+const FINAL_SCENE_PATH := "res://scenes/gameplay/FinalScreen.tscn"
 const TOTAL_CONTROL := 2
 const ZONE_IDS := ["scene", "victoria", "desmond"]
-const ZONE_CONTENT: Dictionary[String, Dictionary] = {
+const PHASE_COPY := {
+	"F1": {
+		"overline": "WEYR CONTACT // SURGERY LAYER // F1",
+		"title": "ALLOCATE TENSION // FIRST CUT",
+		"subtitle": "Freeze 1 opens the carrying line.",
+		"helper": "Route exactly 2 control for F1. This allocation is added to the run total before Gameplay resumes at F2.",
+	},
+	"F2": {
+		"overline": "WEYR CONTACT // SURGERY LAYER // F2",
+		"title": "ALLOCATE TENSION // SECOND CUT",
+		"subtitle": "Freeze 2 compounds the earlier choice.",
+		"helper": "Route exactly 2 control for F2. The result stacks onto prior allocations before Gameplay resumes at F3.",
+	},
+	"F3": {
+		"overline": "WEYR CONTACT // SURGERY LAYER // F3",
+		"title": "ALLOCATE TENSION // FINAL CUT",
+		"subtitle": "Freeze 3 resolves the carrier.",
+		"helper": "Route exactly 2 control for F3. This final pass resolves the accumulated run and exits to Final Screen.",
+	},
+}
+const ZONE_CONTENT := {
 	"scene": {
 		"title": "SCENE",
 		"subtitle": "Escalate the rupture",
@@ -61,15 +81,15 @@ const COLOR_TEXT_DIM := Color(0.48, 0.5, 0.58, 0.86)
 
 @onready var remaining_label: Label = $Margin/RootColumn/FooterBlock/RemainingLabel
 @onready var status_label: Label = $Margin/RootColumn/FooterBlock/StatusLabel
-@onready var back_button: Button = $Margin/RootColumn/FooterBlock/ButtonRow/BackButton
 @onready var reset_button: Button = $Margin/RootColumn/FooterBlock/ButtonRow/ResetButton
 @onready var confirm_button: Button = $Margin/RootColumn/FooterBlock/ButtonRow/ConfirmButton
 
-var pulse_time: float = 0.0
-var zone_panels: Dictionary[String, PanelContainer] = {}
-var zone_title_labels: Dictionary[String, Label] = {}
-var zone_subtitle_labels: Dictionary[String, Label] = {}
-var zone_point_labels: Dictionary[String, Label] = {}
+var pulse_time := 0.0
+var source_phase := "F1"
+var zone_panels := {}
+var zone_title_labels := {}
+var zone_subtitle_labels := {}
+var zone_point_labels := {}
 var zone_allocation := {
 	"scene": 0,
 	"victoria": 0,
@@ -78,6 +98,7 @@ var zone_allocation := {
 
 
 func _ready() -> void:
+	_resolve_source_phase()
 	_configure_copy()
 	_configure_buttons()
 	_configure_zones()
@@ -164,16 +185,12 @@ func _draw_route_layer(layer: Control) -> void:
 	layer.draw_colored_polygon(wound_points, Color(0.39, 0.11, 0.52, 0.22))
 
 
-func _unhandled_input(event: InputEvent) -> void:
-	if event.is_action_pressed("ui_cancel"):
-		_return_to_title()
-
-
 func _configure_copy() -> void:
-	overline_label.text = "WEYR CONTACT // SURGERY LAYER"
-	title_label.text = "ALLOCATE TENSION"
-	subtitle_label.text = "The price cannot be erased. Only redirected."
-	helper_label.text = "Click zones to route exactly 2 control. Split pressure if needed, then confirm the carrying line."
+	var copy: Dictionary = PHASE_COPY.get(source_phase, PHASE_COPY["F1"])
+	overline_label.text = copy["overline"]
+	title_label.text = copy["title"]
+	subtitle_label.text = copy["subtitle"]
+	helper_label.text = copy["helper"]
 	weyr_title.text = "WEYR"
 	weyr_subtitle.text = "Hungry pressure\nheld open"
 	remaining_label.text = ""
@@ -200,14 +217,11 @@ func _update_header_width() -> void:
 
 
 func _configure_buttons() -> void:
-	back_button.text = "RETURN"
 	reset_button.text = "RESET ALLOCATION"
 	confirm_button.text = "CONFIRM ROUTE"
-	back_button.pressed.connect(_return_to_title)
 	reset_button.pressed.connect(_reset_allocation)
 	confirm_button.pressed.connect(_confirm_allocation)
 	confirm_button.disabled = true
-	_apply_button_style(back_button, false)
 	_apply_button_style(reset_button, false)
 	_apply_button_style(confirm_button, true)
 
@@ -235,10 +249,10 @@ func _configure_zones() -> void:
 	}
 
 	for zone_id: String in zone_panels.keys():
-		var panel := zone_panels[zone_id]
-		var title := zone_title_labels[zone_id]
-		var subtitle := zone_subtitle_labels[zone_id]
-		var points := zone_point_labels[zone_id]
+		var panel: PanelContainer = zone_panels[zone_id] as PanelContainer
+		var title: Label = zone_title_labels[zone_id] as Label
+		var subtitle: Label = zone_subtitle_labels[zone_id] as Label
+		var points: Label = zone_point_labels[zone_id] as Label
 		var zone_copy: Dictionary = ZONE_CONTENT[zone_id]
 
 		panel.mouse_filter = Control.MOUSE_FILTER_STOP
@@ -272,14 +286,12 @@ func _confirm_allocation() -> void:
 		return
 
 	if has_node("/root/GameState"):
-		GameState.set_surgery_allocation(zone_allocation.duplicate(true))
-		GameState.resolve_surgery_allocation()
+		GameState.apply_surgery_result(source_phase, zone_allocation.duplicate(true))
+		if GameState.is_run_complete():
+			get_tree().change_scene_to_file(FINAL_SCENE_PATH)
+			return
 
-	get_tree().change_scene_to_file(NEXT_SCENE_PATH)
-
-
-func _return_to_title() -> void:
-	get_tree().change_scene_to_file(TITLE_SCENE_PATH)
+	get_tree().change_scene_to_file(GAMEPLAY_SCENE_PATH)
 
 
 func _reset_allocation() -> void:
@@ -335,20 +347,41 @@ func _build_status_line() -> String:
 		parts.append("%s %d" % [ZONE_CONTENT[zone_id]["title"], int(zone_allocation.get(zone_id, 0))])
 
 	if _get_total_allocated() < TOTAL_CONTROL:
-		return "Allocation live: %s. Route %d more control to commit the carrying line." % [", ".join(parts), _get_remaining_control()]
+		return "Allocation live for %s: %s. Route %d more control to commit this freeze." % [source_phase, ", ".join(parts), _get_remaining_control()]
 
 	var outcome_id := _resolve_ending_id()
-	return "Allocation locked: %s. Full concentration resolves %s; any split resolves 12D." % [", ".join(parts), outcome_id]
+	return "Allocation locked for %s: %s. This pass would resolve %s in isolation; the run resolves from the accumulated total after F3." % [source_phase, ", ".join(parts), outcome_id]
 
 
 func _resolve_ending_id() -> String:
-	if int(zone_allocation.get("scene", 0)) == TOTAL_CONTROL:
-		return "12A"
-	if int(zone_allocation.get("victoria", 0)) == TOTAL_CONTROL:
-		return "12B"
-	if int(zone_allocation.get("desmond", 0)) == TOTAL_CONTROL:
-		return "12C"
-	return "12D"
+	var outcome_key := "mixed"
+	if has_node("/root/GameState"):
+		outcome_key = GameState.get_surgery_pass_outcome(zone_allocation)
+	else:
+		if int(zone_allocation.get("scene", 0)) == TOTAL_CONTROL:
+			outcome_key = "scene"
+		elif int(zone_allocation.get("victoria", 0)) == TOTAL_CONTROL:
+			outcome_key = "victoria"
+		elif int(zone_allocation.get("desmond", 0)) == TOTAL_CONTROL:
+			outcome_key = "desmond"
+
+	match outcome_key:
+		"scene":
+			return "12A"
+		"victoria":
+			return "12B"
+		"desmond":
+			return "12C"
+		_:
+			return "12D"
+
+
+func _resolve_source_phase() -> void:
+	if has_node("/root/GameState"):
+		GameState.ensure_runtime_phase()
+		source_phase = GameState.current_phase
+	if not PHASE_COPY.has(source_phase):
+		source_phase = "F1"
 
 
 func _to_layer_center(control: Control, layer: Control) -> Vector2:

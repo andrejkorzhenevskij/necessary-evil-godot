@@ -252,4 +252,4 @@ text = "RESTART RUN"
 [node name="ReturnButton" type="Button" parent="Margin/RootColumn/FooterBlock/ButtonRow" unique_name_in_owner = true]
 custom_minimum_size = Vector2(210, 50)
 layout_mode = 2
-text = "RETURN TO TITLE"
+text = "BACK TO MENU"
