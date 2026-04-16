@@ -2,71 +2,406 @@ extends Control
 
 const TITLE_SCENE_PATH := "res://scenes/start/TitleScreen.tscn"
 const SURGERY_SCENE_PATH := "res://scenes/gameplay/SurgeryLayer.tscn"
+const SNAPSHOT_SCENE_PATH := "res://scenes/gameplay/SnapshotScreen.tscn"
+const FINAL_SCENE_PATH := "res://scenes/gameplay/FinalScreen.tscn"
+const F1_SCRIPT_PATH := "res://narrative/F1_script.txt"
 const PHASE_FLOW := ["F1", "F2", "F3"]
 const FILM_METRIC_MAX := 9.0
-const PHASE_CONTENT := {
-	"F1": {
-		"scene_image_label": "F1 // OPERATING FLOOR",
-		"scene_image_note": "Freeze 1 establishes the field. The first cut hands directly into Surgery Layer before the run can settle.",
-		"inner_voice": "OCTAVIUS INNER VOICE // Name the wound before it starts naming you.",
-		"overline": "FIELD FLOW // F1",
-		"title": "Operating Floor",
-		"beat_line": "INT. PREP BAY - FIRST FREEZE",
-		"body_copy": "[i]The run opens in a controlled chamber.[/i]\n\nF1 now lives inside the shared runtime shell. Read the setup, inspect the tracked channels, and move into Surgery Layer when the freeze point hits.",
-		"cue_card": "Phase carrier: GameplayScreen. Next forced step: Surgery Layer for F1.",
-		"scratch_notes": "Runtime path: Title -> Gameplay(F1) -> Surgery -> Gameplay(F2).",
-		"primary_action": "Enter Surgery Layer",
-		"secondary_action": "Return to Title",
-		"slot_a_title": "Scene Channel",
-		"slot_a_cue": "first fracture: escalation available",
-		"slot_b_title": "Victoria Channel",
-		"slot_b_cue": "first fracture: exit pressure tracked",
-		"slot_c_title": "Desmond Channel",
-		"slot_c_cue": "first fracture: precision pressure tracked",
+const STEP_SEPARATOR := "::step"
+const AUTHORED_LINE_COMMAND_PREFIX := "::"
+const OCTAVIA_AUTO_CLEAR_CLICKS := 2
+const TURN_CLICK_COUNT := 3
+const FADE_DURATION := 1.5
+const PAN_DEFAULT_DURATION := 1.15
+const PAN_JITTER_AMPLITUDE := 34.0
+const TURN_GLITCH_SHIFT := 18.0
+const FRAME_STRIP_BASE_WIDTH := 40.0
+const FRAME_STRIP_MIN_WIDTH := 24.0
+const FRAME_VIEWPORT_MIN_WIDTH := 180.0
+const FRAME_SIDE_GUTTER := 12.0
+const FRAME_TOP_MATTE := 18.0
+const FRAME_BOTTOM_MATTE := 18.0
+const FRAME_STRIP_TO_PORTRAIT_GAP := 22.0
+const PORTRAIT_STRIP_BASE_HEIGHT := 92.0
+const PORTRAIT_STRIP_MIN_HEIGHT := 76.0
+const PORTRAIT_STRIP_SIDE_INSET := 14.0
+
+const PAN_PRESETS := [
+	{
+		"name": "drift_right",
+		"start_scale": Vector2(1.02, 1.02),
+		"end_scale": Vector2(1.08, 1.08),
+		"start_offset": Vector2(-12.0, -6.0),
+		"end_offset": Vector2(20.0, -14.0),
 	},
-	"F2": {
-		"scene_image_label": "F2 // THEATER HOLD",
-		"scene_image_note": "Freeze 2 returns to the same runtime shell with prior allocation already recorded. The second cut compounds what was preserved.",
-		"inner_voice": "OCTAVIUS INNER VOICE // The room remembers where you pushed first.",
-		"overline": "FIELD FLOW // F2",
-		"title": "Second Threshold",
-		"beat_line": "INT. SURGERY THEATER - MID-RUN",
-		"body_copy": "[i]The shell stays the same, the pressure changes.[/i]\n\nF2 is no longer a separate playable scene. GameplayScreen resumes here, reflects the carried state, and pushes the run into Surgery Layer again.",
-		"cue_card": "Freeze 2 stacks onto the recorded totals instead of replacing them.",
-		"scratch_notes": "Runtime path: Gameplay(F2) -> Surgery -> Gameplay(F3).",
-		"primary_action": "Route Freeze 2",
-		"secondary_action": "Return to Title",
-		"slot_a_title": "Scene Channel",
-		"slot_a_cue": "pressure carried from the first cut",
-		"slot_b_title": "Victoria Channel",
-		"slot_b_cue": "exit integrity still contested",
-		"slot_c_title": "Desmond Channel",
-		"slot_c_cue": "control cost now compounding",
+	{
+		"name": "drift_down",
+		"start_scale": Vector2(1.03, 1.03),
+		"end_scale": Vector2(1.09, 1.09),
+		"start_offset": Vector2(10.0, -18.0),
+		"end_offset": Vector2(-8.0, 16.0),
 	},
-	"F3": {
-		"scene_image_label": "F3 // RESOLUTION EDGE",
-		"scene_image_note": "Freeze 3 is the last playable beat. One final surgery pass resolves the run and hands off to Final Screen.",
-		"inner_voice": "OCTAVIUS INNER VOICE // Whatever carries the last weight writes the archive.",
-		"overline": "FIELD FLOW // F3",
-		"title": "Final Threshold",
-		"beat_line": "INT. ARCHIVE EDGE - LAST FREEZE",
-		"body_copy": "[i]The same carrier now holds the closing beat.[/i]\n\nF3 remains gameplay inside the shared shell. Enter Surgery Layer one last time, let GameState resolve the accumulated load, and exit cleanly into Final Screen.",
-		"cue_card": "Last runtime step: Surgery resolves totals, then Final Screen reads the recorded outcome.",
-		"scratch_notes": "Runtime path: Gameplay(F3) -> Surgery -> Final.",
-		"primary_action": "Resolve Final Surgery",
-		"secondary_action": "Return to Title",
-		"slot_a_title": "Scene Channel",
-		"slot_a_cue": "final escalation would dominate the record",
-		"slot_b_title": "Victoria Channel",
-		"slot_b_cue": "final mercy would carry the exit",
-		"slot_c_title": "Desmond Channel",
-		"slot_c_cue": "final precision would narrow the ending",
+	{
+		"name": "slow_push",
+		"start_scale": Vector2(1.00, 1.00),
+		"end_scale": Vector2(1.07, 1.07),
+		"start_offset": Vector2(0.0, 0.0),
+		"end_offset": Vector2(10.0, -10.0),
+	},
+]
+
+const IMAGE_LIBRARY := {
+	"image_1": "res://art/image_1.png",
+	"image_2": "res://art/image_2.png",
+	"image_3": "res://art/image_3.png",
+	"image_4": "res://art/image_4.png",
+	"image_4-2.png": "res://art/image_4-2.png",
+	"image_5": "res://art/image_5.png",
+	"image_6": "res://art/image_6.png",
+	"image_7": "res://art/image_7.png",
+	"image_8": "res://art/image_8.png",
+	"image_9": "res://art/image_9.png",
+	"image_10": "res://art/image_10.png",
+	"image_11": "res://art/image_11.png",
+	"image_12": "res://art/image_12.png",
+	"image_13": "res://art/image_13.png",
+	"image_14": "res://art/image_14.png",
+	"image_15": "res://art/image_15.png",
+	"image_16": "res://art/image_16.png",
+	"image_18": "res://art/image_18.png",
+	"image_19": "res://art/image_19.png",
+	"prep_bay": "res://art/image_1.png",
+	"corridor_flash": "res://art/image_2.png",
+	"theater_hold": "res://art/image_5.png",
+	"resolution_edge": "res://art/image_7.png",
+}
+
+const OVERLAY_LIBRARY := {
+	"scan": {
+		"label": "SCAN OVERLAY",
+		"note": "Field telemetry rises over the frame. The procedure is not active yet.",
+	},
+	"target_lock": {
+		"label": "TARGET LOCK",
+		"note": "The room narrows around the cut point. Advance again to commit the handoff.",
 	},
 }
 
+const SURGERY_OUTCOME_LABELS := {
+	"12A": "OUTCOME_12A",
+	"12B": "OUTCOME_12B",
+	"12C": "OUTCOME_12C",
+	"12D": "OUTCOME_12D",
+}
+
+const SAMPLE_SEQUENCE_BY_PHASE := {
+	"F1": """::step
+[img: image_1]
+РАССКАЗЧИК:
+Вейр выбрасывает протуберанцы вверх — на сотни метров, иногда на километры.
+
+::step
+[img: image_2]
+РАССКАЗЧИК:
+Так он «охотится» на живых.
+
+::step
+[img: image_3]
+РАССКАЗЧИК:
+Хотя охотиться он, конечно, не может. Это просто свойство.
+
+::step
+[img: image_4]
+ДЕЗМОНД:
+Это… чёрт меня дери… оно сработало!
+
+::step
+[octavia: Красиво упал. Хотя я бы ронял ближе к центру.]
+
+::step
+ДЕЗМОНД:
+И вопрос теперь — что с этим делать?.. И где я.
+[img: image_4-2.png]
+
+::pan
+
+::step
+РАССКАЗЧИК:
+Но довольно философии. Давайте следить за героем нашего фильма.
+
+::step
+[img: image_5]
+ДЕЙСТВИЕ:
+ДЕЗМОНД осторожно встаёт.
+Тело рядом дёргается, высекая из сетки искры.
+Он приседает, ловит искру в воздухе — и тут же одёргивает руку, будто обжигается.
+
+::step
+[octavia: Слишком ровно происходит… Стоп. Что?]
+
+::step
+КРУПНО:
+Под его шагами искры не вылетают.
+
+[octavia: Я вообще не должен этого видеть! А меня волнует, что всё слишком… Ровно?]
+
+::step
+ДЕЙСТВИЕ:
+ДЕЗМОНД подходит к мостику.
+Переходит на соседнюю платформу.
+У мостика стоит столбик с небольшим пультом или датчиком.
+[img: image_6]
+
+::step
+ДЕЗМОНД (ТИХО):
+Ноль реакции. И искр — ноль. Оттого, что я — не отсюда, да.
+
+::step
+ДЕЙСТВИЕ:
+На пульте горит красный огонёк.
+ДЕЗМОНД машет рукой рядом, потом касается. Ничего.
+
+::step
+ДЕЗМОНД (ТИХО):
+Здесь не жарко и не влажно. Дымка висит в метре над полом — явно не пар и не туман...
+
+::step
+[img: image_7]
+ВИЗУАЛ:
+Там, где нет платформ, нет и дымки.
+Видно широкое плоское чёрное «крыло» — ромбовидное, с фиолетовыми огнями по краям. Оно удаляется.
+[octavia: И вот это, это — я, но… это ведь уже произошло около часа назад…]
+
+::step
+[img: image_8]
+ЗВУК:
+Тяжёлые, уверенные, бездушные шаги.
+
+ДЕЙСТВИЕ:
+ДЕЗМОНД замечает лестницу на противоположном конце платформы.
+Лестница уходит вверх, в дымку. ДЕЗМОНД прячется на ней.
+
+ДЕЙСТВИЕ:
+На этой платформе — такие же сетчатые полы, дымка в метре над ними, массивные угловатые механизмы с фиолетовыми искрами внутри.
+И ещё — люди.
+
+КРУПНЕЕ:
+И не-люди.
+
+::step
+[img: image_9]
+
+::pan
+
+::step
+ДЕЗМОНД:
+Ох ты ж, храни меня святой Шелдон!..
+
+[octavia: Это повтор. Почему это повтор?]
+
+ДЕЙСТВИЕ:
+Люди спокойно и организованно идут к дальней стороне платформы, откуда слышны шаги.
+Автоматоны — нет.
+
+КРУПНО:
+Под ногами людей из пола вылетают фиолетовые псевдо-искры.
+Под ногами автоматонов — нет, под ногами Дезмонда — тоже нет.
+
+::step
+[img: image_10]
+
+ДЕЙСТВИЕ:
+Источник шагов спускается по той же лестнице, по которой поднимаются люди.
+
+ВИЗУАЛ:
+Это боевой автоматон.
+Широкий, блестящий, с очень человеческим на вид ружьём.
+
+ЗВУК / ДЕЙСТВИЕ:
+Где-то вдали раздаётся выстрел.
+Из груди автоматона высекаются обычные искры — металлом о металл.
+Он слегка пошатывается.
+
+::step
+[img: image_11]
+КРУПНО:
+И ничего больше.
+
+::step
+ДЕЗМОНД (ТИХО):
+Кто бы это ни был, нужно помочь.
+
+::step
+ДЕЙСТВИЕ:
+На Дезмонда не обращают внимания.
+Он присматривается: сквозь дымку видно фигуру в красном и фигуру в сером.
+
+[octavia: Ну вот для начала, с чего он взял, что стреляли — хорошие ребята, а не наоборот?]
+
+::step
+ДЕЙСТВИЕ:
+ДЕЗМОНД замечает на краю платформы аварийный ящик.
+По автоматону ещё пару раз безуспешно стреляют.
+ДЕЗМОНД перебегает к ящику.
+
+КРУПНО:
+Внутри — сигнальный пистолет. Или что-то очень на него похожее.
+
+::step
+[img: image_12]
+
+::pan
+
+::step
+ДЕЙСТВИЕ:
+Автоматон делает тяжёлый ровный шаг и вскидывает ружьё.
+ДЕЗМОНД целится не в него, а в пол под его ногами.
+
+ДЕЗМОНД (ТИХО):
+Ну вот с чего я вообще взял…
+
+[octavia: …Это я делаю?]
+
+::step 
+::goto: SURGERY MODE
+
+::label: OUTCOME_12A
+
+::step
+[img: image_13]
+::turn
+
+::step
+ДЕЙСТВИЕ:
+Ракета взрывается под ногами автоматона. Он теряет равновесие.
+
+::step
+Выстрел с той стороны попадает туда же — под ноги.
+
+::step
+Сетка надрывается.
+
+::step
+[img: image_14]
+ДЕЙСТВИЕ:
+Автоматон проваливается в разрыв, выпускает ружьё и по-человечески хватается за край сетки.
+
+::label: OUTCOME_12B
+
+::step
+[img: image_15]
+::turn
+
+::step
+ДЕЙСТВИЕ:
+Пистолет оказывается сигнальным — и это кстати. Ракета отскакивает от пола и взрывается под потолком следующего этажа, в дымке.
+
+::step
+Дымка мгновенно зеленеет, опускается до пола и становится непроглядной.
+
+::step
+ЗВУК:
+С той стороны звучит несколько выстрелов.
+
+ДЕЙСТВИЕ:
+Автоматону они не вредят, но сбивают крепление ружья.
+Ружьё падает на пол.
+
+::step
+[img: image_16]
+ДЕЙСТВИЕ:
+ДЕЗМОНД кидается автоматону под ноги, подхватывает ружьё и бежит прочь.
+
+ЗВУК:
+Где-то вдали раздаётся женский вскрик.
+
+::label: OUTCOME_12C
+
+::step
+[img: image_14]
+::turn
+
+::step
+ДЕЙСТВИЕ:
+Они стреляют одновременно.
+
+::step
+Отдача и удар в сетку роняют автоматона. Он проваливается в разрыв, выпускает ружьё, хватается за сетку.
+
+::step
+Сетка рвётся, автоматон летит вниз. Ружьё вылетает из рук и скользит к ДЕЗМОНДУ.
+
+::step
+[img: image_18]
+[octavia: Как в дрянном синематике стоит...]
+
+::step
+::pan
+
+::step
+КРУПНО:
+Все, кто остался на платформе, оборачиваются к нему.
+
+::step
+ЗВУК / ДЕЙСТВИЕ:
+Снизу лязг — автоматон упал на платформу ниже. ДЕЗМОНД подхватывает оружие и бросается наутёк.
+
+ЗВУК:
+Где-то вдали раздаётся женский вскрик.
+
+::label: OUTCOME_12D
+
+::step
+[img: image_19]
+::turn
+
+::step
+[octavia: Вот! Опять это «слишком гладко!»]
+
+::step
+ДЕЙСТВИЕ:
+Мир на долю секунды блекнет. Потом вокруг вспыхивает форменное светопреставление.
+
+::step
+Пуля с той стороны попадает в ракету. Та взрывается в воздухе, рассыпаясь фиолетовыми не-искрами.
+
+::step
+Автоматон начинает судорожно дёргаться и роняет ружьё.
+
+::step
+[img: image_16]
+ДЕЙСТВИЕ:
+ДЕЗМОНД кидается к оружию, подхватывает его и бросается наутёк. Где-то вдали слышен женский вскрик.""",
+	"F2": """[phase: F2]
+[img: theater_hold]
+[octavia: F2 sample sequence is active until authored content replaces it.]
+
+The shell reopens carrying the prior totals.
+::step
+::goto: SURGERY MODE""",
+	"F3": """[phase: F3]
+[img: resolution_edge]
+[octavia: Last playable beat. One more surgery pass resolves the run.]
+
+The archive edge stays stable just long enough for one final routing step.
+::step
+::goto: SURGERY MODE""",
+}
+
+@onready var scene_image_area: PanelContainer = $Margin/RootStack/MainRow/SceneFrame/FrameMargin/FrameCanvas/SceneImageArea
+@onready var scene_image_texture: TextureRect = $Margin/RootStack/MainRow/SceneFrame/FrameMargin/FrameCanvas/SceneImageArea/SceneImageTexture
 @onready var scene_image_label: Label = $Margin/RootStack/MainRow/SceneFrame/FrameMargin/FrameCanvas/SceneImageArea/SceneImageLabel
 @onready var scene_image_note: Label = $Margin/RootStack/MainRow/SceneFrame/FrameMargin/FrameCanvas/SceneImageArea/SceneImageNote
+@onready var inner_voice_layer: Control = $Margin/RootStack/MainRow/SceneFrame/FrameMargin/FrameCanvas/SceneImageArea/OctaviusInnerVoiceLayer
 @onready var inner_voice_label: Label = $Margin/RootStack/MainRow/SceneFrame/FrameMargin/FrameCanvas/SceneImageArea/OctaviusInnerVoiceLayer/OctaviusInnerVoiceLabel
+@onready var scene_frame: PanelContainer = $Margin/RootStack/MainRow/SceneFrame
+@onready var frame_canvas: Control = $Margin/RootStack/MainRow/SceneFrame/FrameMargin/FrameCanvas
+@onready var filmstrip_left: TextureRect = $Margin/RootStack/MainRow/SceneFrame/FrameMargin/FrameCanvas/FilmstripLeft
+@onready var filmstrip_right: TextureRect = $Margin/RootStack/MainRow/SceneFrame/FrameMargin/FrameCanvas/FilmstripRight
+@onready var fade_overlay: ColorRect = $FadeOverlay
+@onready var turn_interference_a: ColorRect = $Margin/RootStack/MainRow/SceneFrame/FrameMargin/FrameCanvas/SceneImageArea/TurnInterferenceA
+@onready var turn_interference_b: ColorRect = $Margin/RootStack/MainRow/SceneFrame/FrameMargin/FrameCanvas/SceneImageArea/TurnInterferenceB
+@onready var pan_prompt_label: Label = $PanPromptLabel
 
 @onready var portrait_strip: PanelContainer = $Margin/RootStack/MainRow/SceneFrame/FrameMargin/FrameCanvas/PortraitStrip
 @onready var portrait_bleach_overlay: ColorRect = $Margin/RootStack/MainRow/SceneFrame/FrameMargin/FrameCanvas/PortraitStrip/PortraitFx/BleachOverlay
@@ -90,36 +425,121 @@ const PHASE_CONTENT := {
 @onready var dossier_slot_c_headshot_label: Label = $Margin/RootStack/MainRow/SceneFrame/FrameMargin/FrameCanvas/PortraitStrip/PortraitMargin/PortraitRow/DossierSlotC/DossierSlotCMargin/DossierSlotCStack/DossierSlotCHeadshot/DossierSlotCHeadshotLabel
 @onready var dossier_slot_c_title: Label = $Margin/RootStack/MainRow/SceneFrame/FrameMargin/FrameCanvas/PortraitStrip/PortraitMargin/PortraitRow/DossierSlotC/DossierSlotCMargin/DossierSlotCStack/DossierSlotCTitle
 @onready var dossier_slot_c_cue: Label = $Margin/RootStack/MainRow/SceneFrame/FrameMargin/FrameCanvas/PortraitStrip/PortraitMargin/PortraitRow/DossierSlotC/DossierSlotCMargin/DossierSlotCStack/DossierSlotCCue
+@onready var frame_damage_top: ColorRect = $Margin/RootStack/MainRow/SceneFrame/FrameMargin/FrameCanvas/FrameDamageTop
+@onready var frame_damage_right: ColorRect = $Margin/RootStack/MainRow/SceneFrame/FrameMargin/FrameCanvas/FrameDamageRight
 
 @onready var overline: Label = $Margin/RootStack/MainRow/ScriptColumn/ScriptMargin/ScriptStack/Overline
 @onready var title_label: Label = $Margin/RootStack/MainRow/ScriptColumn/ScriptMargin/ScriptStack/Title
 @onready var beat_line: Label = $Margin/RootStack/MainRow/ScriptColumn/ScriptMargin/ScriptStack/BeatLine
 @onready var body_copy: RichTextLabel = $Margin/RootStack/MainRow/ScriptColumn/ScriptMargin/ScriptStack/BodyCopy
+@onready var cue_card: PanelContainer = $Margin/RootStack/MainRow/ScriptColumn/ScriptMargin/ScriptStack/CueCard
 @onready var cue_card_text: Label = $Margin/RootStack/MainRow/ScriptColumn/ScriptMargin/ScriptStack/CueCard/CueCardMargin/CueCardText
 @onready var scratch_notes: Label = $Margin/RootStack/MainRow/ScriptColumn/ScriptMargin/ScriptStack/ScratchNotes
+@onready var action_buttons: VBoxContainer = $Margin/RootStack/MainRow/ScriptColumn/ScriptMargin/ScriptStack/ActionButtons
 @onready var primary_action_button: Button = $Margin/RootStack/MainRow/ScriptColumn/ScriptMargin/ScriptStack/ActionButtons/PrimaryActionButton
 @onready var secondary_action_button: Button = $Margin/RootStack/MainRow/ScriptColumn/ScriptMargin/ScriptStack/ActionButtons/SecondaryActionButton
 @onready var tertiary_action_button: Button = $Margin/RootStack/MainRow/ScriptColumn/ScriptMargin/ScriptStack/ActionButtons/TertiaryActionButton
+@onready var surgery_overlay: Control = $SurgeryOverlay
+@onready var overlay_label: Label = $SurgeryOverlay/OverlayShade/OverlayLabel
+@onready var overlay_note: Label = $SurgeryOverlay/OverlayShade/OverlayNote
 
 var current_phase := "F1"
 var metrics_pulse_time := 0.0
+var authored_steps: Array[Dictionary] = []
+var authored_label_lookup := {}
+var current_step_index := 0
+var pending_octavia_clear_clicks := -1
+var is_fading_in := true
+var narrative_progression_locked := false
+var is_transitioning := false
+var turn_phase_index := 0
+var turn_clicks_remaining := 0
+var turn_resume_ready := false
+var is_pan_active := false
+var active_pan_tween: Tween
+var active_fade_tween: Tween
+var layout_refresh_queued := false
+var active_branch_end_step_index := -1
+var pending_initial_step_index := -1
+var pending_initial_branch_end_step_index := -1
 
 
 func _ready() -> void:
+	if has_node("/root/TitleMusic"):
+		TitleMusic.ensure_title_theme()
 	_resolve_phase()
 	_bind_actions()
-	_apply_phase_content()
+	_configure_display_channels()
+	_refresh_phase_headers()
+	_load_authored_sequence()
 	_refresh_metric_panel()
+	fade_overlay.show()
+	fade_overlay.color = Color(0, 0, 0, 1)
 	set_process(true)
+	call_deferred("_finish_initial_layout")
+
+
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_RESIZED:
+		_queue_frame_layout_refresh()
 
 
 func _process(delta: float) -> void:
+	if not _can_run_runtime_updates():
+		return
+
 	metrics_pulse_time += delta
 	_refresh_metric_panel()
 
 
+func _input(event: InputEvent) -> void:
+	if not _is_input_available():
+		return
+
+	if is_fading_in:
+		return
+
+	if is_pan_active:
+		return
+
+	if _is_turn_consuming_input():
+		if event.is_action_pressed("ui_accept"):
+			_advance_turn_sequence()
+			_mark_input_handled()
+			return
+
+		if event is InputEventMouseButton:
+			var turn_mouse_event := event as InputEventMouseButton
+			if turn_mouse_event.button_index == MOUSE_BUTTON_LEFT and turn_mouse_event.pressed:
+				_advance_turn_sequence()
+				_mark_input_handled()
+				return
+
+	if narrative_progression_locked:
+		return
+
+	if event.is_action_pressed("ui_accept"):
+		_debug_log_step_advance()
+		_advance_authored_step()
+		_mark_input_handled()
+		return
+
+	if event is InputEventMouseButton:
+		var mouse_event := event as InputEventMouseButton
+		if mouse_event.button_index == MOUSE_BUTTON_LEFT and mouse_event.pressed:
+			_debug_log_step_advance()
+			_advance_authored_step()
+			_mark_input_handled()
+
+
 func _resolve_phase() -> void:
-	if has_node("/root/GameState"):
+	if _has_game_state():
+		var pending_resume: Dictionary = GameState.peek_gameplay_resume()
+		var resume_phase := str(pending_resume.get("phase", ""))
+		if not resume_phase.is_empty() and PHASE_FLOW.has(resume_phase):
+			current_phase = resume_phase
+			return
+
 		GameState.ensure_runtime_phase()
 		current_phase = GameState.current_phase
 	if not PHASE_FLOW.has(current_phase):
@@ -127,53 +547,914 @@ func _resolve_phase() -> void:
 
 
 func _bind_actions() -> void:
-	primary_action_button.pressed.connect(_go_to_surgery)
-	secondary_action_button.pressed.connect(_return_to_title)
+	action_buttons.hide()
+	primary_action_button.hide()
+	secondary_action_button.text = "Return to Title"
 	tertiary_action_button.hide()
-	primary_action_button.grab_focus()
 
 
-func _apply_phase_content() -> void:
-	var content: Dictionary = PHASE_CONTENT.get(current_phase, PHASE_CONTENT["F1"])
+func _configure_display_channels() -> void:
+	overline.hide()
+	title_label.hide()
+	beat_line.hide()
+	cue_card.hide()
+	scratch_notes.hide()
+	body_copy.text = ""
+	body_copy.clear()
+	body_copy.scroll_to_line(0)
+	_clear_overlay()
+	_clear_octavia()
+	_style_octavia_label()
+	_style_pan_prompt()
+	_hide_pan_prompt()
+	_clear_turn_interference()
 
-	scene_image_label.text = content["scene_image_label"]
-	scene_image_note.text = "%s\n\nCompleted freezes: %s\nAccumulated routing: %s" % [
-		content["scene_image_note"],
-		_build_completed_summary(),
-		_build_allocation_summary(),
-	]
-	inner_voice_label.text = content["inner_voice"]
 
-	overline.text = content["overline"]
-	title_label.text = content["title"]
-	beat_line.text = content["beat_line"]
-	body_copy.text = "%s\n\nCurrent runtime phase: %s." % [content["body_copy"], current_phase]
-	cue_card_text.text = content["cue_card"]
-	scratch_notes.text = "%s\nLegacy scenes F1/F2/F3 remain preserved as reference only." % content["scratch_notes"]
+func _refresh_phase_headers() -> void:
+	overline.text = ""
+	title_label.text = ""
+	beat_line.text = ""
 
-	primary_action_button.text = content["primary_action"]
-	secondary_action_button.text = content["secondary_action"]
+
+func _load_authored_sequence() -> void:
+	var script_text := _get_authored_script_text(current_phase)
+	var parsed_script := _parse_steps(script_text)
+	authored_steps.clear()
+	for step_data: Variant in parsed_script.get("steps", []):
+		if step_data is Dictionary:
+			authored_steps.append(step_data)
+
+	authored_label_lookup = {}
+	var parsed_labels: Variant = parsed_script.get("labels", {})
+	if parsed_labels is Dictionary:
+		authored_label_lookup = parsed_labels
+
+	current_step_index = 0
+	active_branch_end_step_index = -1
+	pending_initial_step_index = -1
+	pending_initial_branch_end_step_index = -1
+	narrative_progression_locked = false
+	_reset_turn_state(true)
+	_log_parsed_step_preview()
+	_log_authored_labels()
+	_apply_pending_resume_state()
+
+	if authored_steps.is_empty():
+		authored_steps = [{"lines": ["[i]No authored steps found.[/i]"], "commands": []}]
+
+	if pending_initial_step_index < 0:
+		_apply_default_image_for_phase()
+	else:
+		print("[GameplayScreen] deferred initial image for pending resume step=", pending_initial_step_index)
+	_clear_octavia()
+
+
+func _get_authored_script_text(phase_id: String) -> String:
+	var source_used := "builtin"
+	var raw_text := SAMPLE_SEQUENCE_BY_PHASE.get(phase_id, SAMPLE_SEQUENCE_BY_PHASE["F1"]) as String
+	if phase_id == "F1":
+		var file_exists := FileAccess.file_exists(F1_SCRIPT_PATH)
+		print("[GameplayScreen] file_exists=", file_exists)
+		if file_exists:
+			source_used = "file"
+			raw_text = FileAccess.get_file_as_string(F1_SCRIPT_PATH)
+		else:
+			source_used = "fallback"
+
+	print("[GameplayScreen] script source=", source_used, " ", F1_SCRIPT_PATH if phase_id == "F1" else phase_id)
+	print("[GameplayScreen] raw_text_length=", raw_text.length())
+	print("[GameplayScreen] raw_preview=", JSON.stringify(_preview_text(raw_text)))
+	var normalized_text := _normalize_script_text(raw_text)
+	print("[GameplayScreen] normalized_text_length=", normalized_text.length())
+	print("[GameplayScreen] normalized_preview=", JSON.stringify(_preview_text(normalized_text)))
+	return normalized_text
+
+
+func _preview_text(text: String, max_chars: int = 120) -> String:
+	return text.substr(0, mini(text.length(), max_chars))
+
+
+func _normalize_script_text(text: String) -> String:
+	var normalized_text := text.replace("\r\n", "\n").replace("\r", "\n")
+	if normalized_text.begins_with("\ufeff"):
+		normalized_text = normalized_text.substr(1)
+	return normalized_text
+
+
+func _show_initial_step() -> void:
+	if pending_initial_step_index >= 0:
+		current_step_index = pending_initial_step_index
+		active_branch_end_step_index = pending_initial_branch_end_step_index
+		print("[GameplayScreen] presenting deferred resume step=", pending_initial_step_index, " branch_end_step_index=", pending_initial_branch_end_step_index)
+		pending_initial_step_index = -1
+		pending_initial_branch_end_step_index = -1
+
+	if authored_steps.is_empty() or current_step_index >= authored_steps.size():
+		return
+
+	var step: Dictionary = authored_steps[current_step_index]
+	current_step_index += 1
+	_apply_step(step)
+
+
+func _parse_steps(script_text: String) -> Dictionary:
+	var parsed_steps: Array[Dictionary] = []
+	var label_lookup := {}
+	var pending_labels: Array[String] = []
+	var step_started := false
+	var step_commands: Array[Dictionary] = []
+	var line_command_regex := RegEx.new()
+	line_command_regex.compile("^::([A-Za-z_]+)(?:\\s*:\\s*(.+))?$")
+	var step_text_builder := ""
+
+	for raw_line: String in script_text.split("\n", false):
+		var line := raw_line.strip_edges()
+		if line.begins_with(AUTHORED_LINE_COMMAND_PREFIX):
+			var match := line_command_regex.search(line)
+			if match != null:
+				var command_name := match.get_string(1).to_lower()
+				var command_value := match.get_string(2).strip_edges()
+				match command_name:
+					"step":
+						if step_started:
+							_append_parsed_step(parsed_steps, step_text_builder, step_commands)
+							step_commands.clear()
+							step_text_builder = ""
+
+						var target_step_index := parsed_steps.size()
+						for pending_label: String in pending_labels:
+							if label_lookup.has(pending_label):
+								push_warning("GameplayScreen: duplicate authored label '%s'" % pending_label)
+								continue
+							label_lookup[pending_label] = target_step_index
+
+						pending_labels.clear()
+						step_started = true
+					"label":
+						var normalized_label := _normalize_authored_label(command_value)
+						if normalized_label.is_empty():
+							push_warning("GameplayScreen: empty authored label declaration")
+						else:
+							pending_labels.append(normalized_label)
+					_:
+						if not step_started:
+							step_started = true
+						step_commands.append({
+							"name": command_name,
+							"value": command_value,
+						})
+				continue
+			push_warning("GameplayScreen: malformed authored control line '%s'" % line)
+
+		if not step_started:
+			step_started = true
+		var inline_data := _extract_inline_commands(raw_line)
+		var visible_text := str(inline_data.get("text", ""))
+		if not step_text_builder.is_empty():
+			step_text_builder += "\n"
+		step_text_builder += visible_text
+		for command_data: Variant in inline_data.get("commands", []):
+			if command_data is Dictionary:
+				step_commands.append(command_data)
+
+	if step_started:
+		_append_parsed_step(parsed_steps, step_text_builder, step_commands)
+	if not pending_labels.is_empty():
+		push_warning("GameplayScreen: labels without following step ignored: %s" % ", ".join(pending_labels))
+
+	print("[GameplayScreen] parsed total_steps=", parsed_steps.size())
+	print("[GameplayScreen] parsed labels=", label_lookup)
+	if parsed_steps.is_empty():
+		_log_zero_step_diagnostics(script_text)
+
+	return {
+		"steps": parsed_steps,
+		"labels": label_lookup,
+	}
+
+
+func _append_parsed_step(parsed_steps: Array[Dictionary], step_text_builder: String, step_commands: Array[Dictionary]) -> void:
+	var step_lines: Array[String] = []
+	var visible_text := step_text_builder.strip_edges()
+	if not visible_text.is_empty():
+		step_lines.append(visible_text)
+
+	var merged_commands: Array[Dictionary] = []
+	for command_data: Dictionary in step_commands:
+		merged_commands.append(command_data)
+
+	if merged_commands.is_empty() and step_lines.is_empty():
+		return
+
+	parsed_steps.append({
+		"lines": step_lines,
+		"commands": merged_commands,
+	})
+
+
+func _extract_inline_commands(step_text: String) -> Dictionary:
+	var commands: Array[Dictionary] = []
+	var visible_parts: Array[String] = []
+	var cursor := 0
+	var command_regex := RegEx.new()
+	command_regex.compile("\\[(img|overlay|octavia|goto|phase)\\s*:\\s*([^\\]]*)\\]|\\[(clear_overlay|clear_octavia)\\]")
+
+	for match: RegExMatch in command_regex.search_all(step_text):
+		var start := match.get_start()
+		if start > cursor:
+			visible_parts.append(step_text.substr(cursor, start - cursor))
+
+		var command_name := ""
+		var command_value := ""
+		if match.get_string(1) != "":
+			command_name = match.get_string(1)
+			command_value = match.get_string(2).strip_edges()
+		else:
+			command_name = match.get_string(3)
+
+		commands.append({
+			"name": command_name,
+			"value": command_value,
+		})
+		cursor = match.get_end()
+
+	if cursor < step_text.length():
+		visible_parts.append(step_text.substr(cursor))
+
+	var visible_text := "".join(visible_parts)
+	return {
+		"text": visible_text,
+		"commands": commands,
+	}
+
+
+func _advance_authored_step() -> void:
+	if not _is_runtime_active() or narrative_progression_locked or current_step_index >= authored_steps.size():
+		return
+
+	if active_branch_end_step_index >= 0 and current_step_index >= active_branch_end_step_index:
+		print("[GameplayScreen] branch playback complete at step=", current_step_index, " boundary=", active_branch_end_step_index)
+		current_step_index = authored_steps.size()
+		active_branch_end_step_index = -1
+		return
+
+	_clear_turn_visuals_if_pending()
+	_decay_octavia()
+
+	var step: Dictionary = authored_steps[current_step_index]
+	current_step_index += 1
+	_apply_step(step)
+
 	_refresh_metric_panel()
 
 
-func _go_to_surgery() -> void:
-	get_tree().change_scene_to_file(SURGERY_SCENE_PATH)
+func _apply_step(step: Dictionary) -> void:
+	if not _is_runtime_active():
+		return
+
+	_hide_pan_prompt()
+	var raw_commands: Variant = step.get("commands", [])
+	var commands: Array[Dictionary] = _build_command_array(raw_commands)
+	var raw_lines: Variant = step.get("lines", [])
+	var lines: Array[String] = _build_string_array(raw_lines)
+	print("[GameplayScreen] _apply_step step_index=", maxi(current_step_index - 1, 0), " lines_type=", type_string(typeof(raw_lines)), " commands_type=", type_string(typeof(raw_commands)), " line_count=", lines.size(), " command_count=", commands.size())
+	for command_idx: int in range(commands.size()):
+		var command_data: Dictionary = commands[command_idx]
+		print("[GameplayScreen] _apply_step command ", command_idx, " name=", str(command_data.get("name", "")), " value=", str(command_data.get("value", "")))
+
+	for command_data: Dictionary in commands:
+		_execute_command(command_data)
+		if narrative_progression_locked:
+			return
+
+	if not lines.is_empty():
+		_append_body_text("\n".join(lines))
+
+
+func _execute_command(command_data: Dictionary) -> void:
+	var command_name := str(command_data.get("name", ""))
+	var command_value := str(command_data.get("value", ""))
+	print("[GameplayScreen] executing command name=", command_name, " value=", command_value)
+
+	match command_name:
+		"img":
+			_apply_image(command_value)
+		"overlay":
+			_apply_overlay(command_value)
+		"clear_overlay":
+			_clear_overlay()
+		"octavia":
+			_set_octavia_text(command_value)
+		"clear_octavia":
+			_clear_octavia()
+		"goto":
+			_handle_goto_command(command_value)
+		"label":
+			_handle_label_command(command_value)
+		"pan":
+			_begin_pan(command_value)
+		"turn":
+			_begin_turn_sequence()
+		"phase":
+			_set_phase(command_value)
+		_:
+			push_warning("GameplayScreen: unsupported authored command '%s'" % command_name)
+
+
+func _handle_label_command(_label_name: String) -> void:
+	return
+
+
+func jump_to_label(label_name: String) -> bool:
+	var normalized_label := _normalize_authored_label(label_name)
+	if normalized_label.is_empty():
+		push_warning("GameplayScreen: cannot jump to empty label")
+		return false
+
+	if not authored_label_lookup.has(normalized_label):
+		push_warning("GameplayScreen: unknown authored label '%s'" % normalized_label)
+		return false
+
+	current_step_index = int(authored_label_lookup.get(normalized_label, 0))
+	active_branch_end_step_index = _resolve_branch_end_step_index(current_step_index)
+	narrative_progression_locked = false
+	print("[GameplayScreen] jump_to_label label=", normalized_label, " target_step_index=", current_step_index, " branch_end_step_index=", active_branch_end_step_index)
+	return true
+
+
+func _resolve_branch_end_step_index(target_step_index: int) -> int:
+	var sorted_targets: Array[int] = []
+	for mapped_step_index: Variant in authored_label_lookup.values():
+		sorted_targets.append(int(mapped_step_index))
+	sorted_targets.sort()
+
+	for branch_start: int in sorted_targets:
+		if branch_start > target_step_index:
+			return branch_start
+
+	return authored_steps.size()
+
+
+func _resolve_outcome_label(outcome_id: String) -> String:
+	return str(SURGERY_OUTCOME_LABELS.get(outcome_id.strip_edges().to_upper(), ""))
+
+
+func _log_authored_labels() -> void:
+	var label_names: Array[String] = []
+	for label_name: Variant in authored_label_lookup.keys():
+		label_names.append(str(label_name))
+	label_names.sort()
+
+	for label_name: String in label_names:
+		print("[GameplayScreen] parsed label ", label_name, " -> step ", int(authored_label_lookup.get(label_name, -1)))
+
+
+func _log_parsed_step_preview() -> void:
+	var preview_count := mini(authored_steps.size(), 5)
+	for step_idx: int in range(preview_count):
+		var step_data: Dictionary = authored_steps[step_idx]
+		var lines: Array[String] = _build_string_array(step_data.get("lines", []))
+		var commands: Array[Dictionary] = _build_command_array(step_data.get("commands", []))
+		var labels: Array[String] = _labels_for_step_index(step_idx)
+		print("[GameplayScreen] parsed step preview index=", step_idx, " line_count=", lines.size(), " command_count=", commands.size(), " labels=", labels)
+
+
+func _log_zero_step_diagnostics(script_text: String) -> void:
+	var step_token_present := script_text.find(STEP_SEPARATOR) != -1
+	var split_parts := script_text.split(STEP_SEPARATOR, false)
+	print("[GameplayScreen] zero-step diagnostics step_token_present=", step_token_present, " step_split_parts=", split_parts.size())
+	if not split_parts.is_empty():
+		var preview_parts: Array[String] = []
+		for idx: int in range(mini(split_parts.size(), 3)):
+			preview_parts.append(_preview_text(split_parts[idx], 80))
+		print("[GameplayScreen] zero-step diagnostics split_preview=", preview_parts)
+
+
+func _labels_for_step_index(step_idx: int) -> Array[String]:
+	var labels: Array[String] = []
+	for label_name: Variant in authored_label_lookup.keys():
+		if int(authored_label_lookup.get(label_name, -1)) == step_idx:
+			labels.append(str(label_name))
+	labels.sort()
+	return labels
+
+
+func _build_string_array(value: Variant) -> Array[String]:
+	var typed_lines: Array[String] = []
+	if value is Array:
+		for entry: Variant in value:
+			typed_lines.append(str(entry))
+	return typed_lines
+
+
+func _build_command_array(value: Variant) -> Array[Dictionary]:
+	var typed_commands: Array[Dictionary] = []
+	if value is Array:
+		for entry: Variant in value:
+			if entry is Dictionary:
+				typed_commands.append(entry)
+	return typed_commands
+
+
+func _append_body_text(text_block: String) -> void:
+	if body_copy.text.is_empty():
+		body_copy.text = text_block
+	else:
+		body_copy.text += "\n\n%s" % text_block
+	body_copy.scroll_to_line(body_copy.get_line_count())
+
+
+func _apply_default_image_for_phase() -> void:
+	match current_phase:
+		"F2":
+			_apply_image("theater_hold")
+		"F3":
+			_apply_image("resolution_edge")
+		_:
+			_apply_image("prep_bay")
+
+
+func _apply_pending_resume_state() -> void:
+	if not _has_game_state():
+		return
+
+	var resume_data := GameState.consume_gameplay_resume()
+	if str(resume_data.get("phase", "")) != current_phase:
+		return
+
+	var requested_resume_label := _normalize_authored_label(str(resume_data.get("label", "")))
+	if not requested_resume_label.is_empty():
+		var outcome_id := ""
+		if _has_game_state():
+			outcome_id = str(GameState.current_outcome_id).strip_edges()
+		var resolved_label := _resolve_outcome_label(outcome_id)
+		if resolved_label.is_empty():
+			resolved_label = requested_resume_label
+		var resolved_target_step_index := int(authored_label_lookup.get(resolved_label, -1))
+		print("[GameplayScreen] surgery return outcome_id=", outcome_id)
+		print("[GameplayScreen] surgery return resolved_label=", resolved_label)
+		print("[GameplayScreen] surgery return target_step_index=", resolved_target_step_index)
+		if authored_label_lookup.has(resolved_label):
+			pending_initial_step_index = resolved_target_step_index
+			pending_initial_branch_end_step_index = _resolve_branch_end_step_index(resolved_target_step_index)
+			current_step_index = resolved_target_step_index
+			active_branch_end_step_index = pending_initial_branch_end_step_index
+			print("[GameplayScreen] queued deferred resume label=", resolved_label, " step_index=", pending_initial_step_index, " branch_end_step_index=", pending_initial_branch_end_step_index)
+			return
+		push_warning("GameplayScreen: unknown authored label '%s'" % resolved_label)
+
+	current_step_index = mini(int(resume_data.get("step_index", 0)), authored_steps.size())
+	pending_initial_step_index = current_step_index
+	pending_initial_branch_end_step_index = -1
+	print("[GameplayScreen] queued deferred resume step_index=", pending_initial_step_index)
+	active_branch_end_step_index = -1
+
+
+func _apply_image(image_id: String) -> void:
+	var image_path := str(IMAGE_LIBRARY.get(image_id, ""))
+	if image_path.is_empty():
+		push_warning("GameplayScreen: unknown image id '%s'" % image_id)
+		return
+
+	_reset_pan_state()
+	var image_texture := load(image_path) as Texture2D
+	scene_image_texture.texture = image_texture
+	scene_image_label.hide()
+	scene_image_note.hide()
+	print("[GameplayScreen] _apply_image id=", image_id)
+	if image_texture != null:
+		print("[GameplayScreen] _apply_image texture_size=", image_texture.get_size())
+	else:
+		print("[GameplayScreen] _apply_image texture_size=<null>")
+	print("[GameplayScreen] _apply_image scene_image_area.size=", scene_image_area.size)
+	print("[GameplayScreen] _apply_image scene_image_texture.size=", scene_image_texture.size)
+	print("[GameplayScreen] _apply_image scene_image_texture.global_rect=", scene_image_texture.get_global_rect())
+
+
+func _apply_overlay(overlay_id: String) -> void:
+	var overlay_data: Dictionary = OVERLAY_LIBRARY.get(overlay_id, {})
+	if overlay_data.is_empty():
+		push_warning("GameplayScreen: unknown overlay id '%s'" % overlay_id)
+		return
+
+	surgery_overlay.visible = true
+	overlay_label.text = str(overlay_data.get("label", overlay_id))
+	overlay_note.text = str(overlay_data.get("note", ""))
+
+
+func _clear_overlay() -> void:
+	surgery_overlay.visible = false
+	overlay_label.text = ""
+	overlay_note.text = ""
+
+
+func _set_octavia_text(text: String) -> void:
+	inner_voice_label.text = text
+	inner_voice_layer.visible = not text.is_empty()
+	inner_voice_label.visible = not text.is_empty()
+	inner_voice_layer.z_index = 10
+	inner_voice_label.z_index = 11
+	pending_octavia_clear_clicks = OCTAVIA_AUTO_CLEAR_CLICKS
+	print("[GameplayScreen] _set_octavia_text text=", text)
+	print("[GameplayScreen] _set_octavia_text layer_visible=", inner_voice_layer.visible)
+	print("[GameplayScreen] _set_octavia_text label_visible=", inner_voice_label.visible)
+	print("[GameplayScreen] _set_octavia_text layer_global_rect=", inner_voice_layer.get_global_rect())
+	print("[GameplayScreen] _set_octavia_text label_global_rect=", inner_voice_label.get_global_rect())
+	print("[GameplayScreen] _set_octavia_text layer_z_index=", inner_voice_layer.z_index)
+	print("[GameplayScreen] _set_octavia_text label_z_index=", inner_voice_label.z_index)
+
+
+func _clear_octavia() -> void:
+	inner_voice_label.text = ""
+	inner_voice_label.visible = false
+	inner_voice_layer.visible = false
+	pending_octavia_clear_clicks = -1
+
+
+func _decay_octavia() -> void:
+	if pending_octavia_clear_clicks < 0:
+		return
+
+	pending_octavia_clear_clicks -= 1
+	if pending_octavia_clear_clicks <= 0:
+		_clear_octavia()
+
+
+func _style_octavia_label() -> void:
+	inner_voice_label.add_theme_color_override("font_color", Color(1.0, 0.980392, 0.780392, 1.0))
+	inner_voice_label.add_theme_color_override("font_shadow_color", Color(0.0, 0.0, 0.0, 0.95))
+	inner_voice_label.add_theme_constant_override("shadow_offset_x", 2)
+	inner_voice_label.add_theme_constant_override("shadow_offset_y", 2)
+	inner_voice_label.add_theme_font_size_override("font_size", 18)
+	inner_voice_layer.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	inner_voice_layer.set_anchors_preset(Control.PRESET_FULL_RECT)
+	inner_voice_label.position = Vector2(28.0, 24.0)
+	inner_voice_label.size = Vector2(700.0, 96.0)
+	inner_voice_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+
+
+func _style_pan_prompt() -> void:
+	pan_prompt_label.visible = false
+	pan_prompt_label.add_theme_font_size_override("font_size", 18)
+	pan_prompt_label.add_theme_color_override("font_color", Color(0.95, 0.92, 0.78, 0.98))
+	pan_prompt_label.add_theme_color_override("font_shadow_color", Color(0.0, 0.0, 0.0, 0.9))
+	pan_prompt_label.add_theme_constant_override("shadow_offset_x", 2)
+	pan_prompt_label.add_theme_constant_override("shadow_offset_y", 2)
+
+
+func _show_pan_prompt() -> void:
+	pan_prompt_label.visible = true
+	pan_prompt_label.modulate = Color(1.0, 1.0, 1.0, 0.95)
+
+
+func _hide_pan_prompt() -> void:
+	if is_instance_valid(pan_prompt_label):
+		pan_prompt_label.visible = false
+
+
+func _queue_frame_layout_refresh() -> void:
+	if layout_refresh_queued:
+		return
+
+	layout_refresh_queued = true
+	call_deferred("_refresh_frame_layout")
+
+
+func _refresh_frame_layout() -> void:
+	layout_refresh_queued = false
+	if not is_instance_valid(frame_canvas):
+		return
+
+	for fixed_control: Control in [filmstrip_left, filmstrip_right, scene_image_area, portrait_strip, frame_damage_top, frame_damage_right]:
+		fixed_control.set_anchors_preset(Control.PRESET_TOP_LEFT)
+
+	var canvas_size := frame_canvas.size
+	if canvas_size.x <= 0.0 or canvas_size.y <= 0.0:
+		return
+
+	var portrait_height := clampf(canvas_size.y * 0.16, PORTRAIT_STRIP_MIN_HEIGHT, PORTRAIT_STRIP_BASE_HEIGHT)
+	var portrait_bottom := canvas_size.y - FRAME_BOTTOM_MATTE
+	var portrait_top := portrait_bottom - portrait_height
+	var strip_top := FRAME_TOP_MATTE
+	var strip_bottom := portrait_top - FRAME_STRIP_TO_PORTRAIT_GAP
+	if strip_bottom <= strip_top + 80.0:
+		portrait_height = maxf(PORTRAIT_STRIP_MIN_HEIGHT, portrait_height - ((strip_top + 80.0) - strip_bottom))
+		portrait_top = portrait_bottom - portrait_height
+		strip_bottom = portrait_top - FRAME_STRIP_TO_PORTRAIT_GAP
+
+	var strip_height := maxf(80.0, strip_bottom - strip_top)
+	var strip_width := _resolve_filmstrip_width(canvas_size.x)
+	var viewport_left := strip_width + FRAME_SIDE_GUTTER
+	var viewport_right := canvas_size.x - strip_width - FRAME_SIDE_GUTTER
+	var viewport_width := maxf(0.0, viewport_right - viewport_left)
+
+	filmstrip_left.position = Vector2(0.0, strip_top)
+	filmstrip_left.size = Vector2(strip_width, strip_height)
+	filmstrip_right.position = Vector2(canvas_size.x - strip_width, strip_top)
+	filmstrip_right.size = Vector2(strip_width, strip_height)
+
+	scene_image_area.position = Vector2(viewport_left, strip_top)
+	scene_image_area.size = Vector2(viewport_width, strip_height)
+
+	portrait_strip.position = Vector2(PORTRAIT_STRIP_SIDE_INSET, portrait_top)
+	portrait_strip.size = Vector2(maxf(0.0, canvas_size.x - PORTRAIT_STRIP_SIDE_INSET * 2.0), portrait_height)
+
+	inner_voice_label.position = Vector2(28.0, 24.0)
+	inner_voice_label.size = Vector2(maxf(220.0, scene_image_area.size.x - 56.0), minf(96.0, maxf(56.0, scene_image_area.size.y * 0.22)))
+
+	frame_damage_top.position = Vector2(viewport_left + 18.0, 0.0)
+	frame_damage_top.size = Vector2(maxf(0.0, viewport_width + FRAME_SIDE_GUTTER * 2.0 - 36.0), 10.0)
+	frame_damage_right.position = Vector2(maxf(0.0, canvas_size.x - 14.0), strip_top + 48.0)
+	frame_damage_right.size = Vector2(14.0, maxf(0.0, strip_height - 70.0))
+
+
+func _resolve_filmstrip_width(canvas_width: float) -> float:
+	var strip_width := FRAME_STRIP_BASE_WIDTH
+	var max_strip_width := maxf(FRAME_STRIP_MIN_WIDTH, (canvas_width - FRAME_VIEWPORT_MIN_WIDTH - FRAME_SIDE_GUTTER * 2.0) * 0.5)
+	strip_width = minf(strip_width, max_strip_width)
+	return maxf(FRAME_STRIP_MIN_WIDTH, strip_width)
+
+
+func _begin_pan(preset_name: String) -> void:
+	if not _is_runtime_active():
+		return
+
+	var preset := _resolve_pan_preset(preset_name)
+	is_pan_active = true
+	narrative_progression_locked = true
+	_reset_pan_state()
+	_hide_pan_prompt()
+
+	scene_image_texture.pivot_offset = scene_image_area.size * 0.5
+	scene_image_texture.scale = preset["start_scale"]
+	scene_image_texture.position = preset["start_offset"]
+
+	active_pan_tween = create_tween()
+	active_pan_tween.set_parallel(false)
+	active_pan_tween.set_trans(Tween.TRANS_SINE)
+	active_pan_tween.set_ease(Tween.EASE_IN_OUT)
+	var pan_offsets := [
+		preset["start_offset"] + Vector2(-PAN_JITTER_AMPLITUDE * 0.55, 8.0),
+		preset["start_offset"] + Vector2(PAN_JITTER_AMPLITUDE * 0.80, -10.0),
+		preset["end_offset"] + Vector2(-PAN_JITTER_AMPLITUDE * 0.35, 12.0),
+		preset["end_offset"] + Vector2(12.0, -6.0),
+		preset["end_offset"],
+	]
+	var pan_scales := [
+		preset["start_scale"] + Vector2(0.03, 0.03),
+		preset["start_scale"] + Vector2(0.07, 0.07),
+		preset["end_scale"] + Vector2(-0.01, -0.01),
+		preset["end_scale"] + Vector2(0.02, 0.02),
+		preset["end_scale"],
+	]
+	var pan_segment_durations := [0.62, 0.58, 0.64, 0.58, 0.58]
+	for idx: int in range(pan_offsets.size()):
+		var segment_duration: float = pan_segment_durations[idx]
+		active_pan_tween.set_parallel(true)
+		active_pan_tween.tween_property(scene_image_texture, "position", pan_offsets[idx], segment_duration)
+		active_pan_tween.tween_property(scene_image_texture, "scale", pan_scales[idx], segment_duration)
+		active_pan_tween.tween_property(scene_image_area, "modulate", Color(1.0, 0.97 - 0.02 * idx, 1.0, 1.0), segment_duration)
+		active_pan_tween.set_parallel(false)
+	active_pan_tween.finished.connect(_finish_pan)
+
+
+func _resolve_pan_preset(preset_name: String) -> Dictionary:
+	if not preset_name.is_empty():
+		var normalized_name := preset_name.strip_edges().to_lower().replace(" ", "_")
+		for preset: Dictionary in PAN_PRESETS:
+			if str(preset.get("name", "")) == normalized_name:
+				return preset
+
+	return PAN_PRESETS[current_step_index % PAN_PRESETS.size()]
+
+
+func _finish_pan() -> void:
+	if not _is_runtime_active():
+		return
+
+	scene_image_area.modulate = Color(1, 1, 1, 1)
+	is_pan_active = false
+	narrative_progression_locked = false
+	active_pan_tween = null
+	_show_pan_prompt()
+
+
+func _reset_pan_state() -> void:
+	if active_pan_tween != null and is_instance_valid(active_pan_tween):
+		active_pan_tween.kill()
+	active_pan_tween = null
+	is_pan_active = false
+	scene_image_texture.scale = Vector2.ONE
+	scene_image_texture.position = Vector2.ZERO
+	scene_image_texture.pivot_offset = scene_image_area.size * 0.5
+	scene_image_area.modulate = Color(1, 1, 1, 1)
+
+
+func _begin_turn_sequence() -> void:
+	if not _is_runtime_active():
+		return
+
+	narrative_progression_locked = true
+	turn_phase_index = 0
+	turn_clicks_remaining = TURN_CLICK_COUNT
+	turn_resume_ready = false
+	_refresh_metric_panel()
+
+
+func _is_turn_consuming_input() -> bool:
+	return turn_clicks_remaining > 0
+
+
+func _advance_turn_sequence() -> void:
+	if not _is_runtime_active() or turn_clicks_remaining <= 0:
+		return
+
+	turn_phase_index += 1
+	turn_clicks_remaining -= 1
+	_refresh_metric_panel()
+
+	if turn_clicks_remaining <= 0:
+		narrative_progression_locked = false
+		turn_resume_ready = true
+
+
+func _clear_turn_visuals_if_pending() -> void:
+	if not turn_resume_ready:
+		return
+
+	_reset_turn_state(true)
+	_refresh_metric_panel()
+
+
+func _reset_turn_state(clear_visuals: bool) -> void:
+	turn_phase_index = 0
+	turn_clicks_remaining = 0
+	turn_resume_ready = false
+	if clear_visuals:
+		_clear_turn_visuals()
+
+
+func _clear_turn_visuals() -> void:
+	if not _has_ui_targets():
+		return
+
+	scene_image_texture.modulate = Color(1, 1, 1, 1)
+	scene_image_area.modulate = Color(1, 1, 1, 1)
+	scene_image_texture.position = Vector2.ZERO
+	_clear_turn_interference()
+	if not is_fading_in:
+		fade_overlay.hide()
+		fade_overlay.color = Color(0, 0, 0, 0)
+
+
+func _clear_turn_interference() -> void:
+	turn_interference_a.visible = false
+	turn_interference_b.visible = false
+	turn_interference_a.color = Color(0.88, 0.58, 1.0, 0.0)
+	turn_interference_b.color = Color(0.56, 0.78, 1.0, 0.0)
+
+
+func _apply_turn_visuals() -> void:
+	if not _has_ui_targets() or turn_phase_index <= 0:
+		return
+
+	var phase_strength := float(turn_phase_index) / float(TURN_CLICK_COUNT)
+	var rewrite_flash := 0.55 + 0.45 * absf(sin(metrics_pulse_time * (11.0 + phase_strength * 6.0)))
+	var band_pulse := 0.5 + 0.5 * sin(metrics_pulse_time * (8.4 + phase_strength * 4.6))
+	var strip_alpha := 0.18 + phase_strength * 0.34
+	var fracture_alpha := 0.18 + phase_strength * 0.30
+	var glitch_shift: float = floor(sin(metrics_pulse_time * (14.0 + phase_strength * 4.0)) * TURN_GLITCH_SHIFT * phase_strength)
+	var vertical_jitter := sin(metrics_pulse_time * 9.0) * 2.0 * phase_strength
+
+	scene_image_texture.position = Vector2(glitch_shift, vertical_jitter)
+	scene_image_texture.modulate = Color(
+		lerpf(1.0, 0.74, phase_strength * 0.34),
+		lerpf(1.0, 0.82, phase_strength * 0.18),
+		lerpf(1.0, 1.18, phase_strength * 0.24),
+		1.0
+	)
+	scene_image_area.modulate = Color(
+		lerpf(1.0, 0.90, phase_strength * 0.24),
+		lerpf(1.0, 0.88, phase_strength * 0.10),
+		lerpf(1.0, 1.12, phase_strength * 0.20),
+		1.0
+	)
+
+	var viewport_height := maxf(1.0, scene_image_area.size.y)
+	var sweep_a := fposmod(metrics_pulse_time * (170.0 + 120.0 * phase_strength), maxf(1.0, viewport_height + 180.0)) - 90.0
+	var sweep_b := fposmod(metrics_pulse_time * (230.0 + 140.0 * phase_strength) + viewport_height * 0.35, maxf(1.0, viewport_height + 220.0)) - 110.0
+	turn_interference_a.visible = true
+	turn_interference_b.visible = true
+	turn_interference_a.position.y = sweep_a
+	turn_interference_b.position.y = sweep_b
+	turn_interference_a.size.y = 28.0 + 28.0 * band_pulse
+	turn_interference_b.size.y = 18.0 + 24.0 * (1.0 - band_pulse)
+	turn_interference_a.color = Color(0.92, 0.58 + 0.10 * band_pulse, 1.0, strip_alpha + 0.16 * rewrite_flash)
+	turn_interference_b.color = Color(0.48, 0.82, 1.0, strip_alpha * 0.72 + 0.10 * (1.0 - rewrite_flash))
+
+
+
+func _finish_initial_layout() -> void:
+	_refresh_frame_layout()
+	_show_initial_step()
+	call_deferred("_debug_log_layout_state")
+	_fade_in_from_black()
+
+
+func _fade_in_from_black() -> void:
+	active_fade_tween = create_tween()
+	active_fade_tween.tween_property(fade_overlay, "color", Color(0, 0, 0, 0), FADE_DURATION)
+	await active_fade_tween.finished
+	if not _has_ui_targets() or is_transitioning:
+		active_fade_tween = null
+		return
+
+	active_fade_tween = null
+	is_fading_in = false
+	fade_overlay.hide()
+
+
+func _debug_log_layout_state() -> void:
+	print("[GameplayScreen] _ready scene_image_area.size=", scene_image_area.size)
+	print("[GameplayScreen] _ready scene_image_area.global_rect=", scene_image_area.get_global_rect())
+	print("[GameplayScreen] _ready scene_image_texture.size=", scene_image_texture.size)
+	print("[GameplayScreen] _ready scene_image_texture.global_rect=", scene_image_texture.get_global_rect())
+	print("[GameplayScreen] _ready scene_frame.global_rect=", scene_frame.get_global_rect())
+	print("[GameplayScreen] _ready frame_canvas.global_rect=", frame_canvas.get_global_rect())
+
+
+func _debug_log_step_advance() -> void:
+	print("[GameplayScreen] _advance click current_step_index=", current_step_index, " total_steps=", authored_steps.size())
+
+
+func _handle_goto_command(target_name: String) -> void:
+	if not _is_runtime_active():
+		return
+
+	narrative_progression_locked = true
+
+	match _normalize_goto_target(target_name):
+		"SURGERY_MODE", "SURGERY_1":
+			_enter_surgery_mode()
+		"SNAPSHOT":
+			_enter_snapshot_mode()
+		"FINAL":
+			_enter_final_screen()
+		_:
+			narrative_progression_locked = false
+			push_warning("GameplayScreen: unknown goto target '%s'" % target_name)
+
+
+func _normalize_goto_target(target_name: String) -> String:
+	return target_name.strip_edges().to_upper().replace(" ", "_")
+
+
+func _normalize_authored_label(label_name: String) -> String:
+	return label_name.strip_edges().to_upper().replace(" ", "_")
+
+
+func _enter_surgery_mode() -> void:
+	_begin_scene_transition(SURGERY_SCENE_PATH)
+
+
+func _enter_snapshot_mode() -> void:
+	if _has_game_state():
+		GameState.set_gameplay_resume(current_phase, current_step_index)
+	_begin_scene_transition(SNAPSHOT_SCENE_PATH)
+
+
+func _enter_final_screen() -> void:
+	if _has_game_state() and GameState.ending_id.is_empty():
+		GameState.resolve_run_from_allocation()
+	_begin_scene_transition(FINAL_SCENE_PATH)
+
+
+func _set_phase(phase_id: String) -> void:
+	if not PHASE_FLOW.has(phase_id):
+		push_warning("GameplayScreen: unknown phase id '%s'" % phase_id)
+		return
+
+	current_phase = phase_id
+	if _has_game_state():
+		GameState.current_phase = phase_id
+	_refresh_phase_headers()
+	_apply_default_image_for_phase()
 
 
 func _return_to_title() -> void:
-	if has_node("/root/GameState"):
+	if _has_game_state():
 		GameState.reset_run()
-	get_tree().change_scene_to_file(TITLE_SCENE_PATH)
+	_begin_scene_transition(TITLE_SCENE_PATH)
 
 
 func _build_completed_summary() -> String:
-	if not has_node("/root/GameState") or GameState.completed_phases.is_empty():
+	if not _has_game_state() or GameState.completed_phases.is_empty():
 		return "none"
 	return ", ".join(GameState.completed_phases)
 
 
 func _build_allocation_summary() -> String:
-	if not has_node("/root/GameState"):
+	if not _has_game_state():
 		return "Scene 0 / Victoria 0 / Desmond 0"
 	return "Scene %d / Victoria %d / Desmond %d" % [
 		int(GameState.surgery_allocation.get("scene", 0)),
@@ -183,10 +1464,13 @@ func _build_allocation_summary() -> String:
 
 
 func _refresh_metric_panel() -> void:
-	if has_node("/root/GameState"):
+	if not _can_run_runtime_updates() or not _has_ui_targets():
+		return
+
+	if _has_game_state():
 		current_phase = GameState.current_phase if not GameState.current_phase.is_empty() else PHASE_FLOW[PHASE_FLOW.size() - 1]
 
-	if not has_node("/root/GameState"):
+	if not _has_game_state():
 		dossier_slot_a_headshot_label.text = "FILM"
 		dossier_slot_a_title.text = "Depth 0"
 		dossier_slot_a_cue.text = "Oblivion 0 [LOW]\nPressure 0 [LOW]"
@@ -230,11 +1514,14 @@ func _refresh_metric_panel() -> void:
 
 
 func _apply_metric_panel_corruption() -> void:
+	if not _can_run_runtime_updates() or not _has_ui_targets():
+		return
+
 	var oblivion_ratio: float = 0.0
 	var pressure_ratio: float = 0.0
 	var oblivion_value: int = 0
 	var pressure_value: int = 0
-	if has_node("/root/GameState"):
+	if _has_game_state():
 		oblivion_value = int(GameState.film_oblivion)
 		pressure_value = int(GameState.film_pressure)
 		oblivion_ratio = clampf(float(oblivion_value) / FILM_METRIC_MAX, 0.0, 1.0)
@@ -377,6 +1664,74 @@ func _apply_metric_panel_corruption() -> void:
 	portrait_pressure_edge_bottom.color = Color(0.74, 0.36, 1.00, edge_alpha * 1.18 + burn_flash_alpha)
 	portrait_pressure_fracture_left.color = Color(0.70, 0.34, 1.00, fracture_alpha)
 	portrait_pressure_fracture_right.color = Color(0.78, 0.38, 1.00, fracture_alpha * 1.08)
+
+	if turn_phase_index > 0:
+		_apply_turn_visuals()
+
+
+func _begin_scene_transition(target_scene_path: String) -> void:
+	if is_transitioning:
+		return
+
+	is_transitioning = true
+	narrative_progression_locked = true
+	_stop_runtime_activity()
+	call_deferred("_change_scene_deferred", target_scene_path)
+
+
+func _change_scene_deferred(target_scene_path: String) -> void:
+	var tree := get_tree()
+	if tree == null:
+		return
+
+	tree.change_scene_to_file(target_scene_path)
+
+
+func _stop_runtime_activity() -> void:
+	set_process(false)
+	set_process_input(false)
+	set_physics_process(false)
+	_reset_pan_state()
+	_reset_turn_state(true)
+	_kill_active_tweens()
+	pending_octavia_clear_clicks = -1
+	is_pan_active = false
+
+
+func _kill_active_tweens() -> void:
+	if active_fade_tween != null and is_instance_valid(active_fade_tween):
+		active_fade_tween.kill()
+	active_fade_tween = null
+
+	if active_pan_tween != null and is_instance_valid(active_pan_tween):
+		active_pan_tween.kill()
+	active_pan_tween = null
+
+
+func _is_runtime_active() -> bool:
+	return is_instance_valid(self) and is_inside_tree() and not is_transitioning
+
+
+func _can_run_runtime_updates() -> bool:
+	return _is_runtime_active()
+
+
+func _is_input_available() -> bool:
+	return _is_runtime_active()
+
+
+func _has_ui_targets() -> bool:
+	return is_instance_valid(self) and is_inside_tree() and is_instance_valid(scene_image_texture) and is_instance_valid(portrait_strip) and is_instance_valid(fade_overlay)
+
+
+func _has_game_state() -> bool:
+	return is_instance_valid(self) and is_inside_tree() and is_instance_valid(GameState)
+
+
+func _mark_input_handled() -> void:
+	var viewport := get_viewport()
+	if viewport != null:
+		viewport.set_input_as_handled()
 
 
 func _risk_band(value: int) -> int:

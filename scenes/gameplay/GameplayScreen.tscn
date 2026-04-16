@@ -5,3 +5,57 @@
 
 [node name="GameplayScreen" instance=ExtResource("1_main")]
 script = ExtResource("2_gameplay")
+
+[node name="FadeOverlay" type="ColorRect" parent="." unique_id=206580096]
+z_index = 100
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0, 0, 0, 1)
+
+[node name="TurnInterferenceA" type="ColorRect" parent="Margin/RootStack/MainRow/SceneFrame/FrameMargin/FrameCanvas/SceneImageArea" unique_id=913450201]
+visible = false
+z_index = 96
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_top = 96.0
+offset_bottom = 138.0
+grow_horizontal = 2
+mouse_filter = 2
+color = Color(0.88, 0.58, 1, 0)
+
+[node name="TurnInterferenceB" type="ColorRect" parent="Margin/RootStack/MainRow/SceneFrame/FrameMargin/FrameCanvas/SceneImageArea" unique_id=951387420]
+visible = false
+z_index = 97
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_top = 224.0
+offset_bottom = 252.0
+grow_horizontal = 2
+mouse_filter = 2
+color = Color(0.56, 0.78, 1, 0)
+
+[node name="PanPromptLabel" type="Label" parent="." unique_id=871264991]
+visible = false
+z_index = 101
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -86.0
+offset_top = 208.0
+offset_right = 86.0
+offset_bottom = 236.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+text = "click. go on."
+horizontal_alignment = 1
