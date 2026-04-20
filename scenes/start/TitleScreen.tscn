@@ -10,18 +10,28 @@
 [ext_resource type="PackedScene" uid="uid://o0ua8el6khqm" path="res://scenes/dossier/CasefilePanel.tscn" id="8_vsh83"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_board"]
-bg_color = Color(0.0509804, 0.0588235, 0.0705882, 0.76)
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color(0.356863, 0.290196, 0.231373, 0.85)
+bg_color = Color(0.0509804, 0.0588235, 0.0705882, 0.42)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.356863, 0.290196, 0.231373, 0.28)
 corner_radius_top_left = 20
 corner_radius_top_right = 20
 corner_radius_bottom_right = 20
 corner_radius_bottom_left = 20
-shadow_color = Color(0, 0, 0, 0.4)
-shadow_size = 14
+shadow_color = Color(0, 0, 0, 0.18)
+shadow_size = 8
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_board_decor"]
+bg_color = Color(0, 0, 0, 0)
+border_color = Color(0.356863, 0.290196, 0.231373, 0)
+corner_radius_top_left = 20
+corner_radius_top_right = 20
+corner_radius_bottom_right = 20
+corner_radius_bottom_left = 20
+shadow_color = Color(0, 0, 0, 0.12)
+shadow_size = 6
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_card"]
 bg_color = Color(0.0862745, 0.0705882, 0.0588235, 0.94)
@@ -100,27 +110,54 @@ expand_mode = 1
 stretch_mode = 6
 
 [node name="Shade" type="ColorRect" parent="." unique_id=72744122]
+visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0.027451, 0.0313726, 0.0392157, 0.72)
+mouse_filter = 2
+color = Color(0.027451, 0.0313726, 0.0392157, 0.24)
 
-[node name="BoardFrame" type="PanelContainer" parent="." unique_id=241061617]
+[node name="BoardFrame" type="Control" parent="." unique_id=241061617]
 layout_mode = 1
-anchors_preset = -1
 anchor_left = 0.07
 anchor_top = 0.08
 anchor_right = 0.93
 anchor_bottom = 0.92
+offset_top = -76.34
+offset_bottom = 76.339966
 grow_horizontal = 2
 grow_vertical = 2
+
+[node name="BoardShadow" type="PanelContainer" parent="BoardFrame" unique_id=241061618]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_board")
 
+[node name="BoardDecor" type="PanelContainer" parent="BoardFrame" unique_id=241061619]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_board_decor")
+
 [node name="BoardMargin" type="MarginContainer" parent="BoardFrame" unique_id=563636349]
-layout_mode = 2
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 theme_override_constants/margin_left = 28
 theme_override_constants/margin_top = 24
 theme_override_constants/margin_right = 28
@@ -364,6 +401,32 @@ theme_override_styles/pressed = SubResource("StyleBoxFlat_button_pressed")
 theme_override_styles/hover = SubResource("StyleBoxFlat_button_hover")
 text = "START PLAY"
 
+[node name="DebugF2Button" type="Button" parent="BoardFrame/BoardMargin/BoardContent/FooterRow" unique_id=1002714887]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(248, 58)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.0980392, 0.105882, 0.117647, 1)
+theme_override_colors/font_pressed_color = Color(0.0980392, 0.105882, 0.117647, 1)
+theme_override_colors/font_hover_color = Color(0.0980392, 0.105882, 0.117647, 1)
+theme_override_font_sizes/font_size = 20
+theme_override_styles/normal = SubResource("StyleBoxFlat_button_normal")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_button_pressed")
+theme_override_styles/hover = SubResource("StyleBoxFlat_button_hover")
+text = "DEBUG F2"
+
+[node name="DebugF3Button" type="Button" parent="BoardFrame/BoardMargin/BoardContent/FooterRow" unique_id=1602714887]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(248, 58)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.0980392, 0.105882, 0.117647, 1)
+theme_override_colors/font_pressed_color = Color(0.0980392, 0.105882, 0.117647, 1)
+theme_override_colors/font_hover_color = Color(0.0980392, 0.105882, 0.117647, 1)
+theme_override_font_sizes/font_size = 20
+theme_override_styles/normal = SubResource("StyleBoxFlat_button_normal")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_button_pressed")
+theme_override_styles/hover = SubResource("StyleBoxFlat_button_hover")
+text = "DEBUG F3"
+
 [node name="DossierBackdropDim" type="ColorRect" parent="." unique_id=206580094]
 visible = false
 z_index = 9
@@ -376,6 +439,17 @@ grow_vertical = 2
 mouse_filter = 2
 color = Color(0.0156863, 0.0196078, 0.027451, 0.72)
 
+[node name="FadeOverlay" type="ColorRect" parent="." unique_id=206580095]
+z_index = 50
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0, 0, 0, 0)
+
 [node name="CasefilePanel" parent="." unique_id=1465156981 instance=ExtResource("8_vsh83")]
 z_index = 10
 layout_mode = 0
@@ -387,3 +461,5 @@ grow_horizontal = 1
 grow_vertical = 1
 
 [connection signal="pressed" from="BoardFrame/BoardMargin/BoardContent/FooterRow/BeginButton" to="." method="_on_begin_button_pressed"]
+[connection signal="pressed" from="BoardFrame/BoardMargin/BoardContent/FooterRow/DebugF2Button" to="." method="_on_debug_f2_button_pressed"]
+[connection signal="pressed" from="BoardFrame/BoardMargin/BoardContent/FooterRow/DebugF3Button" to="." method="_on_debug_f3_button_pressed"]

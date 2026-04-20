@@ -1,10 +1,13 @@
 extends Control
 
 const TITLE_SCENE_PATH := "res://scenes/start/TitleScreen.tscn"
+const GAMEPLAY_SCENE_PATH := "res://scenes/gameplay/GameplayScreen.tscn"
 const SURGERY_SCENE_PATH := "res://scenes/gameplay/SurgeryLayer.tscn"
 const SNAPSHOT_SCENE_PATH := "res://scenes/gameplay/SnapshotScreen.tscn"
 const FINAL_SCENE_PATH := "res://scenes/gameplay/FinalScreen.tscn"
 const F1_SCRIPT_PATH := "res://narrative/F1_script.txt"
+const F2_SCRIPT_PATH := "res://narrative/F2_script.txt"
+const F3_SCRIPT_PATH := "res://narrative/F3_script.txt"
 const PHASE_FLOW := ["F1", "F2", "F3"]
 const FILM_METRIC_MAX := 9.0
 const STEP_SEPARATOR := "::step"
@@ -12,7 +15,10 @@ const AUTHORED_LINE_COMMAND_PREFIX := "::"
 const OCTAVIA_AUTO_CLEAR_CLICKS := 2
 const TURN_CLICK_COUNT := 3
 const FADE_DURATION := 1.5
-const PAN_DEFAULT_DURATION := 1.15
+const PAN_DEFAULT_DURATION := 2.5
+const BODY_COPY_EMPHASIS_DURATION := 0.24
+const BODY_COPY_EMPHASIS_OFFSET_Y := -8.0
+const BODY_COPY_EMPHASIS_START_ALPHA := 0.58
 const PAN_JITTER_AMPLITUDE := 34.0
 const TURN_GLITCH_SHIFT := 18.0
 const FRAME_STRIP_BASE_WIDTH := 40.0
@@ -70,6 +76,49 @@ const IMAGE_LIBRARY := {
 	"image_16": "res://art/image_16.png",
 	"image_18": "res://art/image_18.png",
 	"image_19": "res://art/image_19.png",
+	"image_20": "res://art/image_20.png",
+	"image_21": "res://art/image_21.png",
+	"image_22": "res://art/image_22.png",
+	"image_23": "res://art/image_23.png",
+	"image_24": "res://art/image_24.png",
+	"image_25": "res://art/image_25.png",
+	"image_26": "res://art/image_26.png",
+	"image_27": "res://art/image_27.png",
+	"image_28": "res://art/image_28.png",
+	"image_29": "res://art/image_29.png",
+	"image_30": "res://art/image_30.png",
+	"image_31": "res://art/image_31.png",
+	"image_32": "res://art/image_32.png",
+	"image_33": "res://art/image_33.png",
+	"image_34": "res://art/image_34.png",
+	"image_35": "res://art/image_35.png",
+	"image_36": "res://art/image_36.png",
+	"image_37": "res://art/image_37.png",
+	"image_38": "res://art/image_38.png",
+	"image_39": "res://art/image_39.png",
+	"image_40": "res://art/image_40.png",
+	"image_41": "res://art/image_41.png",
+	"image_42": "res://art/image_42.png",
+	"image_43": "res://art/image_43.png",
+	"image_44": "res://art/image_44.png",
+	"image_45": "res://art/image_45.png",
+	"image_46": "res://art/image_46.png",
+	"image_46-1": "res://art/image_46-1.png",
+	"image_46-1.png": "res://art/image_46-1.png",
+	"image_47": "res://art/image_47.png",
+	"image_47-1": "res://art/image_47-1.png",
+	"image_47-1.png": "res://art/image_47-1.png",
+	"image_48": "res://art/image_48.png",
+	"image_48-1": "res://art/image_48-1.png",
+	"image_48-1.png": "res://art/image_48-1.png",
+	"image_48-2": "res://art/image_48-2.png",
+	"image_48-2.png": "res://art/image_48-2.png",
+	"image_49": "res://art/image_49.png",
+	"image_49-1": "res://art/image_49-1.png",
+	"image_49-1.png": "res://art/image_49-1.png",
+	"image_50": "res://art/image_50.png",
+	"image_51": "res://art/image_51.png",
+	"image_52": "res://art/image_52.png",
 	"prep_bay": "res://art/image_1.png",
 	"corridor_flash": "res://art/image_2.png",
 	"theater_hold": "res://art/image_5.png",
@@ -92,6 +141,32 @@ const SURGERY_OUTCOME_LABELS := {
 	"12B": "OUTCOME_12B",
 	"12C": "OUTCOME_12C",
 	"12D": "OUTCOME_12D",
+}
+const PHASE_SCRIPT_PATHS := {
+	"F1": F1_SCRIPT_PATH,
+	"F2": F2_SCRIPT_PATH,
+	"F3": F3_SCRIPT_PATH,
+}
+const SURGERY_OUTCOME_LABELS_BY_PHASE := {
+	"F1": SURGERY_OUTCOME_LABELS,
+	"F2": {
+		"12A": "F2_OUTCOME_A",
+		"12B": "F2_OUTCOME_B",
+		"12C": "F2_OUTCOME_C",
+		"12D": "F2_OUTCOME_B",
+	},
+	"F3": {
+		"12A": "F3_OUTCOME_A",
+		"12B": "F3_OUTCOME_B",
+		"12C": "F3_OUTCOME_C",
+		"12D": "F3_OUTCOME_N",
+	},
+}
+const F2_VICTORIA_LINE_LABELS := {
+	"12A": "F2_VIK_LINE_A",
+	"12B": "F2_VIK_LINE_B",
+	"12C": "F2_VIK_LINE_C",
+	"12D": "F2_VIK_LINE_B",
 }
 
 const SAMPLE_SEQUENCE_BY_PHASE := {
@@ -286,6 +361,9 @@ const SAMPLE_SEQUENCE_BY_PHASE := {
 ДЕЙСТВИЕ:
 Автоматон проваливается в разрыв, выпускает ружьё и по-человечески хватается за край сетки.
 
+::step
+::goto: POST_OUTCOME_COMMON
+
 ::label: OUTCOME_12B
 
 ::step
@@ -314,6 +392,9 @@ const SAMPLE_SEQUENCE_BY_PHASE := {
 
 ЗВУК:
 Где-то вдали раздаётся женский вскрик.
+
+::step
+::goto: POST_OUTCOME_COMMON
 
 ::label: OUTCOME_12C
 
@@ -349,6 +430,9 @@ const SAMPLE_SEQUENCE_BY_PHASE := {
 ЗВУК:
 Где-то вдали раздаётся женский вскрик.
 
+::step
+::goto: POST_OUTCOME_COMMON
+
 ::label: OUTCOME_12D
 
 ::step
@@ -371,7 +455,14 @@ const SAMPLE_SEQUENCE_BY_PHASE := {
 ::step
 [img: image_16]
 ДЕЙСТВИЕ:
-ДЕЗМОНД кидается к оружию, подхватывает его и бросается наутёк. Где-то вдали слышен женский вскрик.""",
+ДЕЗМОНД кидается к оружию, подхватывает его и бросается наутёк. Где-то вдали слышен женский вскрик.
+
+::step
+::goto: POST_OUTCOME_COMMON
+
+::label: POST_OUTCOME_COMMON
+::step
+::goto: SNAPSHOT MODE""",
 	"F2": """[phase: F2]
 [img: theater_hold]
 [octavia: F2 sample sequence is active until authored content replaces it.]
@@ -458,6 +549,7 @@ var turn_resume_ready := false
 var is_pan_active := false
 var active_pan_tween: Tween
 var active_fade_tween: Tween
+var active_body_copy_emphasis_tween: Tween
 var layout_refresh_queued := false
 var active_branch_end_step_index := -1
 var pending_initial_step_index := -1
@@ -561,6 +653,7 @@ func _configure_display_channels() -> void:
 	scratch_notes.hide()
 	body_copy.text = ""
 	body_copy.clear()
+	_reset_body_copy_emphasis()
 	body_copy.scroll_to_line(0)
 	_clear_overlay()
 	_clear_octavia()
@@ -612,16 +705,17 @@ func _load_authored_sequence() -> void:
 func _get_authored_script_text(phase_id: String) -> String:
 	var source_used := "builtin"
 	var raw_text := SAMPLE_SEQUENCE_BY_PHASE.get(phase_id, SAMPLE_SEQUENCE_BY_PHASE["F1"]) as String
-	if phase_id == "F1":
-		var file_exists := FileAccess.file_exists(F1_SCRIPT_PATH)
+	var script_path := str(PHASE_SCRIPT_PATHS.get(phase_id, ""))
+	if not script_path.is_empty():
+		var file_exists := FileAccess.file_exists(script_path)
 		print("[GameplayScreen] file_exists=", file_exists)
 		if file_exists:
 			source_used = "file"
-			raw_text = FileAccess.get_file_as_string(F1_SCRIPT_PATH)
+			raw_text = FileAccess.get_file_as_string(script_path)
 		else:
 			source_used = "fallback"
 
-	print("[GameplayScreen] script source=", source_used, " ", F1_SCRIPT_PATH if phase_id == "F1" else phase_id)
+	print("[GameplayScreen] script source=", source_used, " ", script_path if not script_path.is_empty() else phase_id)
 	print("[GameplayScreen] raw_text_length=", raw_text.length())
 	print("[GameplayScreen] raw_preview=", JSON.stringify(_preview_text(raw_text)))
 	var normalized_text := _normalize_script_text(raw_text)
@@ -794,8 +888,14 @@ func _advance_authored_step() -> void:
 
 	if active_branch_end_step_index >= 0 and current_step_index >= active_branch_end_step_index:
 		print("[GameplayScreen] branch playback complete at step=", current_step_index, " boundary=", active_branch_end_step_index)
-		current_step_index = authored_steps.size()
+		var branch_resume_step_index := active_branch_end_step_index
 		active_branch_end_step_index = -1
+		if _should_show_snapshot_after_branch():
+			if _has_game_state():
+				GameState.set_gameplay_resume(current_phase, branch_resume_step_index)
+			_begin_scene_transition(SNAPSHOT_SCENE_PATH)
+			return
+		current_step_index = authored_steps.size()
 		return
 
 	_clear_turn_visuals_if_pending()
@@ -896,7 +996,8 @@ func _resolve_branch_end_step_index(target_step_index: int) -> int:
 
 
 func _resolve_outcome_label(outcome_id: String) -> String:
-	return str(SURGERY_OUTCOME_LABELS.get(outcome_id.strip_edges().to_upper(), ""))
+	var phase_labels: Dictionary = SURGERY_OUTCOME_LABELS_BY_PHASE.get(current_phase, SURGERY_OUTCOME_LABELS)
+	return str(phase_labels.get(outcome_id.strip_edges().to_upper(), ""))
 
 
 func _log_authored_labels() -> void:
@@ -960,8 +1061,30 @@ func _append_body_text(text_block: String) -> void:
 	if body_copy.text.is_empty():
 		body_copy.text = text_block
 	else:
-		body_copy.text += "\n\n%s" % text_block
-	body_copy.scroll_to_line(body_copy.get_line_count())
+		body_copy.text = "%s\n\n%s" % [text_block, body_copy.text]
+	body_copy.scroll_to_line(0)
+	_play_body_copy_emphasis()
+
+
+func _reset_body_copy_emphasis() -> void:
+	if is_instance_valid(active_body_copy_emphasis_tween):
+		active_body_copy_emphasis_tween.kill()
+	active_body_copy_emphasis_tween = null
+	body_copy.position.y = 0.0
+	body_copy.modulate = Color(1, 1, 1, 1)
+
+
+func _play_body_copy_emphasis() -> void:
+	_reset_body_copy_emphasis()
+	body_copy.position.y = BODY_COPY_EMPHASIS_OFFSET_Y
+	body_copy.modulate = Color(1, 1, 1, BODY_COPY_EMPHASIS_START_ALPHA)
+
+	active_body_copy_emphasis_tween = create_tween()
+	active_body_copy_emphasis_tween.set_parallel(true)
+	active_body_copy_emphasis_tween.set_trans(Tween.TRANS_QUAD)
+	active_body_copy_emphasis_tween.set_ease(Tween.EASE_OUT)
+	active_body_copy_emphasis_tween.tween_property(body_copy, "position:y", 0.0, BODY_COPY_EMPHASIS_DURATION)
+	active_body_copy_emphasis_tween.tween_property(body_copy, "modulate", Color(1, 1, 1, 1), BODY_COPY_EMPHASIS_DURATION)
 
 
 func _apply_default_image_for_phase() -> void:
@@ -996,10 +1119,10 @@ func _apply_pending_resume_state() -> void:
 		print("[GameplayScreen] surgery return target_step_index=", resolved_target_step_index)
 		if authored_label_lookup.has(resolved_label):
 			pending_initial_step_index = resolved_target_step_index
-			pending_initial_branch_end_step_index = _resolve_branch_end_step_index(resolved_target_step_index)
+			pending_initial_branch_end_step_index = -1
 			current_step_index = resolved_target_step_index
-			active_branch_end_step_index = pending_initial_branch_end_step_index
-			print("[GameplayScreen] queued deferred resume label=", resolved_label, " step_index=", pending_initial_step_index, " branch_end_step_index=", pending_initial_branch_end_step_index)
+			active_branch_end_step_index = -1
+			print("[GameplayScreen] queued deferred resume label=", resolved_label, " step_index=", pending_initial_step_index, " branch_end_step_index=disabled")
 			return
 		push_warning("GameplayScreen: unknown authored label '%s'" % resolved_label)
 
@@ -1013,6 +1136,7 @@ func _apply_pending_resume_state() -> void:
 func _apply_image(image_id: String) -> void:
 	var image_path := str(IMAGE_LIBRARY.get(image_id, ""))
 	if image_path.is_empty():
+		print("[GameplayScreen] missing image id=", image_id)
 		push_warning("GameplayScreen: unknown image id '%s'" % image_id)
 		return
 
@@ -1396,11 +1520,25 @@ func _handle_goto_command(target_name: String) -> void:
 	match _normalize_goto_target(target_name):
 		"SURGERY_MODE", "SURGERY_1":
 			_enter_surgery_mode()
-		"SNAPSHOT":
+		"SNAPSHOT", "SNAPSHOT_MODE":
 			_enter_snapshot_mode()
 		"FINAL":
 			_enter_final_screen()
+		"F2_OUTCOME_RESOLVE":
+			_jump_to_resolved_label(_resolve_outcome_label(_get_current_outcome_id()))
+		"F3_OUTCOME_RESOLVE":
+			_jump_to_resolved_label(_resolve_outcome_label(_get_current_outcome_id()))
+		"F3_EVENT_RESOLVE":
+			_jump_to_resolved_label(_resolve_f3_event_label())
+		"F2_VIK_LINE_RESOLVE":
+			_jump_to_resolved_label(_resolve_f2_victoria_line_label())
+		"RESCUE_SEQUENCE":
+			_continue_to_next_phase()
+		"ANALYTICS_MODE":
+			_enter_analytics_mode()
 		_:
+			if jump_to_label(target_name):
+				return
 			narrative_progression_locked = false
 			push_warning("GameplayScreen: unknown goto target '%s'" % target_name)
 
@@ -1420,6 +1558,7 @@ func _enter_surgery_mode() -> void:
 func _enter_snapshot_mode() -> void:
 	if _has_game_state():
 		GameState.set_gameplay_resume(current_phase, current_step_index)
+		GameState.set_snapshot_context(current_phase, false)
 	_begin_scene_transition(SNAPSHOT_SCENE_PATH)
 
 
@@ -1427,6 +1566,68 @@ func _enter_final_screen() -> void:
 	if _has_game_state() and GameState.ending_id.is_empty():
 		GameState.resolve_run_from_allocation()
 	_begin_scene_transition(FINAL_SCENE_PATH)
+
+
+func _enter_analytics_mode() -> void:
+	match current_phase:
+		"F3":
+			_enter_final_screen()
+		_:
+			_enter_final_screen()
+
+
+func _jump_to_resolved_label(label_name: String) -> void:
+	if jump_to_label(label_name):
+		narrative_progression_locked = false
+		return
+
+	narrative_progression_locked = false
+	push_warning("GameplayScreen: unresolved authored label '%s' for phase '%s'" % [label_name, current_phase])
+
+
+func _resolve_f3_event_label() -> String:
+	if current_phase != "F3" or not _has_game_state():
+		return "F3_POST_OUTCOME"
+
+	var burn: int = int(GameState.film_pressure)
+	var oblivion: int = int(GameState.film_oblivion)
+
+	if burn <= 0 and oblivion <= 0:
+		return "F3_POST_OUTCOME"
+	if burn > oblivion:
+		return "F3_EVENT_BURN"
+	if oblivion > burn:
+		return "F3_EVENT_OBLIVION"
+	return "F3_POST_OUTCOME"
+
+
+func _get_current_outcome_id() -> String:
+	if not _has_game_state():
+		return ""
+	return str(GameState.current_outcome_id).strip_edges().to_upper()
+
+
+func _resolve_f2_victoria_line_label() -> String:
+	var outcome_id := _get_current_outcome_id()
+	return str(F2_VICTORIA_LINE_LABELS.get(outcome_id, F2_VICTORIA_LINE_LABELS["12B"]))
+
+
+func _continue_to_next_phase() -> void:
+	var next_phase := ""
+	if _has_game_state():
+		next_phase = str(GameState.current_phase).strip_edges()
+
+	if next_phase.is_empty():
+		next_phase = GameState.get_next_phase(current_phase) if _has_game_state() else ""
+
+	if next_phase.is_empty():
+		_enter_final_screen()
+		return
+
+	if _has_game_state():
+		GameState.set_gameplay_resume(next_phase, 0)
+		GameState.clear_snapshot_context()
+	_begin_scene_transition(GAMEPLAY_SCENE_PATH)
 
 
 func _set_phase(phase_id: String) -> void:
@@ -1439,6 +1640,13 @@ func _set_phase(phase_id: String) -> void:
 		GameState.current_phase = phase_id
 	_refresh_phase_headers()
 	_apply_default_image_for_phase()
+
+
+func _should_show_snapshot_after_branch() -> bool:
+	if not _has_game_state():
+		return false
+	var snapshot_context: Dictionary = GameState.get_snapshot_context()
+	return not str(snapshot_context.get("source_phase", "")).strip_edges().is_empty()
 
 
 func _return_to_title() -> void:
@@ -1467,8 +1675,9 @@ func _refresh_metric_panel() -> void:
 	if not _can_run_runtime_updates() or not _has_ui_targets():
 		return
 
-	if _has_game_state():
-		current_phase = GameState.current_phase if not GameState.current_phase.is_empty() else PHASE_FLOW[PHASE_FLOW.size() - 1]
+	var panel_phase := current_phase
+	if _has_game_state() and not GameState.current_phase.is_empty():
+		panel_phase = GameState.current_phase
 
 	if not _has_game_state():
 		dossier_slot_a_headshot_label.text = "FILM"
@@ -1476,7 +1685,7 @@ func _refresh_metric_panel() -> void:
 		dossier_slot_a_cue.text = "Oblivion 0 [LOW]\nPressure 0 [LOW]"
 		dossier_slot_b_headshot_label.text = "PLAYER"
 		dossier_slot_b_title.text = "Control_next 0"
-		dossier_slot_b_cue.text = "Phase %s | O LOW\nFreezes none | P LOW" % current_phase
+		dossier_slot_b_cue.text = "Phase %s | O LOW\nFreezes none | P LOW" % panel_phase
 		dossier_slot_c_headshot_label.text = "CAST"
 		dossier_slot_c_title.text = "D I/T 0/0"
 		dossier_slot_c_cue.text = "V I/T 0/0\nL I/T 0/0"
@@ -1494,7 +1703,7 @@ func _refresh_metric_panel() -> void:
 	dossier_slot_b_headshot_label.text = "PLAYER"
 	dossier_slot_b_title.text = "Control_next %d" % GameState.control_next
 	dossier_slot_b_cue.text = "Phase %s | O %s\nFreezes %s | P %s" % [
-		current_phase,
+		panel_phase,
 		_risk_tag(int(GameState.film_oblivion)),
 		_build_completed_summary(),
 		_risk_tag(int(GameState.film_pressure)),

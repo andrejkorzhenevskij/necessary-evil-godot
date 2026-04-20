@@ -247,28 +247,37 @@ horizontal_alignment = 1
 
 [node name="FooterBlock" type="VBoxContainer" parent="Margin/RootColumn" unique_id=292504724]
 layout_mode = 2
-theme_override_constants/separation = 8
+theme_override_constants/separation = 10
 
-[node name="RemainingLabel" type="Label" parent="Margin/RootColumn/FooterBlock" unique_id=2068921366]
+[node name="SummaryBlock" type="VBoxContainer" parent="Margin/RootColumn/FooterBlock" unique_id=938120411]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="RemainingLabel" type="Label" parent="Margin/RootColumn/FooterBlock/SummaryBlock" unique_id=2068921366]
 layout_mode = 2
 text = "Remaining control: 2 / 2"
 
-[node name="StatusLabel" type="Label" parent="Margin/RootColumn/FooterBlock" unique_id=1186312977]
+[node name="StatusLabel" type="Label" parent="Margin/RootColumn/FooterBlock/SummaryBlock" unique_id=1186312977]
 layout_mode = 2
 text = "Allocation live."
 autowrap_mode = 3
 
-[node name="ButtonRow" type="HBoxContainer" parent="Margin/RootColumn/FooterBlock" unique_id=1847297912]
+[node name="ButtonWrap" type="MarginContainer" parent="Margin/RootColumn/FooterBlock" unique_id=149213004]
+layout_mode = 2
+theme_override_constants/margin_top = 6
+theme_override_constants/margin_bottom = 10
+
+[node name="ButtonRow" type="HBoxContainer" parent="Margin/RootColumn/FooterBlock/ButtonWrap" unique_id=1847297912]
 layout_mode = 2
 theme_override_constants/separation = 12
 alignment = 1
 
-[node name="ResetButton" type="Button" parent="Margin/RootColumn/FooterBlock/ButtonRow" unique_id=360360495]
+[node name="ResetButton" type="Button" parent="Margin/RootColumn/FooterBlock/ButtonWrap/ButtonRow" unique_id=360360495]
 custom_minimum_size = Vector2(220, 54)
 layout_mode = 2
 text = "RESET ALLOCATION"
 
-[node name="ConfirmButton" type="Button" parent="Margin/RootColumn/FooterBlock/ButtonRow" unique_id=1098919973]
+[node name="ConfirmButton" type="Button" parent="Margin/RootColumn/FooterBlock/ButtonWrap/ButtonRow" unique_id=1098919973]
 custom_minimum_size = Vector2(220, 54)
 layout_mode = 2
 disabled = true

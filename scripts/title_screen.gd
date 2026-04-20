@@ -2,9 +2,13 @@ extends Control
 
 const NEXT_SCENE_PATH := "res://scenes/gameplay/GameplayScreen.tscn"
 const FALLBACK_SCENE_PATH := "res://scenes/start/StartPlayTransition.tscn"
+const FADE_DURATION := 1.5
 
 @onready var begin_button: Button = %BeginButton
+@onready var debug_f2_button: Button = %DebugF2Button
+@onready var debug_f3_button: Button = %DebugF3Button
 @onready var dossier_backdrop_dim: ColorRect = $DossierBackdropDim
+@onready var fade_overlay: ColorRect = $FadeOverlay
 @onready var dossier_panel: Control = $CasefilePanel
 @onready var dossier_close_button: Button = $CasefilePanel/Margin/Ledger/HeaderRow/CasefileDismissButton
 @onready var dossier_case_ref: Label = $CasefilePanel/Margin/Ledger/CaseRef
@@ -73,11 +77,18 @@ const DOSSIER_DATA := {
 }
 
 var active_dossier_id := ""
+var is_transitioning := false
 
 func _ready() -> void:
+	if has_node("/root/TitleMusic"):
+		TitleMusic.ensure_title_theme()
 	begin_button.grab_focus()
+	debug_f2_button.show()
+	debug_f3_button.show()
 	_configure_dossier_overlay()
 	dossier_backdrop_dim.hide()
+	fade_overlay.show()
+	fade_overlay.color = Color(0, 0, 0, 1)
 	dossier_panel.hide()
 	dossier_close_button.pressed.connect(_close_dossier)
 
@@ -87,10 +98,64 @@ func _ready() -> void:
 		card.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
 		card.gui_input.connect(_on_card_gui_input.bind(card_name))
 
+	_fade_in_from_black()
+
 func _on_begin_button_pressed() -> void:
+	if is_transitioning:
+		return
+
+	is_transitioning = true
+	begin_button.disabled = true
+	debug_f2_button.disabled = true
+	debug_f3_button.disabled = true
+	begin_button.release_focus()
+	_set_board_input_enabled(false)
 	GameState.reset_run()
+	_transition_to_target_scene()
+
+
+func _on_debug_f2_button_pressed() -> void:
+	if is_transitioning:
+		return
+
+	is_transitioning = true
+	begin_button.disabled = true
+	debug_f2_button.disabled = true
+	debug_f3_button.disabled = true
+	debug_f2_button.release_focus()
+	_set_board_input_enabled(false)
+	GameState.apply_debug_preset_f2_desmond()
+	_transition_to_target_scene()
+
+
+func _on_debug_f3_button_pressed() -> void:
+	if is_transitioning:
+		return
+
+	is_transitioning = true
+	begin_button.disabled = true
+	debug_f2_button.disabled = true
+	debug_f3_button.disabled = true
+	debug_f3_button.release_focus()
+	_set_board_input_enabled(false)
+	GameState.apply_debug_preset_f3_desmond()
+	_transition_to_target_scene()
+
+
+func _transition_to_target_scene() -> void:
 	var target_scene_path := NEXT_SCENE_PATH if ResourceLoader.exists(NEXT_SCENE_PATH) else FALLBACK_SCENE_PATH
+	fade_overlay.show()
+	var tween := create_tween()
+	tween.tween_property(fade_overlay, "color", Color(0, 0, 0, 1), FADE_DURATION)
+	await tween.finished
 	get_tree().change_scene_to_file(target_scene_path)
+
+
+func _fade_in_from_black() -> void:
+	var tween := create_tween()
+	tween.tween_property(fade_overlay, "color", Color(0, 0, 0, 0), FADE_DURATION)
+	await tween.finished
+	fade_overlay.hide()
 
 func _on_card_gui_input(event: InputEvent, dossier_id: String) -> void:
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
@@ -138,6 +203,7 @@ func _configure_dossier_overlay() -> void:
 	dossier_backdrop_dim.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_set_overlay_pass_through(dossier_panel)
 	dossier_close_button.mouse_filter = Control.MOUSE_FILTER_STOP
+	fade_overlay.mouse_filter = Control.MOUSE_FILTER_STOP
 
 
 func _set_overlay_pass_through(control: Control) -> void:
@@ -145,3 +211,12 @@ func _set_overlay_pass_through(control: Control) -> void:
 	for child in control.get_children():
 		if child is Control:
 			_set_overlay_pass_through(child as Control)
+
+
+func _set_board_input_enabled(enabled: bool) -> void:
+	for card_name: String in DOSSIER_DATA.keys():
+		var card := get_node(CARD_NODE_PATHS[card_name]) as Control
+		card.mouse_filter = Control.MOUSE_FILTER_STOP if enabled else Control.MOUSE_FILTER_IGNORE
+	begin_button.mouse_filter = Control.MOUSE_FILTER_STOP if enabled else Control.MOUSE_FILTER_IGNORE
+	debug_f2_button.mouse_filter = Control.MOUSE_FILTER_STOP if enabled else Control.MOUSE_FILTER_IGNORE
+	debug_f3_button.mouse_filter = Control.MOUSE_FILTER_STOP if enabled else Control.MOUSE_FILTER_IGNORE

@@ -1,0 +1,445 @@
+[gd_scene format=3 uid="uid://dvjtnwox64jm5"]
+
+[ext_resource type="Script" uid="uid://b1ixt1ju1c5ai" path="res://scripts/snapshot_screen.gd" id="1_snapshot"]
+
+[sub_resource type="SystemFont" id="SystemFont_note_hand"]
+font_names = PackedStringArray("Bradley Hand", "Segoe Print", "Chalkboard SE", "Noteworthy", "Comic Sans MS", "DejaVu Sans")
+font_italic = true
+oversampling = 1.1
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_explanation_bubble"]
+bg_color = Color(0.964706, 0.94902, 0.882353, 0.97)
+border_width_left = 1
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 3
+border_color = Color(0.764706, 0.690196, 0.533333, 0.86)
+corner_radius_top_left = 4
+corner_radius_top_right = 10
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 14
+shadow_color = Color(0.03, 0.02, 0.01, 0.4)
+shadow_size = 20
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_snapshot_frame"]
+bg_color = Color(0.0627451, 0.0588235, 0.054902, 0.96)
+border_width_left = 6
+border_width_top = 10
+border_width_right = 8
+border_width_bottom = 14
+border_color = Color(0.298039, 0.247059, 0.196078, 1)
+corner_radius_top_left = 18
+corner_radius_top_right = 10
+corner_radius_bottom_right = 22
+corner_radius_bottom_left = 12
+shadow_color = Color(0, 0, 0, 0.4)
+shadow_size = 18
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_strip"]
+bg_color = Color(0.0823529, 0.0745098, 0.0666667, 0.94)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.392157, 0.321569, 0.247059, 0.85)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_portrait"]
+bg_color = Color(0.180392, 0.176471, 0.160784, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.505882, 0.45098, 0.352941, 0.8)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_headshot"]
+bg_color = Color(0.101961, 0.0941176, 0.0862745, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.458824, 0.396078, 0.309804, 0.8)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_button_normal"]
+bg_color = Color(0.784314, 0.709804, 0.545098, 0.94)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.270588, 0.223529, 0.180392, 0.95)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+shadow_color = Color(0, 0, 0, 0.3)
+shadow_size = 8
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_button_pressed"]
+bg_color = Color(0.658824, 0.584314, 0.435294, 0.98)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.239216, 0.196078, 0.152941, 1)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+shadow_color = Color(0, 0, 0, 0.2)
+shadow_size = 6
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_button_hover"]
+bg_color = Color(0.870588, 0.792157, 0.607843, 0.98)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.345098, 0.278431, 0.219608, 1)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+shadow_color = Color(0, 0, 0, 0.32)
+shadow_size = 8
+
+[node name="SnapshotScreen" type="Control" unique_id=1220861640]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_snapshot")
+metadata/_edit_vertical_guides_ = [-131.0]
+
+[node name="Backdrop" type="ColorRect" parent="." unique_id=1104797451]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.0392157, 0.0470588, 0.0588235, 1)
+
+[node name="Vignette" type="ColorRect" parent="." unique_id=125030824]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.0156863, 0.0196078, 0.0235294, 0.34)
+
+[node name="ExplanationBubbleTail" type="ColorRect" parent="." unique_id=463536708]
+visible = false
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -360.0
+offset_top = 136.0
+offset_right = -356.0
+offset_bottom = 252.0
+rotation = 0.977384
+mouse_filter = 2
+color = Color(0.231373, 0.196078, 0.14902, 0.9)
+
+[node name="ArrowHeadUpper" type="ColorRect" parent="ExplanationBubbleTail" unique_id=302143111]
+layout_mode = 0
+offset_left = -10.0
+offset_top = -4.0
+offset_right = 8.0
+offset_bottom = 0.0
+rotation = -0.628319
+mouse_filter = 2
+color = Color(0.231373, 0.196078, 0.14902, 0.9)
+
+[node name="ArrowHeadLower" type="ColorRect" parent="ExplanationBubbleTail" unique_id=302143112]
+layout_mode = 0
+offset_left = -10.0
+offset_top = 0.0
+offset_right = 8.0
+offset_bottom = 4.0
+rotation = 0.523599
+mouse_filter = 2
+color = Color(0.231373, 0.196078, 0.14902, 0.9)
+
+[node name="ExplanationBubble" type="PanelContainer" parent="." unique_id=134423286]
+visible = false
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -388.0
+offset_top = 10.0
+offset_right = -84.0
+offset_bottom = 170.0
+rotation = -0.0733038
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_explanation_bubble")
+
+[node name="TapeLeft" type="ColorRect" parent="ExplanationBubble" unique_id=106300118]
+layout_mode = 0
+offset_left = 22.0
+offset_top = -10.0
+offset_right = 74.0
+offset_bottom = 18.0
+rotation = -0.191986
+mouse_filter = 2
+color = Color(0.909804, 0.878431, 0.713725, 0.42)
+
+[node name="TapeRight" type="ColorRect" parent="ExplanationBubble" unique_id=106300119]
+layout_mode = 0
+offset_left = 220.0
+offset_top = -6.0
+offset_right = 274.0
+offset_bottom = 20.0
+rotation = 0.15708
+mouse_filter = 2
+color = Color(0.909804, 0.878431, 0.713725, 0.38)
+
+[node name="BubbleMargin" type="MarginContainer" parent="ExplanationBubble" unique_id=1567416661]
+layout_mode = 2
+theme_override_constants/margin_left = 18
+theme_override_constants/margin_top = 18
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 16
+
+[node name="ExplanationBubbleLabel" type="Label" parent="ExplanationBubble/BubbleMargin" unique_id=82276253]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.168627, 0.145098, 0.109804, 0.98)
+theme_override_fonts/font = SubResource("SystemFont_note_hand")
+theme_override_font_sizes/font_size = 17
+theme_override_constants/line_spacing = 3
+text = "Diagnostic layer enabled.
+Values influence decisions and outcome."
+autowrap_mode = 3
+
+[node name="Margin" type="MarginContainer" parent="." unique_id=1310172903]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 42.0
+offset_top = 32.0
+offset_right = -42.0
+offset_bottom = -32.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="CenterFrame" type="PanelContainer" parent="Margin" unique_id=841116291]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme_override_styles/panel = SubResource("StyleBoxFlat_snapshot_frame")
+
+[node name="FrameMargin" type="MarginContainer" parent="Margin/CenterFrame" unique_id=356019719]
+layout_mode = 2
+theme_override_constants/margin_left = 18
+theme_override_constants/margin_top = 18
+theme_override_constants/margin_right = 18
+theme_override_constants/margin_bottom = 18
+
+[node name="RootColumn" type="VBoxContainer" parent="Margin/CenterFrame/FrameMargin" unique_id=1439762939]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="HeaderBlock" type="VBoxContainer" parent="Margin/CenterFrame/FrameMargin/RootColumn" unique_id=1692312445]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="Overline" type="Label" parent="Margin/CenterFrame/FrameMargin/RootColumn/HeaderBlock" unique_id=1559964521]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.756863, 0.666667, 0.54902, 0.9)
+theme_override_font_sizes/font_size = 14
+text = "SNAPSHOT MODE"
+
+[node name="Title" type="Label" parent="Margin/CenterFrame/FrameMargin/RootColumn/HeaderBlock" unique_id=780684761]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.94902, 0.956863, 0.964706, 1)
+theme_override_font_sizes/font_size = 32
+text = "Carrier Snapshot"
+
+[node name="Subtitle" type="Label" parent="Margin/CenterFrame/FrameMargin/RootColumn/HeaderBlock" unique_id=537903622]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.760784, 0.792157, 0.831373, 0.86)
+theme_override_font_sizes/font_size = 15
+text = "Expanded readout of the current lower-strip state."
+autowrap_mode = 3
+
+[node name="SnapshotStrip" type="PanelContainer" parent="Margin/CenterFrame/FrameMargin/RootColumn" unique_id=1680994410]
+custom_minimum_size = Vector2(0, 220)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_strip")
+
+[node name="PortraitMargin" type="MarginContainer" parent="Margin/CenterFrame/FrameMargin/RootColumn/SnapshotStrip" unique_id=1137782877]
+layout_mode = 2
+theme_override_constants/margin_left = 14
+theme_override_constants/margin_top = 14
+theme_override_constants/margin_right = 14
+theme_override_constants/margin_bottom = 12
+
+[node name="PortraitRow" type="HBoxContainer" parent="Margin/CenterFrame/FrameMargin/RootColumn/SnapshotStrip/PortraitMargin" unique_id=1959587689]
+layout_mode = 2
+theme_override_constants/separation = 14
+
+[node name="DossierSlotA" type="PanelContainer" parent="Margin/CenterFrame/FrameMargin/RootColumn/SnapshotStrip/PortraitMargin/PortraitRow" unique_id=858838960]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_portrait")
+
+[node name="Margin" type="MarginContainer" parent="Margin/CenterFrame/FrameMargin/RootColumn/SnapshotStrip/PortraitMargin/PortraitRow/DossierSlotA" unique_id=962005928]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="Stack" type="VBoxContainer" parent="Margin/CenterFrame/FrameMargin/RootColumn/SnapshotStrip/PortraitMargin/PortraitRow/DossierSlotA/Margin" unique_id=443241679]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="Headshot" type="PanelContainer" parent="Margin/CenterFrame/FrameMargin/RootColumn/SnapshotStrip/PortraitMargin/PortraitRow/DossierSlotA/Margin/Stack" unique_id=1532132544]
+custom_minimum_size = Vector2(0, 28)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_headshot")
+
+[node name="HeadshotLabel" type="Label" parent="Margin/CenterFrame/FrameMargin/RootColumn/SnapshotStrip/PortraitMargin/PortraitRow/DossierSlotA/Margin/Stack/Headshot" unique_id=1470694604]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.854902, 0.827451, 0.776471, 0.92)
+theme_override_font_sizes/font_size = 12
+text = "FILM"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Title" type="Label" parent="Margin/CenterFrame/FrameMargin/RootColumn/SnapshotStrip/PortraitMargin/PortraitRow/DossierSlotA/Margin/Stack" unique_id=1446494707]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.909804, 0.878431, 0.819608, 0.95)
+theme_override_font_sizes/font_size = 13
+text = "Depth 0"
+
+[node name="Cue" type="Label" parent="Margin/CenterFrame/FrameMargin/RootColumn/SnapshotStrip/PortraitMargin/PortraitRow/DossierSlotA/Margin/Stack" unique_id=321906267]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.756863, 0.666667, 0.54902, 0.86)
+theme_override_font_sizes/font_size = 10
+text = "Oblivion 0 [LOW]"
+autowrap_mode = 3
+
+[node name="DossierSlotB" type="PanelContainer" parent="Margin/CenterFrame/FrameMargin/RootColumn/SnapshotStrip/PortraitMargin/PortraitRow" unique_id=2021267748]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_portrait")
+
+[node name="Margin" type="MarginContainer" parent="Margin/CenterFrame/FrameMargin/RootColumn/SnapshotStrip/PortraitMargin/PortraitRow/DossierSlotB" unique_id=962020159]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="Stack" type="VBoxContainer" parent="Margin/CenterFrame/FrameMargin/RootColumn/SnapshotStrip/PortraitMargin/PortraitRow/DossierSlotB/Margin" unique_id=538421852]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="Headshot" type="PanelContainer" parent="Margin/CenterFrame/FrameMargin/RootColumn/SnapshotStrip/PortraitMargin/PortraitRow/DossierSlotB/Margin/Stack" unique_id=1155896152]
+custom_minimum_size = Vector2(0, 28)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_headshot")
+
+[node name="HeadshotLabel" type="Label" parent="Margin/CenterFrame/FrameMargin/RootColumn/SnapshotStrip/PortraitMargin/PortraitRow/DossierSlotB/Margin/Stack/Headshot" unique_id=1744925505]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.854902, 0.827451, 0.776471, 0.92)
+theme_override_font_sizes/font_size = 12
+text = "PLAYER"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Title" type="Label" parent="Margin/CenterFrame/FrameMargin/RootColumn/SnapshotStrip/PortraitMargin/PortraitRow/DossierSlotB/Margin/Stack" unique_id=1774947653]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.909804, 0.878431, 0.819608, 0.95)
+theme_override_font_sizes/font_size = 13
+text = "Control_next 0"
+
+[node name="Cue" type="Label" parent="Margin/CenterFrame/FrameMargin/RootColumn/SnapshotStrip/PortraitMargin/PortraitRow/DossierSlotB/Margin/Stack" unique_id=1441217083]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.756863, 0.666667, 0.54902, 0.86)
+theme_override_font_sizes/font_size = 10
+text = "Phase F1"
+autowrap_mode = 3
+
+[node name="DossierSlotC" type="PanelContainer" parent="Margin/CenterFrame/FrameMargin/RootColumn/SnapshotStrip/PortraitMargin/PortraitRow" unique_id=804021144]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_portrait")
+
+[node name="Margin" type="MarginContainer" parent="Margin/CenterFrame/FrameMargin/RootColumn/SnapshotStrip/PortraitMargin/PortraitRow/DossierSlotC" unique_id=935595267]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="Stack" type="VBoxContainer" parent="Margin/CenterFrame/FrameMargin/RootColumn/SnapshotStrip/PortraitMargin/PortraitRow/DossierSlotC/Margin" unique_id=1544119128]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="Headshot" type="PanelContainer" parent="Margin/CenterFrame/FrameMargin/RootColumn/SnapshotStrip/PortraitMargin/PortraitRow/DossierSlotC/Margin/Stack" unique_id=1881234935]
+custom_minimum_size = Vector2(0, 28)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_headshot")
+
+[node name="HeadshotLabel" type="Label" parent="Margin/CenterFrame/FrameMargin/RootColumn/SnapshotStrip/PortraitMargin/PortraitRow/DossierSlotC/Margin/Stack/Headshot" unique_id=1388332539]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.854902, 0.827451, 0.776471, 0.92)
+theme_override_font_sizes/font_size = 12
+text = "CAST"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Title" type="Label" parent="Margin/CenterFrame/FrameMargin/RootColumn/SnapshotStrip/PortraitMargin/PortraitRow/DossierSlotC/Margin/Stack" unique_id=220184185]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.909804, 0.878431, 0.819608, 0.95)
+theme_override_font_sizes/font_size = 13
+text = "D I/T 0/0"
+
+[node name="Cue" type="Label" parent="Margin/CenterFrame/FrameMargin/RootColumn/SnapshotStrip/PortraitMargin/PortraitRow/DossierSlotC/Margin/Stack" unique_id=1951920091]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.756863, 0.666667, 0.54902, 0.86)
+theme_override_font_sizes/font_size = 10
+text = "V I/T 0/0"
+autowrap_mode = 3
+
+[node name="FooterBlock" type="VBoxContainer" parent="Margin/CenterFrame/FrameMargin/RootColumn" unique_id=139288162]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="FooterNote" type="Label" parent="Margin/CenterFrame/FrameMargin/RootColumn/FooterBlock" unique_id=237701273]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.760784, 0.792157, 0.831373, 0.76)
+theme_override_font_sizes/font_size = 13
+text = "Snapshot holds the run state outside normal authored playback."
+autowrap_mode = 3
+
+[node name="ResumeButton" type="Button" parent="Margin/CenterFrame/FrameMargin/RootColumn/FooterBlock" unique_id=1257526733]
+custom_minimum_size = Vector2(248, 58)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_colors/font_color = Color(0.0980392, 0.105882, 0.117647, 1)
+theme_override_colors/font_pressed_color = Color(0.0980392, 0.105882, 0.117647, 1)
+theme_override_colors/font_hover_color = Color(0.0980392, 0.105882, 0.117647, 1)
+theme_override_font_sizes/font_size = 20
+theme_override_styles/normal = SubResource("StyleBoxFlat_button_normal")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_button_pressed")
+theme_override_styles/hover = SubResource("StyleBoxFlat_button_hover")
+text = "RESUME PLAYBACK"

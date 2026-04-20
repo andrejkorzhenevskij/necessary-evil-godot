@@ -1,0 +1,209 @@
+WorkerThreadPool: 12 threads, 3 max low-priority.
+Godot Engine v4.6.1.stable.fedora.14d19694e - https://godotengine.org
+TextServer: Added interface "Dummy"
+TextServer: Added interface "ICU / HarfBuzz / Graphite (Built-in)"
+Unrecognized output string "misc2" in mapping:
+030000000d0f0000ab01000011010000,Horipad Steam,a:b0,b:b1,back:b10,dpdown:h0.4,dpleft:h0.8,dpright:h0.2,dpup:h0.1,guide:b12,leftshoulder:b6,leftstick:b13,lefttrigger:a5,leftx:a0,lefty:a1,misc2:b2,paddle1:b19,paddle2:b18,paddle3:b15,paddle4:b5,rightshoulder:b7,rightstick:b14,righttrigger:a4,rightx:a2,righty:a3,start:b11,x:b3,y:b4,platform:Linux,
+Unrecognized output string "misc2" in mapping:
+050000000d0f00009601000091000000,Horipad Steam,a:b0,b:b1,back:b10,dpdown:h0.4,dpleft:h0.8,dpright:h0.2,dpup:h0.1,guide:b12,leftshoulder:b6,leftstick:b13,lefttrigger:a5,leftx:a0,lefty:a1,misc2:b2,paddle1:b19,paddle2:b18,paddle3:b15,paddle4:b5,rightshoulder:b7,rightstick:b14,righttrigger:a4,rightx:a2,righty:a3,start:b11,x:b3,y:b4,platform:Linux,
+Unrecognized output string "misc2" in mapping:
+030000007e0500006920000011010000,Nintendo Switch 2 Pro Controller,a:b0,b:b1,back:b14,dpdown:b8,dpleft:b10,dpright:b9,dpup:b11,guide:b16,leftshoulder:b12,leftstick:b15,lefttrigger:b13,leftx:a0,lefty:a1~,misc1:b17,misc2:b20,paddle1:b18,paddle2:b19,rightshoulder:b4,rightstick:b7,righttrigger:b5,rightx:a2,righty:a3~,start:b6,x:b2,y:b3,platform:Linux,
+SDL: Init OK!
+Xshape 1.1 detected.
+Xinerama 1.1 detected.
+Xrandr 1.6 detected.
+Xrender 0.11 detected.
+Xinput 2.2 detected.
+XInput: Refreshing devices.
+XInput: Absolute pointing device: xwayland-pointer:10
+XInput: No touch devices found.
+Detecting GPUs, set DRI_PRIME in the environment to override GPU detection logic.
+Found renderers:
+Renderer 0: Mesa Intel(R) UHD Graphics (ADL-S GT0.5) with priority: 20
+Renderer 1: zink Vulkan 1.4(NVIDIA GeForce RTX 2050 (NVK GA107) (MESA_NVK)) with priority: 0
+Using renderer: Mesa Intel(R) UHD Graphics (ADL-S GT0.5)
+DBus 1.16.0 detected.
+FreeDesktopScreenSaver: Acquired screensaver inhibition cookie: 18075
+Using "default" pen tablet driver...
+Shader 'CanvasSdfShaderGLES3' SHA256: 926b1e5006cb330430f4752ff4eeb8ec5eb86c9f30aad7d4edff40345bbaa18d
+Shader 'SkeletonShaderGLES3' SHA256: 43bb193cf05c3d4db99fb9c1f80fedf32c435a3463ea61dec94036f2d201333e
+Shader 'ParticlesShaderGLES3' SHA256: b02ea720d5c272cbea809669070f7d6b72ccade64b7d872b016bd171943297bb
+Shader 'ParticlesCopyShaderGLES3' SHA256: b915e59d4227afc357bced0aca87ad8dd3ecb25730a3c0db24f65743590ca279
+Shader 'CopyShaderGLES3' SHA256: 0c373b27b08c0a6991e3853c6a9518c54382e99df6a36c4aa96b599f30b35262
+Shader 'CubemapFilterShaderGLES3' SHA256: 5bf6d2a0619f3f94a16405058b7ccc7b699f719c2654b2d3bcf70913d7ab9756
+Shader 'GlowShaderGLES3' SHA256: bf1d40055af10a6b572f26965dac484e05387c843209b16229acbdb50eebc0dd
+Shader 'PostShaderGLES3' SHA256: a742f6cdc925c6281005ef1f3dbeb4f8310165f562e0d6246fb2453696a64ade
+Shader 'FeedShaderGLES3' SHA256: 249e6cfe1d26e30abc55734621b78d2017123392f849361695f56d148a2716c8
+Shader 'CanvasShaderGLES3' SHA256: b5608b47cac747bd8de3bd7d5fba2276b890a954e8205f8606fa9d59d65fd5e1
+Shader 'CanvasOcclusionShaderGLES3' SHA256: 19482ef36cba458ebfb4aaef21491ebfa20050f9fb9eaea58680d66cd3ad91c9
+Shader 'SceneShaderGLES3' SHA256: d65afe4bad7791d66fcac8fbceb0c7cf646789ce3a73a43f62e31aed3ca54056
+Shader 'SkyShaderGLES3' SHA256: 90dbbc67a124a749651cae329b2b8218435ba7f1ab11d31c1fd6db1e6ca15b06
+OpenGL API 4.6 (Core Profile) Mesa 25.3.6 - Compatibility - Using Device: Intel - Mesa Intel(R) UHD Graphics (ADL-S GT0.5)
+PulseAudio 17.0.0 detected.
+PulseAudio: context other
+PulseAudio: context other
+PulseAudio: context other
+PulseAudio: context ready
+PulseAudio: Detecting channels for device: alsa_output.pci-0000_00_1f.3.analog-stereo
+PulseAudio: detected 2 output channels
+PulseAudio: audio buffer frames: 512 calculated output latency: 11ms
+
+TextServer: Primary interface set to: "ICU / HarfBuzz / Graphite (Built-in)".
+CORE API HASH: 75400357
+EDITOR API HASH: 3012763406
+SceneTreeFTI: traversal method DEFAULT
+Loading resource: res://scripts/GameState.gd
+Loaded system CA certificates
+Loading resource: res://scenes/start/TitleScreen.tscn
+Loading resource: res://scripts/title_screen.gd
+Loading resource: res://art/back.png
+Loading resource: res://.godot/imported/back.png-1195e539ea0f91e22da95281ccc9822a.ctex
+Loading resource: res://art/stamp.png
+Loading resource: res://.godot/imported/stamp.png-41f360e60aea8ef1c559e2943d601d0f.ctex
+Loading resource: res://art/ChatGPT Image 13 мар. 2026 г., 01_57_23.png
+Loading resource: res://.godot/imported/ChatGPT Image 13 мар. 2026 г., 01_57_23.png-5fd503c35866f3c76b02afc033fb684b.ctex
+Loading resource: res://art/ChatGPT Image 13 мар. 2026 г., 02_20_06.png
+Loading resource: res://.godot/imported/ChatGPT Image 13 мар. 2026 г., 02_20_06.png-ea84d3dab24a3c2293e628859e293b12.ctex
+Loading resource: res://art/ChatGPT Image 13 мар. 2026 г., 02_26_30.png
+Loading resource: res://.godot/imported/ChatGPT Image 13 мар. 2026 г., 02_26_30.png-d1b8b4bc397a33b1a0c2d27d4dc74767.ctex
+Loading resource: res://art/ChatGPT Image 13 мар. 2026 г., 03_02_40.png
+Loading resource: res://.godot/imported/ChatGPT Image 13 мар. 2026 г., 03_02_40.png-4ae1785da7944ea6c2bf5865550af11a.ctex
+Loading resource: res://scenes/dossier/CasefilePanel.tscn
+Loading resource: res://art/Dossier.png
+Loading resource: res://.godot/imported/Dossier.png-34e3cdbac8febbaf30c251e1734b3d1e.ctex
+Loading resource: res://art/closedossier.png
+Loading resource: res://.godot/imported/closedossier.png-2378b7155af29d542c1f2a430e5fa6c4.ctex
+Loading resource: res://scenes/gameplay/GameplayScreen.tscn
+Loading resource: res://scenes/gameplay/MainGameplayInterface.tscn
+Loading resource: res://scripts/main_gameplay_screen.gd
+Loading resource: res://art/image_1.png
+Loading resource: res://.godot/imported/image_1.png-ccd95067c647289047ef270d40d27e8b.ctex
+[GameplayScreen] _apply_image id=prep_bay
+[GameplayScreen] _apply_image texture_size=(1536.0, 1024.0)
+[GameplayScreen] _apply_image scene_image_area.size=(8.0, 428.0)
+[GameplayScreen] _apply_image scene_image_texture.size=(8.0, 428.0)
+[GameplayScreen] _apply_image scene_image_texture.global_rect=[P: (-42.5, -1414.5), S: (8.0, 428.0)]
+[GameplayScreen] _apply_image id=image_1
+[GameplayScreen] _apply_image texture_size=(1536.0, 1024.0)
+[GameplayScreen] _apply_image scene_image_area.size=(8.0, 428.0)
+[GameplayScreen] _apply_image scene_image_texture.size=(8.0, 428.0)
+[GameplayScreen] _apply_image scene_image_texture.global_rect=[P: (-42.5, -1414.5), S: (8.0, 428.0)]
+[GameplayScreen] _ready scene_image_area.size=(1544.0, 1032.0)
+[GameplayScreen] _ready scene_image_area.global_rect=[P: (-387.0, -261.0), S: (1544.0, 1032.0)]
+[GameplayScreen] _ready scene_image_texture.size=(1536.0, 1024.0)
+[GameplayScreen] _ready scene_image_texture.global_rect=[P: (-383.0, -257.0), S: (1536.0, 1024.0)]
+[GameplayScreen] _ready scene_frame.global_rect=[P: (-4.0, 15.0), S: (780.0, 618.0)]
+[GameplayScreen] _ready frame_canvas.global_rect=[P: (20.0, 41.0), S: (730.0, 560.0)]
+[GameplayScreen] _advance click current_step_index=1 total_steps=19
+Loading resource: res://art/image_2.png
+Loading resource: res://.godot/imported/image_2.png-bfb18096faee037652dfde4dcf2e655d.ctex
+[GameplayScreen] _apply_image id=image_2
+[GameplayScreen] _apply_image texture_size=(1536.0, 1024.0)
+[GameplayScreen] _apply_image scene_image_area.size=(1544.0, 1032.0)
+[GameplayScreen] _apply_image scene_image_texture.size=(1536.0, 1024.0)
+[GameplayScreen] _apply_image scene_image_texture.global_rect=[P: (-383.0, -257.0), S: (1536.0, 1024.0)]
+[GameplayScreen] _advance click current_step_index=2 total_steps=19
+Loading resource: res://art/image_3.png
+Loading resource: res://.godot/imported/image_3.png-af5f4367023c6bb144f05575f5176a0f.ctex
+[GameplayScreen] _apply_image id=image_3
+[GameplayScreen] _apply_image texture_size=(1536.0, 1024.0)
+[GameplayScreen] _apply_image scene_image_area.size=(1544.0, 1032.0)
+[GameplayScreen] _apply_image scene_image_texture.size=(1536.0, 1024.0)
+[GameplayScreen] _apply_image scene_image_texture.global_rect=[P: (-383.0, -257.0), S: (1536.0, 1024.0)]
+[GameplayScreen] _advance click current_step_index=3 total_steps=19
+Loading resource: res://art/image_4.png
+Loading resource: res://.godot/imported/image_4.png-3fcff13b398901bf625942eef5090064.ctex
+[GameplayScreen] _apply_image id=image_4
+[GameplayScreen] _apply_image texture_size=(1536.0, 1024.0)
+[GameplayScreen] _apply_image scene_image_area.size=(1544.0, 1032.0)
+[GameplayScreen] _apply_image scene_image_texture.size=(1536.0, 1024.0)
+[GameplayScreen] _apply_image scene_image_texture.global_rect=[P: (-383.0, -257.0), S: (1536.0, 1024.0)]
+[GameplayScreen] _advance click current_step_index=4 total_steps=19
+[GameplayScreen] _set_octavia_text text=Красиво упал. Хотя я бы ронял ближе к центру.
+[GameplayScreen] _set_octavia_text layer_visible=true
+[GameplayScreen] _set_octavia_text label_visible=true
+[GameplayScreen] _set_octavia_text layer_global_rect=[P: (-387.0, -261.0), S: (1536.0, 604.0)]
+[GameplayScreen] _set_octavia_text label_global_rect=[P: (-359.0, -237.0), S: (700.0, 96.0)]
+[GameplayScreen] _set_octavia_text layer_z_index=10
+[GameplayScreen] _set_octavia_text label_z_index=11
+[GameplayScreen] _advance click current_step_index=5 total_steps=19
+[GameplayScreen] _advance click current_step_index=6 total_steps=19
+[GameplayScreen] _advance click current_step_index=7 total_steps=19
+Loading resource: res://art/image_4-2.png
+Loading resource: res://.godot/imported/image_4-2.png-4f709748c37354f9e339ab287a381703.ctex
+[GameplayScreen] _apply_image id=image_4-2.png
+[GameplayScreen] _apply_image texture_size=(1536.0, 1024.0)
+[GameplayScreen] _apply_image scene_image_area.size=(1544.0, 1032.0)
+[GameplayScreen] _apply_image scene_image_texture.size=(1536.0, 1024.0)
+[GameplayScreen] _apply_image scene_image_texture.global_rect=[P: (-383.0, -257.0), S: (1536.0, 1024.0)]
+[GameplayScreen] _advance click current_step_index=8 total_steps=19
+Loading resource: res://art/image_5.png
+Loading resource: res://.godot/imported/image_5.png-d8a1c85d0dc6cd8d30e5c04a8bfc97f5.ctex
+[GameplayScreen] _apply_image id=image_5
+[GameplayScreen] _apply_image texture_size=(1536.0, 1024.0)
+[GameplayScreen] _apply_image scene_image_area.size=(1544.0, 1032.0)
+[GameplayScreen] _apply_image scene_image_texture.size=(1536.0, 1024.0)
+[GameplayScreen] _apply_image scene_image_texture.global_rect=[P: (-383.0, -257.0), S: (1536.0, 1024.0)]
+[GameplayScreen] _advance click current_step_index=9 total_steps=19
+[GameplayScreen] _set_octavia_text text=Слишком ровно происходит… Стоп. Что?
+[GameplayScreen] _set_octavia_text layer_visible=true
+[GameplayScreen] _set_octavia_text label_visible=true
+[GameplayScreen] _set_octavia_text layer_global_rect=[P: (-383.0, -257.0), S: (1536.0, 1024.0)]
+[GameplayScreen] _set_octavia_text label_global_rect=[P: (-355.0, -233.0), S: (700.0, 96.0)]
+[GameplayScreen] _set_octavia_text layer_z_index=10
+[GameplayScreen] _set_octavia_text label_z_index=11
+[GameplayScreen] _advance click current_step_index=10 total_steps=19
+[GameplayScreen] _advance click current_step_index=11 total_steps=19
+[GameplayScreen] _set_octavia_text text=Я вообще не должен этого видеть! А меня волнует, что всё слишком... Ровно?
+[GameplayScreen] _set_octavia_text layer_visible=true
+[GameplayScreen] _set_octavia_text label_visible=true
+[GameplayScreen] _set_octavia_text layer_global_rect=[P: (-383.0, -257.0), S: (1536.0, 1024.0)]
+[GameplayScreen] _set_octavia_text label_global_rect=[P: (-355.0, -233.0), S: (700.0, 96.0)]
+[GameplayScreen] _set_octavia_text layer_z_index=10
+[GameplayScreen] _set_octavia_text label_z_index=11
+[GameplayScreen] _advance click current_step_index=12 total_steps=19
+Loading resource: res://art/image_6.png
+Loading resource: res://.godot/imported/image_6.png-6cb181905d3fea95ce0792009fa0cfe4.ctex
+[GameplayScreen] _apply_image id=image_6
+[GameplayScreen] _apply_image texture_size=(1536.0, 1024.0)
+[GameplayScreen] _apply_image scene_image_area.size=(1544.0, 1032.0)
+[GameplayScreen] _apply_image scene_image_texture.size=(1536.0, 1024.0)
+[GameplayScreen] _apply_image scene_image_texture.global_rect=[P: (-383.0, -257.0), S: (1536.0, 1024.0)]
+[GameplayScreen] _advance click current_step_index=13 total_steps=19
+[GameplayScreen] _advance click current_step_index=14 total_steps=19
+[GameplayScreen] _advance click current_step_index=15 total_steps=19
+[GameplayScreen] _set_octavia_text text=И вот это, это — я, но… это ведь уже произошло около часа назад…
+[GameplayScreen] _set_octavia_text layer_visible=true
+[GameplayScreen] _set_octavia_text label_visible=true
+[GameplayScreen] _set_octavia_text layer_global_rect=[P: (-383.0, -257.0), S: (1536.0, 1024.0)]
+[GameplayScreen] _set_octavia_text label_global_rect=[P: (-355.0, -233.0), S: (700.0, 96.0)]
+[GameplayScreen] _set_octavia_text layer_z_index=10
+[GameplayScreen] _set_octavia_text label_z_index=11
+[GameplayScreen] _advance click current_step_index=16 total_steps=19
+[GameplayScreen] _advance click current_step_index=17 total_steps=19
+[GameplayScreen] _set_octavia_text text=Это повтор. Почему это повтор?
+[GameplayScreen] _set_octavia_text layer_visible=true
+[GameplayScreen] _set_octavia_text label_visible=true
+[GameplayScreen] _set_octavia_text layer_global_rect=[P: (-383.0, -257.0), S: (1536.0, 1024.0)]
+[GameplayScreen] _set_octavia_text label_global_rect=[P: (-355.0, -233.0), S: (700.0, 96.0)]
+[GameplayScreen] _set_octavia_text layer_z_index=10
+[GameplayScreen] _set_octavia_text label_z_index=11
+[GameplayScreen] _advance click current_step_index=18 total_steps=19
+Loading resource: res://art/image_7.png
+Loading resource: res://.godot/imported/image_7.png-6ab20050a7b726359d56a3ca9cd4786c.ctex
+[GameplayScreen] _apply_image id=image_7
+[GameplayScreen] _apply_image texture_size=(1536.0, 1024.0)
+[GameplayScreen] _apply_image scene_image_area.size=(1544.0, 1032.0)
+[GameplayScreen] _apply_image scene_image_texture.size=(1536.0, 1024.0)
+[GameplayScreen] _apply_image scene_image_texture.global_rect=[P: (-383.0, -257.0), S: (1536.0, 1024.0)]
+[GameplayScreen] _advance click current_step_index=19 total_steps=19
+[GameplayScreen] _advance click current_step_index=19 total_steps=19
+[GameplayScreen] _advance click current_step_index=19 total_steps=19
+[GameplayScreen] _advance click current_step_index=19 total_steps=19
+[GameplayScreen] _advance click current_step_index=19 total_steps=19
+[GameplayScreen] _advance click current_step_index=19 total_steps=19
+[GameplayScreen] _advance click current_step_index=19 total_steps=19
+XR: Clearing primary interface
+XR: Removed interface "Native mobile"
+XR: Removed interface "OpenXR"
+PulseAudio: context terminated

@@ -79,10 +79,10 @@ const COLOR_TEXT_DIM := Color(0.48, 0.5, 0.58, 0.86)
 @onready var desmond_zone_subtitle: Label = $Margin/RootColumn/DiagramArea/DesmondZone/Margin/Column/DesmondZoneSubtitle
 @onready var desmond_zone_points: Label = $Margin/RootColumn/DiagramArea/DesmondZone/Margin/Column/DesmondZonePoints
 
-@onready var remaining_label: Label = $Margin/RootColumn/FooterBlock/RemainingLabel
-@onready var status_label: Label = $Margin/RootColumn/FooterBlock/StatusLabel
-@onready var reset_button: Button = $Margin/RootColumn/FooterBlock/ButtonRow/ResetButton
-@onready var confirm_button: Button = $Margin/RootColumn/FooterBlock/ButtonRow/ConfirmButton
+@onready var remaining_label: Label = $Margin/RootColumn/FooterBlock/SummaryBlock/RemainingLabel
+@onready var status_label: Label = $Margin/RootColumn/FooterBlock/SummaryBlock/StatusLabel
+@onready var reset_button: Button = $Margin/RootColumn/FooterBlock/ButtonWrap/ButtonRow/ResetButton
+@onready var confirm_button: Button = $Margin/RootColumn/FooterBlock/ButtonWrap/ButtonRow/ConfirmButton
 
 var pulse_time := 0.0
 var source_phase := "F1"
@@ -286,10 +286,19 @@ func _confirm_allocation() -> void:
 		return
 
 	if has_node("/root/GameState"):
+		var outcome_id := _resolve_ending_id()
+		print("[SurgeryLayer] confirm outcome_id=", outcome_id)
+		GameState.current_outcome_id = outcome_id
+		GameState.set_gameplay_resume_branch(source_phase, "OUTCOME_%s" % outcome_id)
 		GameState.apply_surgery_result(source_phase, zone_allocation.duplicate(true))
+		if source_phase == "F3":
+			# F3 still has authored outcome playback after surgery, so keep the phase live
+			# and let GameplayScreen resume into the F3 outcome branch.
+			GameState.current_phase = source_phase
 		if GameState.is_run_complete():
 			get_tree().change_scene_to_file(FINAL_SCENE_PATH)
 			return
+		GameState.set_snapshot_context(source_phase, source_phase == "F1")
 
 	get_tree().change_scene_to_file(GAMEPLAY_SCENE_PATH)
 

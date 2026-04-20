@@ -40,6 +40,7 @@ var completed_phases: Array[String] = []
 var dominant_zone: String = ""
 var resolved_outcome: String = ""
 var ending_id: String = ""
+var current_outcome_id: String = ""
 var badge_ids: Array[String] = []
 var dossier_variant: String = ""
 var resolution_label: String = ""
@@ -59,6 +60,11 @@ var victoria_integrity := 5
 var victoria_trauma := 0
 var leonard_integrity := 5
 var leonard_trauma := 0
+var gameplay_resume_phase := ""
+var gameplay_resume_step_index := 0
+var gameplay_resume_label := ""
+var snapshot_source_phase := ""
+var snapshot_show_explanatory_overlay := false
 
 
 func reset_run() -> void:
@@ -67,6 +73,7 @@ func reset_run() -> void:
 	dominant_zone = ""
 	resolved_outcome = ""
 	ending_id = ""
+	current_outcome_id = ""
 	badge_ids.clear()
 	dossier_variant = ""
 	resolution_label = ""
@@ -86,6 +93,37 @@ func reset_run() -> void:
 	victoria_trauma = 0
 	leonard_integrity = 5
 	leonard_trauma = 0
+	clear_gameplay_resume()
+	clear_snapshot_context()
+
+
+func apply_debug_preset_f2_desmond() -> void:
+	reset_run()
+	apply_surgery_result("F1", {
+		"scene": 0,
+		"victoria": 0,
+		"desmond": 2,
+	})
+	clear_gameplay_resume()
+	clear_snapshot_context()
+
+
+func apply_debug_preset_f3_desmond() -> void:
+	reset_run()
+	apply_surgery_result("F1", {
+		"scene": 0,
+		"victoria": 0,
+		"desmond": 2,
+	})
+	apply_surgery_result("F2", {
+		"scene": 0,
+		"victoria": 1,
+		"desmond": 1,
+	})
+	dominant_zone = "desmond"
+	current_outcome_id = "12C"
+	clear_gameplay_resume()
+	clear_snapshot_context()
 
 
 func ensure_runtime_phase() -> void:
@@ -112,6 +150,7 @@ func apply_surgery_result(phase_id: String, allocation: Dictionary) -> void:
 		push_error("GameState.apply_surgery_result: unknown phase '%s'" % phase_id)
 		return
 
+	current_outcome_id = _resolve_outcome_id_from_allocation(allocation)
 	_accumulate_surgery_allocation(allocation)
 	_apply_surgery_metric_deltas(allocation)
 
@@ -189,6 +228,59 @@ func get_surgery_pass_outcome(allocation: Dictionary) -> String:
 	return _resolve_outcome_key_from_allocation(allocation)
 
 
+func set_gameplay_resume(phase_id: String, step_index: int) -> void:
+	gameplay_resume_phase = phase_id
+	gameplay_resume_step_index = maxi(step_index, 0)
+	gameplay_resume_label = ""
+
+
+func set_gameplay_resume_branch(phase_id: String, label_name: String) -> void:
+	gameplay_resume_phase = phase_id
+	gameplay_resume_step_index = 0
+	gameplay_resume_label = label_name.strip_edges()
+
+
+func peek_gameplay_resume() -> Dictionary:
+	return {
+		"phase": gameplay_resume_phase,
+		"step_index": gameplay_resume_step_index,
+		"label": gameplay_resume_label,
+	}
+
+
+func consume_gameplay_resume() -> Dictionary:
+	var resume_data := {
+		"phase": gameplay_resume_phase,
+		"step_index": gameplay_resume_step_index,
+		"label": gameplay_resume_label,
+	}
+	clear_gameplay_resume()
+	return resume_data
+
+
+func clear_gameplay_resume() -> void:
+	gameplay_resume_phase = ""
+	gameplay_resume_step_index = 0
+	gameplay_resume_label = ""
+
+
+func set_snapshot_context(source_phase: String, show_explanatory_overlay: bool) -> void:
+	snapshot_source_phase = source_phase.strip_edges()
+	snapshot_show_explanatory_overlay = show_explanatory_overlay
+
+
+func get_snapshot_context() -> Dictionary:
+	return {
+		"source_phase": snapshot_source_phase,
+		"show_explanatory_overlay": snapshot_show_explanatory_overlay,
+	}
+
+
+func clear_snapshot_context() -> void:
+	snapshot_source_phase = ""
+	snapshot_show_explanatory_overlay = false
+
+
 func _accumulate_surgery_allocation(allocation: Dictionary) -> void:
 	for zone_id: String in ["scene", "victoria", "desmond"]:
 		surgery_allocation[zone_id] = int(surgery_allocation.get(zone_id, 0)) + int(allocation.get(zone_id, 0))
@@ -235,6 +327,12 @@ func _resolve_outcome_key_from_allocation(allocation: Dictionary) -> String:
 	if highest_points > 0 and highest_zones.size() == 1:
 		return highest_zones[0]
 	return "mixed"
+
+
+func _resolve_outcome_id_from_allocation(allocation: Dictionary) -> String:
+	var outcome_key := _resolve_outcome_key_from_allocation(allocation)
+	var outcome_data: Dictionary = OUTCOMES.get(outcome_key, OUTCOMES["mixed"])
+	return str(outcome_data.get("ending_id", "12D"))
 
 
 func _apply_outcome(outcome_key: String) -> void:

@@ -11,13 +11,14 @@ config_version=5
 [application]
 
 config/name="Necessary Evil"
-run/main_scene="res://scenes/start/TitleScreen.tscn"
+run/main_scene="res://scenes/start/IntroStartScreen.tscn"
 config/features=PackedStringArray("4.6", "GL Compatibility")
 config/icon="res://icon.svg"
 
 [autoload]
 
 GameState="*res://scripts/GameState.gd"
+TitleMusic="*res://scripts/TitleMusic.gd"
 
 [physics]
 
