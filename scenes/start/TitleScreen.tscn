@@ -414,7 +414,7 @@ theme_override_styles/pressed = SubResource("StyleBoxFlat_button_pressed")
 theme_override_styles/hover = SubResource("StyleBoxFlat_button_hover")
 text = "DEBUG F2"
 
-[node name="DebugF3Button" type="Button" parent="BoardFrame/BoardMargin/BoardContent/FooterRow" unique_id=1602714887]
+[node name="DebugF3BurnButton" type="Button" parent="BoardFrame/BoardMargin/BoardContent/FooterRow" unique_id=1602714887]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(248, 58)
 layout_mode = 2
@@ -425,7 +425,33 @@ theme_override_font_sizes/font_size = 20
 theme_override_styles/normal = SubResource("StyleBoxFlat_button_normal")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_button_pressed")
 theme_override_styles/hover = SubResource("StyleBoxFlat_button_hover")
-text = "DEBUG F3"
+text = "DEBUG F3 BURN"
+
+[node name="DebugF3OblivionButton" type="Button" parent="BoardFrame/BoardMargin/BoardContent/FooterRow" unique_id=1602714888]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(248, 58)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.0980392, 0.105882, 0.117647, 1)
+theme_override_colors/font_pressed_color = Color(0.0980392, 0.105882, 0.117647, 1)
+theme_override_colors/font_hover_color = Color(0.0980392, 0.105882, 0.117647, 1)
+theme_override_font_sizes/font_size = 20
+theme_override_styles/normal = SubResource("StyleBoxFlat_button_normal")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_button_pressed")
+theme_override_styles/hover = SubResource("StyleBoxFlat_button_hover")
+text = "DEBUG F3 OBLIVION"
+
+[node name="DebugF3CleanButton" type="Button" parent="BoardFrame/BoardMargin/BoardContent/FooterRow" unique_id=1602714889]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(248, 58)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.0980392, 0.105882, 0.117647, 1)
+theme_override_colors/font_pressed_color = Color(0.0980392, 0.105882, 0.117647, 1)
+theme_override_colors/font_hover_color = Color(0.0980392, 0.105882, 0.117647, 1)
+theme_override_font_sizes/font_size = 20
+theme_override_styles/normal = SubResource("StyleBoxFlat_button_normal")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_button_pressed")
+theme_override_styles/hover = SubResource("StyleBoxFlat_button_hover")
+text = "DEBUG F3 CLEAN"
 
 [node name="DossierBackdropDim" type="ColorRect" parent="." unique_id=206580094]
 visible = false
@@ -462,4 +488,6 @@ grow_vertical = 1
 
 [connection signal="pressed" from="BoardFrame/BoardMargin/BoardContent/FooterRow/BeginButton" to="." method="_on_begin_button_pressed"]
 [connection signal="pressed" from="BoardFrame/BoardMargin/BoardContent/FooterRow/DebugF2Button" to="." method="_on_debug_f2_button_pressed"]
-[connection signal="pressed" from="BoardFrame/BoardMargin/BoardContent/FooterRow/DebugF3Button" to="." method="_on_debug_f3_button_pressed"]
+[connection signal="pressed" from="BoardFrame/BoardMargin/BoardContent/FooterRow/DebugF3BurnButton" to="." method="_on_debug_f3_burn_button_pressed"]
+[connection signal="pressed" from="BoardFrame/BoardMargin/BoardContent/FooterRow/DebugF3OblivionButton" to="." method="_on_debug_f3_oblivion_button_pressed"]
+[connection signal="pressed" from="BoardFrame/BoardMargin/BoardContent/FooterRow/DebugF3CleanButton" to="." method="_on_debug_f3_clean_button_pressed"]

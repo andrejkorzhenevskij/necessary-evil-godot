@@ -2,6 +2,16 @@
 
 [ext_resource type="PackedScene" path="res://scenes/gameplay/MainGameplayInterface.tscn" id="1_main"]
 [ext_resource type="Script" path="res://scripts/main_gameplay_screen.gd" id="2_gameplay"]
+[ext_resource type="Shader" path="res://shaders/scene_oblivion_overlay.gdshader" id="3_oblivion_shader"]
+[ext_resource type="Shader" path="res://shaders/scene_burn_overlay.gdshader" id="4_burn_shader"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_oblivion_fx"]
+shader = ExtResource("3_oblivion_shader")
+shader_parameter/amount = 0.0
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_burn_fx"]
+shader = ExtResource("4_burn_shader")
+shader_parameter/amount = 0.0
 
 [node name="GameplayScreen" instance=ExtResource("1_main")]
 script = ExtResource("2_gameplay")
@@ -16,6 +26,34 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 color = Color(0, 0, 0, 1)
+
+[node name="OblivionEventOverlay" type="TextureRect" parent="Margin/RootStack/MainRow/SceneFrame/FrameMargin/FrameCanvas/SceneImageArea" unique_id=173250191]
+visible = false
+z_index = 5
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+material = SubResource("ShaderMaterial_oblivion_fx")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="BurnEventOverlay" type="TextureRect" parent="Margin/RootStack/MainRow/SceneFrame/FrameMargin/FrameCanvas/SceneImageArea" unique_id=275830411]
+visible = false
+z_index = 6
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+material = SubResource("ShaderMaterial_burn_fx")
+expand_mode = 1
+stretch_mode = 5
 
 [node name="TurnInterferenceA" type="ColorRect" parent="Margin/RootStack/MainRow/SceneFrame/FrameMargin/FrameCanvas/SceneImageArea" unique_id=913450201]
 visible = false

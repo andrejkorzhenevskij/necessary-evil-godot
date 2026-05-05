@@ -6,7 +6,9 @@ const FADE_DURATION := 1.5
 
 @onready var begin_button: Button = %BeginButton
 @onready var debug_f2_button: Button = %DebugF2Button
-@onready var debug_f3_button: Button = %DebugF3Button
+@onready var debug_f3_burn_button: Button = %DebugF3BurnButton
+@onready var debug_f3_oblivion_button: Button = %DebugF3OblivionButton
+@onready var debug_f3_clean_button: Button = %DebugF3CleanButton
 @onready var dossier_backdrop_dim: ColorRect = $DossierBackdropDim
 @onready var fade_overlay: ColorRect = $FadeOverlay
 @onready var dossier_panel: Control = $CasefilePanel
@@ -84,7 +86,9 @@ func _ready() -> void:
 		TitleMusic.ensure_title_theme()
 	begin_button.grab_focus()
 	debug_f2_button.show()
-	debug_f3_button.show()
+	debug_f3_burn_button.show()
+	debug_f3_oblivion_button.show()
+	debug_f3_clean_button.show()
 	_configure_dossier_overlay()
 	dossier_backdrop_dim.hide()
 	fade_overlay.show()
@@ -105,9 +109,7 @@ func _on_begin_button_pressed() -> void:
 		return
 
 	is_transitioning = true
-	begin_button.disabled = true
-	debug_f2_button.disabled = true
-	debug_f3_button.disabled = true
+	_set_debug_buttons_disabled(true)
 	begin_button.release_focus()
 	_set_board_input_enabled(false)
 	GameState.reset_run()
@@ -119,26 +121,46 @@ func _on_debug_f2_button_pressed() -> void:
 		return
 
 	is_transitioning = true
-	begin_button.disabled = true
-	debug_f2_button.disabled = true
-	debug_f3_button.disabled = true
+	_set_debug_buttons_disabled(true)
 	debug_f2_button.release_focus()
 	_set_board_input_enabled(false)
 	GameState.apply_debug_preset_f2_desmond()
 	_transition_to_target_scene()
 
 
-func _on_debug_f3_button_pressed() -> void:
+func _on_debug_f3_burn_button_pressed() -> void:
 	if is_transitioning:
 		return
 
 	is_transitioning = true
-	begin_button.disabled = true
-	debug_f2_button.disabled = true
-	debug_f3_button.disabled = true
-	debug_f3_button.release_focus()
+	_set_debug_buttons_disabled(true)
+	debug_f3_burn_button.release_focus()
 	_set_board_input_enabled(false)
-	GameState.apply_debug_preset_f3_desmond()
+	GameState.apply_debug_preset_f3_burn()
+	_transition_to_target_scene()
+
+
+func _on_debug_f3_oblivion_button_pressed() -> void:
+	if is_transitioning:
+		return
+
+	is_transitioning = true
+	_set_debug_buttons_disabled(true)
+	debug_f3_oblivion_button.release_focus()
+	_set_board_input_enabled(false)
+	GameState.apply_debug_preset_f3_oblivion()
+	_transition_to_target_scene()
+
+
+func _on_debug_f3_clean_button_pressed() -> void:
+	if is_transitioning:
+		return
+
+	is_transitioning = true
+	_set_debug_buttons_disabled(true)
+	debug_f3_clean_button.release_focus()
+	_set_board_input_enabled(false)
+	GameState.apply_debug_preset_f3_clean()
 	_transition_to_target_scene()
 
 
@@ -219,4 +241,14 @@ func _set_board_input_enabled(enabled: bool) -> void:
 		card.mouse_filter = Control.MOUSE_FILTER_STOP if enabled else Control.MOUSE_FILTER_IGNORE
 	begin_button.mouse_filter = Control.MOUSE_FILTER_STOP if enabled else Control.MOUSE_FILTER_IGNORE
 	debug_f2_button.mouse_filter = Control.MOUSE_FILTER_STOP if enabled else Control.MOUSE_FILTER_IGNORE
-	debug_f3_button.mouse_filter = Control.MOUSE_FILTER_STOP if enabled else Control.MOUSE_FILTER_IGNORE
+	debug_f3_burn_button.mouse_filter = Control.MOUSE_FILTER_STOP if enabled else Control.MOUSE_FILTER_IGNORE
+	debug_f3_oblivion_button.mouse_filter = Control.MOUSE_FILTER_STOP if enabled else Control.MOUSE_FILTER_IGNORE
+	debug_f3_clean_button.mouse_filter = Control.MOUSE_FILTER_STOP if enabled else Control.MOUSE_FILTER_IGNORE
+
+
+func _set_debug_buttons_disabled(disabled: bool) -> void:
+	begin_button.disabled = disabled
+	debug_f2_button.disabled = disabled
+	debug_f3_burn_button.disabled = disabled
+	debug_f3_oblivion_button.disabled = disabled
+	debug_f3_clean_button.disabled = disabled

@@ -4,6 +4,11 @@ const PHASE_ORDER := ["F1", "F2", "F3"]
 const FILM_METRIC_MAX := 9
 const CONTROL_NEXT_MAX := 4
 const CHARACTER_METRIC_MAX := 9
+const PHASE_RELEVANT_CHARACTERS := {
+	"F1": ["desmond"],
+	"F2": ["desmond", "victoria"],
+	"F3": ["desmond", "victoria", "leonard"],
+}
 const OUTCOMES := {
 	"scene": {
 		"ending_id": "12A",
@@ -50,9 +55,9 @@ var surgery_allocation := {
 	"victoria": 0,
 	"desmond": 0,
 }
-var film_depth := 1
-var film_oblivion := 0
-var film_pressure := 0
+var film_depth := 0
+var film_oblivion := 1
+var film_pressure := 1
 var control_next := 2
 var desmond_integrity := 5
 var desmond_trauma := 0
@@ -83,9 +88,9 @@ func reset_run() -> void:
 		"victoria": 0,
 		"desmond": 0,
 	}
-	film_depth = 1
-	film_oblivion = 0
-	film_pressure = 0
+	film_depth = 0
+	film_oblivion = 1
+	film_pressure = 1
 	control_next = 2
 	desmond_integrity = 5
 	desmond_trauma = 0
@@ -109,6 +114,38 @@ func apply_debug_preset_f2_desmond() -> void:
 
 
 func apply_debug_preset_f3_desmond() -> void:
+	_apply_debug_preset_f3_base()
+	dominant_zone = "desmond"
+	current_outcome_id = "12C"
+	clear_gameplay_resume()
+	clear_snapshot_context()
+
+
+func apply_debug_preset_f3_burn() -> void:
+	_apply_debug_preset_f3_base()
+	film_pressure = 3
+	film_oblivion = 1
+	clear_gameplay_resume()
+	clear_snapshot_context()
+
+
+func apply_debug_preset_f3_oblivion() -> void:
+	_apply_debug_preset_f3_base()
+	film_pressure = 1
+	film_oblivion = 3
+	clear_gameplay_resume()
+	clear_snapshot_context()
+
+
+func apply_debug_preset_f3_clean() -> void:
+	_apply_debug_preset_f3_base()
+	film_pressure = 2
+	film_oblivion = 2
+	clear_gameplay_resume()
+	clear_snapshot_context()
+
+
+func _apply_debug_preset_f3_base() -> void:
 	reset_run()
 	apply_surgery_result("F1", {
 		"scene": 0,
@@ -120,10 +157,6 @@ func apply_debug_preset_f3_desmond() -> void:
 		"victoria": 1,
 		"desmond": 1,
 	})
-	dominant_zone = "desmond"
-	current_outcome_id = "12C"
-	clear_gameplay_resume()
-	clear_snapshot_context()
 
 
 func ensure_runtime_phase() -> void:
@@ -152,7 +185,7 @@ func apply_surgery_result(phase_id: String, allocation: Dictionary) -> void:
 
 	current_outcome_id = _resolve_outcome_id_from_allocation(allocation)
 	_accumulate_surgery_allocation(allocation)
-	_apply_surgery_metric_deltas(allocation)
+	_apply_surgery_metric_deltas(phase_id, allocation)
 
 	if not completed_phases.has(phase_id):
 		completed_phases.append(phase_id)
@@ -201,7 +234,7 @@ func resolve_run_from_allocation() -> void:
 
 func apply_film_delta(depth_delta: int, oblivion_delta: int, pressure_delta: int) -> void:
 	film_depth = clampi(film_depth + depth_delta, 0, FILM_METRIC_MAX)
-	film_oblivion = clampi(film_oblivion + oblivion_delta, 0, FILM_METRIC_MAX)
+	film_oblivion = clampi(film_oblivion + maxi(oblivion_delta, 0), 0, FILM_METRIC_MAX)
 	film_pressure = clampi(film_pressure + pressure_delta, 0, FILM_METRIC_MAX)
 
 
@@ -210,16 +243,18 @@ func apply_control_next_delta(delta: int) -> void:
 
 
 func apply_character_delta(character_id: String, integrity_delta: int, trauma_delta: int) -> void:
+	var safe_integrity_delta := mini(integrity_delta, 0)
+	var safe_trauma_delta := maxi(trauma_delta, 0)
 	match character_id:
 		"desmond":
-			desmond_integrity = clampi(desmond_integrity + integrity_delta, 0, CHARACTER_METRIC_MAX)
-			desmond_trauma = clampi(desmond_trauma + trauma_delta, 0, CHARACTER_METRIC_MAX)
+			desmond_integrity = clampi(desmond_integrity + safe_integrity_delta, 0, CHARACTER_METRIC_MAX)
+			desmond_trauma = clampi(desmond_trauma + safe_trauma_delta, 0, CHARACTER_METRIC_MAX)
 		"victoria":
-			victoria_integrity = clampi(victoria_integrity + integrity_delta, 0, CHARACTER_METRIC_MAX)
-			victoria_trauma = clampi(victoria_trauma + trauma_delta, 0, CHARACTER_METRIC_MAX)
+			victoria_integrity = clampi(victoria_integrity + safe_integrity_delta, 0, CHARACTER_METRIC_MAX)
+			victoria_trauma = clampi(victoria_trauma + safe_trauma_delta, 0, CHARACTER_METRIC_MAX)
 		"leonard":
-			leonard_integrity = clampi(leonard_integrity + integrity_delta, 0, CHARACTER_METRIC_MAX)
-			leonard_trauma = clampi(leonard_trauma + trauma_delta, 0, CHARACTER_METRIC_MAX)
+			leonard_integrity = clampi(leonard_integrity + safe_integrity_delta, 0, CHARACTER_METRIC_MAX)
+			leonard_trauma = clampi(leonard_trauma + safe_trauma_delta, 0, CHARACTER_METRIC_MAX)
 		_:
 			push_error("GameState.apply_character_delta: unknown character '%s'" % character_id)
 
@@ -286,31 +321,41 @@ func _accumulate_surgery_allocation(allocation: Dictionary) -> void:
 		surgery_allocation[zone_id] = int(surgery_allocation.get(zone_id, 0)) + int(allocation.get(zone_id, 0))
 
 
-func _apply_surgery_metric_deltas(allocation: Dictionary) -> void:
+func _apply_surgery_metric_deltas(phase_id: String, allocation: Dictionary) -> void:
 	var pass_outcome := get_surgery_pass_outcome(allocation)
+	var relevant_characters := _get_relevant_characters_for_phase(phase_id)
 
 	match pass_outcome:
 		"scene":
-			apply_film_delta(2, 1, 2)
-			apply_control_next_delta(-1)
-			apply_character_delta("leonard", -1, 2)
+			apply_film_delta(1, 0, 1)
+			for character_id: String in relevant_characters:
+				apply_character_delta(character_id, -1, 0)
 		"victoria":
 			apply_film_delta(1, 0, 1)
-			apply_control_next_delta(1)
-			apply_character_delta("victoria", 1, 1)
+			_apply_character_focus_delta("victoria", int(allocation.get("victoria", 0)))
 		"desmond":
-			apply_film_delta(1, 0, 2)
-			apply_control_next_delta(0)
-			apply_character_delta("desmond", 1, 2)
+			apply_film_delta(1, 0, 1)
+			_apply_character_focus_delta("desmond", int(allocation.get("desmond", 0)))
 		"mixed":
-			apply_film_delta(1, 1, 1)
-			apply_control_next_delta(0)
-			if int(allocation.get("scene", 0)) > 0:
-				apply_character_delta("leonard", -1, 1)
-			if int(allocation.get("victoria", 0)) > 0:
-				apply_character_delta("victoria", 0, 1)
-			if int(allocation.get("desmond", 0)) > 0:
-				apply_character_delta("desmond", 0, 1)
+			apply_film_delta(-1, 1, -1)
+			for character_id: String in relevant_characters:
+				apply_character_delta(character_id, -1, 0)
+
+
+func _apply_character_focus_delta(character_id: String, points_to_target: int) -> void:
+	if points_to_target <= 0:
+		return
+
+	apply_character_delta(character_id, -1 if points_to_target >= 2 else 0, points_to_target)
+
+
+func _get_relevant_characters_for_phase(phase_id: String) -> Array[String]:
+	var characters: Array[String] = []
+	var raw_characters: Variant = PHASE_RELEVANT_CHARACTERS.get(phase_id, [])
+	if raw_characters is Array:
+		for character_id: Variant in raw_characters:
+			characters.append(str(character_id))
+	return characters
 
 
 func _resolve_outcome_key_from_allocation(allocation: Dictionary) -> String:

@@ -15,6 +15,8 @@ const AUTHORED_LINE_COMMAND_PREFIX := "::"
 const OCTAVIA_AUTO_CLEAR_CLICKS := 2
 const TURN_CLICK_COUNT := 3
 const FADE_DURATION := 1.5
+const EVENT_FX_FADE_IN_DURATION := 0.35
+const EVENT_FX_FADE_OUT_DURATION := 0.24
 const PAN_DEFAULT_DURATION := 2.5
 const BODY_COPY_EMPHASIS_DURATION := 0.24
 const BODY_COPY_EMPHASIS_OFFSET_Y := -8.0
@@ -28,9 +30,14 @@ const FRAME_SIDE_GUTTER := 12.0
 const FRAME_TOP_MATTE := 18.0
 const FRAME_BOTTOM_MATTE := 18.0
 const FRAME_STRIP_TO_PORTRAIT_GAP := 22.0
+const FILMSTRIP_LOOP_SPEED := 27.0
+const FILMSTRIP_LOOP_OVERFLOW := 48.0
 const PORTRAIT_STRIP_BASE_HEIGHT := 92.0
 const PORTRAIT_STRIP_MIN_HEIGHT := 76.0
 const PORTRAIT_STRIP_SIDE_INSET := 14.0
+const EVENT_FX_NONE := ""
+const EVENT_FX_OBLIVION := "oblivion"
+const EVENT_FX_BURN := "burn"
 
 const PAN_PRESETS := [
 	{
@@ -483,6 +490,8 @@ The archive edge stays stable just long enough for one final routing step.
 @onready var scene_image_texture: TextureRect = $Margin/RootStack/MainRow/SceneFrame/FrameMargin/FrameCanvas/SceneImageArea/SceneImageTexture
 @onready var scene_image_label: Label = $Margin/RootStack/MainRow/SceneFrame/FrameMargin/FrameCanvas/SceneImageArea/SceneImageLabel
 @onready var scene_image_note: Label = $Margin/RootStack/MainRow/SceneFrame/FrameMargin/FrameCanvas/SceneImageArea/SceneImageNote
+@onready var oblivion_event_overlay: TextureRect = $Margin/RootStack/MainRow/SceneFrame/FrameMargin/FrameCanvas/SceneImageArea/OblivionEventOverlay
+@onready var burn_event_overlay: TextureRect = $Margin/RootStack/MainRow/SceneFrame/FrameMargin/FrameCanvas/SceneImageArea/BurnEventOverlay
 @onready var inner_voice_layer: Control = $Margin/RootStack/MainRow/SceneFrame/FrameMargin/FrameCanvas/SceneImageArea/OctaviusInnerVoiceLayer
 @onready var inner_voice_label: Label = $Margin/RootStack/MainRow/SceneFrame/FrameMargin/FrameCanvas/SceneImageArea/OctaviusInnerVoiceLayer/OctaviusInnerVoiceLabel
 @onready var scene_frame: PanelContainer = $Margin/RootStack/MainRow/SceneFrame
@@ -550,10 +559,16 @@ var is_pan_active := false
 var active_pan_tween: Tween
 var active_fade_tween: Tween
 var active_body_copy_emphasis_tween: Tween
+var active_event_fx_tween: Tween
 var layout_refresh_queued := false
 var active_branch_end_step_index := -1
 var pending_initial_step_index := -1
 var pending_initial_branch_end_step_index := -1
+var active_event_fx := EVENT_FX_NONE
+var filmstrip_left_offset := 0.0
+var filmstrip_right_offset := 0.0
+var filmstrip_left_tiles: Array[TextureRect] = []
+var filmstrip_right_tiles: Array[TextureRect] = []
 
 
 func _ready() -> void:
@@ -561,6 +576,7 @@ func _ready() -> void:
 		TitleMusic.ensure_title_theme()
 	_resolve_phase()
 	_bind_actions()
+	_setup_filmstrip_loops()
 	_configure_display_channels()
 	_refresh_phase_headers()
 	_load_authored_sequence()
@@ -580,6 +596,7 @@ func _process(delta: float) -> void:
 	if not _can_run_runtime_updates():
 		return
 
+	_update_filmstrip_loops(delta)
 	metrics_pulse_time += delta
 	_refresh_metric_panel()
 
@@ -661,6 +678,7 @@ func _configure_display_channels() -> void:
 	_style_pan_prompt()
 	_hide_pan_prompt()
 	_clear_turn_interference()
+	_reset_event_fx_state()
 
 
 func _refresh_phase_headers() -> void:
@@ -978,6 +996,7 @@ func jump_to_label(label_name: String) -> bool:
 	current_step_index = int(authored_label_lookup.get(normalized_label, 0))
 	active_branch_end_step_index = _resolve_branch_end_step_index(current_step_index)
 	narrative_progression_locked = false
+	_handle_event_fx_label(normalized_label)
 	print("[GameplayScreen] jump_to_label label=", normalized_label, " target_step_index=", current_step_index, " branch_end_step_index=", active_branch_end_step_index)
 	return true
 
@@ -1122,6 +1141,7 @@ func _apply_pending_resume_state() -> void:
 			pending_initial_branch_end_step_index = -1
 			current_step_index = resolved_target_step_index
 			active_branch_end_step_index = -1
+			_handle_event_fx_label(resolved_label)
 			print("[GameplayScreen] queued deferred resume label=", resolved_label, " step_index=", pending_initial_step_index, " branch_end_step_index=disabled")
 			return
 		push_warning("GameplayScreen: unknown authored label '%s'" % resolved_label)
@@ -1143,6 +1163,7 @@ func _apply_image(image_id: String) -> void:
 	_reset_pan_state()
 	var image_texture := load(image_path) as Texture2D
 	scene_image_texture.texture = image_texture
+	_sync_event_overlay_textures()
 	scene_image_label.hide()
 	scene_image_note.hide()
 	print("[GameplayScreen] _apply_image id=", image_id)
@@ -1276,6 +1297,7 @@ func _refresh_frame_layout() -> void:
 	filmstrip_left.size = Vector2(strip_width, strip_height)
 	filmstrip_right.position = Vector2(canvas_size.x - strip_width, strip_top)
 	filmstrip_right.size = Vector2(strip_width, strip_height)
+	_refresh_filmstrip_loop_layouts()
 
 	scene_image_area.position = Vector2(viewport_left, strip_top)
 	scene_image_area.size = Vector2(viewport_width, strip_height)
@@ -1290,6 +1312,7 @@ func _refresh_frame_layout() -> void:
 	frame_damage_top.size = Vector2(maxf(0.0, viewport_width + FRAME_SIDE_GUTTER * 2.0 - 36.0), 10.0)
 	frame_damage_right.position = Vector2(maxf(0.0, canvas_size.x - 14.0), strip_top + 48.0)
 	frame_damage_right.size = Vector2(14.0, maxf(0.0, strip_height - 70.0))
+	_sync_event_overlay_textures()
 
 
 func _resolve_filmstrip_width(canvas_width: float) -> float:
@@ -1297,6 +1320,98 @@ func _resolve_filmstrip_width(canvas_width: float) -> float:
 	var max_strip_width := maxf(FRAME_STRIP_MIN_WIDTH, (canvas_width - FRAME_VIEWPORT_MIN_WIDTH - FRAME_SIDE_GUTTER * 2.0) * 0.5)
 	strip_width = minf(strip_width, max_strip_width)
 	return maxf(FRAME_STRIP_MIN_WIDTH, strip_width)
+
+
+func _setup_filmstrip_loops() -> void:
+	filmstrip_left_tiles = _create_filmstrip_tiles(filmstrip_left, false)
+	filmstrip_right_tiles = _create_filmstrip_tiles(filmstrip_right, true)
+	_refresh_filmstrip_loop_layouts()
+
+
+func _create_filmstrip_tiles(container: TextureRect, flip_h: bool) -> Array[TextureRect]:
+	var tiles: Array[TextureRect] = []
+	if not is_instance_valid(container):
+		return tiles
+
+	var source_texture := container.texture
+	var source_expand_mode := container.expand_mode
+	var loop_stretch_mode := TextureRect.STRETCH_SCALE
+	container.clip_contents = true
+	container.texture = null
+
+	for child: Node in container.get_children():
+		if child is TextureRect and String(child.name).begins_with("LoopTile"):
+			tiles.append(child as TextureRect)
+
+	if tiles.is_empty():
+		for tile_index in range(2):
+			var tile := TextureRect.new()
+			tile.name = "LoopTile%d" % tile_index
+			tile.mouse_filter = Control.MOUSE_FILTER_IGNORE
+			tile.expand_mode = source_expand_mode
+			tile.stretch_mode = loop_stretch_mode
+			tile.flip_h = flip_h
+			container.add_child(tile)
+			tiles.append(tile)
+
+	for tile: TextureRect in tiles:
+		tile.texture = source_texture
+		tile.flip_h = flip_h
+		tile.expand_mode = source_expand_mode
+		tile.stretch_mode = loop_stretch_mode
+
+	return tiles
+
+
+func _refresh_filmstrip_loop_layouts() -> void:
+	filmstrip_left_offset = _layout_filmstrip_tiles(filmstrip_left, filmstrip_left_tiles, filmstrip_left_offset)
+	filmstrip_right_offset = _layout_filmstrip_tiles(filmstrip_right, filmstrip_right_tiles, filmstrip_right_offset)
+
+
+func _update_filmstrip_loops(delta: float) -> void:
+	filmstrip_left_offset = _advance_filmstrip_tiles(filmstrip_left, filmstrip_left_tiles, filmstrip_left_offset, delta)
+	filmstrip_right_offset = _advance_filmstrip_tiles(filmstrip_right, filmstrip_right_tiles, filmstrip_right_offset, delta)
+
+
+func _advance_filmstrip_tiles(container: TextureRect, tiles: Array[TextureRect], offset: float, delta: float) -> float:
+	var content_height := _get_filmstrip_loop_height(container)
+	if content_height <= 0.0:
+		return offset
+
+	offset = wrapf(offset + FILMSTRIP_LOOP_SPEED * delta, 0.0, content_height)
+	_position_filmstrip_tiles(container, tiles, offset)
+	return offset
+
+
+func _layout_filmstrip_tiles(container: TextureRect, tiles: Array[TextureRect], offset: float) -> float:
+	var content_height := _get_filmstrip_loop_height(container)
+	if content_height <= 0.0:
+		return offset
+
+	offset = wrapf(offset, 0.0, content_height)
+	for tile: TextureRect in tiles:
+		tile.position.x = 0.0
+		tile.size = Vector2(container.size.x, content_height)
+	_position_filmstrip_tiles(container, tiles, offset)
+	return offset
+
+
+func _position_filmstrip_tiles(container: TextureRect, tiles: Array[TextureRect], offset: float) -> void:
+	if tiles.size() < 2 or not is_instance_valid(container):
+		return
+
+	var content_height := _get_filmstrip_loop_height(container)
+	if content_height <= 0.0:
+		return
+
+	tiles[0].position = Vector2(0.0, offset - content_height)
+	tiles[1].position = Vector2(0.0, offset)
+
+
+func _get_filmstrip_loop_height(container: TextureRect) -> float:
+	if not is_instance_valid(container):
+		return 0.0
+	return maxf(container.size.y + FILMSTRIP_LOOP_OVERFLOW, container.size.y)
 
 
 func _begin_pan(preset_name: String) -> void:
@@ -1446,7 +1561,6 @@ func _apply_turn_visuals() -> void:
 	var rewrite_flash := 0.55 + 0.45 * absf(sin(metrics_pulse_time * (11.0 + phase_strength * 6.0)))
 	var band_pulse := 0.5 + 0.5 * sin(metrics_pulse_time * (8.4 + phase_strength * 4.6))
 	var strip_alpha := 0.18 + phase_strength * 0.34
-	var fracture_alpha := 0.18 + phase_strength * 0.30
 	var glitch_shift: float = floor(sin(metrics_pulse_time * (14.0 + phase_strength * 4.0)) * TURN_GLITCH_SHIFT * phase_strength)
 	var vertical_jitter := sin(metrics_pulse_time * 9.0) * 2.0 * phase_strength
 
@@ -1552,6 +1666,7 @@ func _normalize_authored_label(label_name: String) -> String:
 
 
 func _enter_surgery_mode() -> void:
+	_reset_event_fx_state()
 	_begin_scene_transition(SURGERY_SCENE_PATH)
 
 
@@ -1559,12 +1674,14 @@ func _enter_snapshot_mode() -> void:
 	if _has_game_state():
 		GameState.set_gameplay_resume(current_phase, current_step_index)
 		GameState.set_snapshot_context(current_phase, false)
+	_reset_event_fx_state()
 	_begin_scene_transition(SNAPSHOT_SCENE_PATH)
 
 
 func _enter_final_screen() -> void:
 	if _has_game_state() and GameState.ending_id.is_empty():
 		GameState.resolve_run_from_allocation()
+	_reset_event_fx_state()
 	_begin_scene_transition(FINAL_SCENE_PATH)
 
 
@@ -1591,14 +1708,15 @@ func _resolve_f3_event_label() -> String:
 
 	var burn: int = int(GameState.film_pressure)
 	var oblivion: int = int(GameState.film_oblivion)
+	var resolved_label := "F3_POST_OUTCOME"
 
-	if burn <= 0 and oblivion <= 0:
-		return "F3_POST_OUTCOME"
 	if burn > oblivion:
-		return "F3_EVENT_BURN"
-	if oblivion > burn:
-		return "F3_EVENT_OBLIVION"
-	return "F3_POST_OUTCOME"
+		resolved_label = "F3_EVENT_BURN"
+	elif oblivion > burn:
+		resolved_label = "F3_EVENT_OBLIVION"
+
+	print("[GameplayScreen] F3_EVENT_RESOLVE pressure=", GameState.film_pressure, " oblivion=", GameState.film_oblivion, " resolved=", resolved_label)
+	return resolved_label
 
 
 func _get_current_outcome_id() -> String:
@@ -1639,7 +1757,128 @@ func _set_phase(phase_id: String) -> void:
 	if _has_game_state():
 		GameState.current_phase = phase_id
 	_refresh_phase_headers()
+	_reset_event_fx_state()
 	_apply_default_image_for_phase()
+
+
+func play_oblivion_event_fx() -> void:
+	_play_event_fx(EVENT_FX_OBLIVION)
+
+
+func play_burn_event_fx() -> void:
+	_play_event_fx(EVENT_FX_BURN)
+
+
+func clear_event_fx() -> void:
+	_stop_event_fx_tween()
+	active_event_fx = EVENT_FX_NONE
+	var oblivion_amount := _get_event_overlay_amount(oblivion_event_overlay)
+	var burn_amount := _get_event_overlay_amount(burn_event_overlay)
+	var should_fade := oblivion_amount > 0.001 or burn_amount > 0.001
+	if not should_fade:
+		_reset_event_fx_state()
+		return
+
+	active_event_fx_tween = create_tween()
+	active_event_fx_tween.set_parallel(true)
+	active_event_fx_tween.set_trans(Tween.TRANS_SINE)
+	active_event_fx_tween.set_ease(Tween.EASE_OUT)
+	active_event_fx_tween.tween_method(_set_event_overlay_amount.bind(oblivion_event_overlay), oblivion_amount, 0.0, EVENT_FX_FADE_OUT_DURATION)
+	active_event_fx_tween.tween_method(_set_event_overlay_amount.bind(burn_event_overlay), burn_amount, 0.0, EVENT_FX_FADE_OUT_DURATION)
+	active_event_fx_tween.finished.connect(_reset_event_fx_state)
+
+
+func _handle_event_fx_label(label_name: String) -> void:
+	match label_name:
+		"F3_EVENT_OBLIVION":
+			play_oblivion_event_fx()
+		"F3_EVENT_BURN":
+			play_burn_event_fx()
+		_:
+			clear_event_fx()
+
+
+func _play_event_fx(effect_name: String) -> void:
+	if not _has_ui_targets():
+		return
+
+	_sync_event_overlay_textures()
+	_stop_event_fx_tween()
+	active_event_fx = effect_name
+
+	var target_overlay := _get_event_overlay_node(effect_name)
+	var other_overlay := burn_event_overlay if target_overlay == oblivion_event_overlay else oblivion_event_overlay
+	if target_overlay == null:
+		_reset_event_fx_state()
+		return
+
+	if is_instance_valid(other_overlay):
+		other_overlay.visible = false
+		_set_event_overlay_amount(0.0, other_overlay)
+	target_overlay.visible = true
+	target_overlay.texture = scene_image_texture.texture
+
+	var start_amount := _get_event_overlay_amount(target_overlay)
+	active_event_fx_tween = create_tween()
+	active_event_fx_tween.set_trans(Tween.TRANS_SINE)
+	active_event_fx_tween.set_ease(Tween.EASE_OUT)
+	active_event_fx_tween.tween_method(_set_event_overlay_amount.bind(target_overlay), start_amount, 1.0, EVENT_FX_FADE_IN_DURATION)
+
+
+func _get_event_overlay_node(effect_name: String) -> TextureRect:
+	match effect_name:
+		EVENT_FX_OBLIVION:
+			return oblivion_event_overlay
+		EVENT_FX_BURN:
+			return burn_event_overlay
+		_:
+			return null
+
+
+func _sync_event_overlay_textures() -> void:
+	if not is_instance_valid(scene_image_texture):
+		return
+
+	var base_texture := scene_image_texture.texture
+	if is_instance_valid(oblivion_event_overlay):
+		oblivion_event_overlay.texture = base_texture
+	if is_instance_valid(burn_event_overlay):
+		burn_event_overlay.texture = base_texture
+
+
+func _get_event_overlay_amount(overlay: TextureRect) -> float:
+	if not is_instance_valid(overlay):
+		return 0.0
+	var shader_material := overlay.material as ShaderMaterial
+	if shader_material == null:
+		return 0.0
+	return float(shader_material.get_shader_parameter("amount"))
+
+
+func _set_event_overlay_amount(value: float, overlay: TextureRect) -> void:
+	if not is_instance_valid(overlay):
+		return
+	var shader_material := overlay.material as ShaderMaterial
+	if shader_material == null:
+		return
+	shader_material.set_shader_parameter("amount", clampf(value, 0.0, 1.0))
+
+
+func _reset_event_fx_state() -> void:
+	_stop_event_fx_tween()
+	active_event_fx = EVENT_FX_NONE
+	if is_instance_valid(oblivion_event_overlay):
+		oblivion_event_overlay.visible = false
+		_set_event_overlay_amount(0.0, oblivion_event_overlay)
+	if is_instance_valid(burn_event_overlay):
+		burn_event_overlay.visible = false
+		_set_event_overlay_amount(0.0, burn_event_overlay)
+
+
+func _stop_event_fx_tween() -> void:
+	if is_instance_valid(active_event_fx_tween):
+		active_event_fx_tween.kill()
+	active_event_fx_tween = null
 
 
 func _should_show_snapshot_after_branch() -> bool:
